@@ -34,6 +34,10 @@ flowchart TB
   classDef guard fill:#FCEBEB,stroke:#A32D2D,color:#791F1F
 ```
 
+## Tech stack
+
+See `docs/adr/ADR-004-tech-stack.md` for the full decision, pinned models, and alternatives.
+
 ## Request lifecycle (L1 detailed mode example)
 
 1. Web → Edge (WAF, rate limit) → API (`POST /api/l1/compare`).
@@ -46,24 +50,24 @@ flowchart TB
 
 ## Components
 
-| Component | Class | Responsibility | Recommended default (TODO(team): confirm via ADR) |
+| Component | Class | Responsibility | Chosen (ADR-004) |
 |---|---|---|---|
-| Web app | SWE | Public, pastor, admin UIs | Next.js (TypeScript) |
-| Edge layer | SWE | WAF, DDoS, rate limits, TLS | Cloudflare in front of hosting |
-| API | SWE | Routing, authn/z, validation, jobs | FastAPI (Python) |
-| Authentication | SWE | Identity, roles `public/pastor/admin` | Supabase Auth / Clerk / Auth0 |
+| Web app | SWE | Public, pastor, admin UIs | **Next.js (TypeScript)** on Vercel |
+| Edge layer | SWE | WAF, DDoS, rate limits, TLS | **Cloudflare** |
+| API | SWE | Routing, authn/z, validation, jobs | **FastAPI (Python)** on Railway/Render |
+| Authentication | SWE | Identity, roles `public/pastor/admin` | **Supabase Auth** (JWT verified in FastAPI) |
 | Authorisation | SWE | Role + ownership checks | In API + enforced again in MCP tools |
-| LLM gateway | AI | Single entry to models; runs guardrail pipeline | Own package; optional LiteLLM underneath |
+| LLM gateway | AI | Single entry to models; runs guardrail pipeline | Own package (`packages/llm-gateway`), Anthropic SDK |
 | Intake agent | AI | Classify + route; never answers | Small/cheap model or deterministic |
 | Compare agent | AI | L1 comparative explanations with citations | RAG over curated corpus |
 | Graph builder | AI | L2 concept extraction → graph snapshot | Batch job |
 | Check-in analyst | AI | L3 score, flags, encouragement, escalation | Self-hosted option for privacy |
-| Input/Output/Tool guardrails | AI | See `guardrails.md` | Presidio, moderation model, injection classifier, JSON Schema |
-| MCP servers (3) | AI | Data access for agents via tools | Official MCP SDK |
-| Relational DB | SWE | Users, lookups, modules, check-ins | Postgres (+ pgvector for RAG) |
-| Graph DB | SWE | L2 concept graph snapshots | Neo4j or Memgraph |
-| Session store | SWE | Conversation + inter-agent state, rate-limit counters | Redis |
-| Observability | AI+SWE | Traces, prompts, tool calls, cost; infra metrics | Langfuse + OpenTelemetry |
+| Input/Output/Tool guardrails | AI | See `guardrails.md` | Presidio, moderation model, injection classifier, Pydantic |
+| MCP servers (3) | AI | Data access for agents via tools | Official MCP Python SDK |
+| Relational DB | SWE | Users, lookups, modules, check-ins | **Postgres + pgvector** (Supabase) |
+| Graph DB | SWE | L2 concept graph snapshots | **Memgraph** |
+| Session store | SWE | Conversation + inter-agent state, rate-limit counters | **Redis** |
+| Observability | AI+SWE | Traces, prompts, tool calls, cost; infra metrics | **Langfuse cloud** + OpenTelemetry |
 | Cost & quota | AI | Per-request token caps, per-user daily quota, monthly budget | Gateway + Redis counters |
 | Eval suite | AI | Offline + CI evals, red-team | `evals/` + Langfuse datasets |
 

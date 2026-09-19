@@ -9,6 +9,7 @@ Every file in this repo and what it's for.
 - `FILES.md` — This index
 - `README.md` — What this repo is and setup order
 - `SOURCES.md` — Where each part came from
+- `docker-compose.yml` — Local Postgres+pgvector, Redis, Memgraph
 - `.cursor/plan-prompts/00-load-context.md`
 - `.cursor/plan-prompts/01-master-plan.md`
 - `.cursor/plan-prompts/02-architecture-lock.md`
@@ -56,6 +57,7 @@ Every file in this repo and what it's for.
 - `docs/adr/ADR-001-single-llm-gateway.md`
 - `docs/adr/ADR-002-intake-agent-routing.md`
 - `docs/adr/ADR-003-l3-privacy.md`
+- `docs/adr/ADR-004-tech-stack.md` — Chosen tech stack + pinned models
 - `docs/adr/ADR-template.md`
 - `evals/datasets/checkin-analyst.jsonl`
 - `evals/datasets/compare.jsonl`

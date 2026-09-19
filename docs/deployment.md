@@ -11,8 +11,8 @@
 web, api, llm-gateway (in-process or separate), 3 MCP servers, Postgres(+pgvector), graph DB, Redis,
 worker (L2 jobs, escalation notifications). Optional: self-hosted LLM (vLLM/Ollama) for L3.
 
-TODO(team): choose host (ADR). Requirements: managed Postgres, container support, secrets manager,
-custom domain + TLS behind the edge layer.
+Hosting (ADR-004): **Vercel** (web) · **Railway or Render** (API, MCP servers, worker, Redis, Memgraph) · **Supabase** (Postgres + pgvector + Auth) · **Cloudflare** in front · **Langfuse cloud**.
+Secrets live in each platform's secret store; never in the repo.
 
 ## Release checklist
 - [ ] CI green (lint, unit, eval thresholds, guardrail-audit, secret scan)
@@ -24,4 +24,8 @@ custom domain + TLS behind the edge layer.
 - [ ] Rollback: previous image tag + prompt version pinned
 
 ## Local
-`docker compose up` → seed → `scripts/run_evals --smoke`. (TODO(team): add compose file once stack is chosen.)
+```bash
+docker compose up -d          # Postgres+pgvector :5432, Redis :6379, Memgraph :7687, Memgraph Lab :3001
+cp .env.example .env          # fill keys
+# then run apps/api (uv) and apps/web (pnpm) on the host; seed; scripts/run_evals.sh --smoke
+```

@@ -43,6 +43,10 @@ This file is the entry point. Scoped rules live in `.cursor/rules/`; the source 
    tokens, cost, latency, user role (not user identity for L3).
 10. **Small vertical slices.** One PR = one working slice through UI → API → agent → tool → data.
 
+## Stack (ADR-004)
+
+Next.js (TS) web · FastAPI (Python) API, agents, guardrails, MCP servers · Claude via `llm-gateway` · Postgres+pgvector & Auth on Supabase · Memgraph (L2 graph) · Redis · Langfuse + OTel · Cloudflare · Vercel + Railway/Render. Python: uv. JS: pnpm.
+
 ## Where things live
 
 ```

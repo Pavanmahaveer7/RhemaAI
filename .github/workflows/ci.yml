@@ -1,4 +1,5 @@
-# TODO(team): adjust paths/commands once the stack is chosen (defaults assume pnpm + uv).
+# Stack per ADR-004: pnpm (apps/web) + uv (apps/api, packages/*). The '|| echo' fallbacks let CI pass
+# before application code exists — remove them once Phase 0 lands.
 name: ci
 on:
   pull_request:
@@ -16,8 +17,8 @@ jobs:
         with: { python-version: "3.12" }
       - run: corepack enable && pnpm install --frozen-lockfile || echo "no node workspace yet"
       - run: pip install uv && uv sync || echo "no python workspace yet"
-      - run: pnpm -r lint && pnpm -r test || echo "TODO(team): wire node lint/test"
-      - run: uv run pytest -q || echo "TODO(team): wire python tests"
+      - run: pnpm -r lint && pnpm -r test || echo "no web app yet (remove after Phase 0)"
+      - run: uv run pytest -q || echo "no python tests yet (remove after Phase 0)"
 
   schemas:
     runs-on: ubuntu-latest

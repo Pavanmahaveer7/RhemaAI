@@ -33,8 +33,8 @@ guardrail rules, agent/tool scaffolding skills, eval datasets, CI, and a gstack-
    git clone --single-branch --depth 1 https://github.com/garrytan/gstack.git ~/gstack
    cd ~/gstack && ./setup --host cursor
    ```
-3. **Fill the `TODO(team)` markers.** `grep -rn "TODO(team)" .` — these are the decisions only you can make
-   (hosting, model choice, auth provider, etc.). Record each decision as an ADR in `docs/adr/`.
+3. **Stack is chosen** — see `docs/adr/ADR-004-tech-stack.md`. Run `docker compose up -d` for local Postgres/Redis/Memgraph.
+   Remaining open items: `grep -rn "TODO(team)" .` — record each decision as an ADR in `docs/adr/`.
 4. **Open `.cursor/plan-prompts/README.md`** and run prompts 00 → 01 → 02 in Cursor Plan Mode.
 5. **Run the planning sequence** in `docs/gstack-workflow.md` §2 before writing application code.
 6. **Build layer by layer** using `/spec` → `new-agent` / `new-mcp-tool` → `/review` → `eval-run` →

@@ -5,10 +5,10 @@ Use the `prompt-change` skill for any edit.
 
 | Agent | Active | Versions | Model (pinned) |
 |---|---|---|---|
-| intake | v1 | v1 | TODO(team) |
-| compare | v1 | v1 | TODO(team) |
-| graph-builder | v1 | v1 | TODO(team) |
-| checkin-analyst | v1 | v1 | TODO(team) |
+| intake | v1 | v1 | `claude-haiku-4-5-20251001` (LLM path only) |
+| compare | v1 | v1 | `claude-sonnet-5` |
+| graph-builder | v1 | v1 | `claude-sonnet-5` |
+| checkin-analyst | v1 | v1 | `claude-sonnet-5` |
 
 ## Invariants (must appear in every version)
 - Output JSON only, matching the schema. No prose outside JSON.
