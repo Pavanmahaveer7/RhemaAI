@@ -1,0 +1,11 @@
+---
+description: Data handling and privacy rules, especially L3 pastor data
+globs: ["**/*"]
+alwaysApply: true
+---
+- Classify data: PUBLIC (L1 content), COMMUNITY (L2 responses — anonymous), PRIVATE (L3 check-ins, pastor profiles).
+- PRIVATE data: encrypted at rest, access-logged, never sent unmasked to a third-party model,
+  never sent to external observability in raw form, deletable on request.
+- L2 responses are collected anonymously; do not store IP or account id alongside response text.
+- Seed/demo data is synthetic. Never use real pastor data in development or demos.
+- Scripture/source texts: only public-domain or properly licensed translations (see docs/data-ethics.md).

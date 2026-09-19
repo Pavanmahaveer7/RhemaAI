@@ -1,0 +1,66 @@
+# File index
+
+Every file in this repo and what it's for.
+
+- `.cursorrules` — Legacy Cursor rules; points to AGENTS.md
+- `.env.example` — Every environment variable
+- `.gitignore` — Ignored files
+- `AGENTS.md` — Entry point every AI coding agent reads first
+- `README.md` — What this repo is and setup order
+- `SOURCES.md` — Where each part came from
+- `.cursor/plan-prompts/00-load-context.md`
+- `.cursor/plan-prompts/01-master-plan.md`
+- `.cursor/plan-prompts/02-architecture-lock.md`
+- `.cursor/plan-prompts/03-slice-plan.md`
+- `.cursor/plan-prompts/04-execute-step.md`
+- `.cursor/plan-prompts/05-agent-build.md`
+- `.cursor/plan-prompts/06-guardrails-plan.md`
+- `.cursor/plan-prompts/07-metaprompt-agent.md`
+- `.cursor/plan-prompts/08-debug-reset.md`
+- `.cursor/plan-prompts/09-review-plan-vs-code.md`
+- `.cursor/plan-prompts/README.md`
+- `.cursor/rules/00-core.mdc`
+- `.cursor/rules/agents.mdc`
+- `.cursor/rules/api.mdc`
+- `.cursor/rules/data-privacy.mdc`
+- `.cursor/rules/guardrails.mdc`
+- `.cursor/rules/mcp-servers.mdc`
+- `.cursor/rules/testing-evals.mdc`
+- `.cursor/rules/web.mdc`
+- `.cursor/skills/demo-ready/SKILL.md`
+- `.cursor/skills/eval-run/SKILL.md`
+- `.cursor/skills/guardrail-audit/SKILL.md`
+- `.cursor/skills/new-agent/SKILL.md`
+- `.cursor/skills/new-mcp-tool/SKILL.md`
+- `.cursor/skills/prompt-change/SKILL.md`
+- `.cursor/skills/redteam/SKILL.md`
+- `.github/pull_request_template.md`
+- `.github/workflows/ci.yml`
+- `docs/api.md`
+- `docs/architecture.md`
+- `docs/data-ethics.md`
+- `docs/data-model.md`
+- `docs/demo-script.md`
+- `docs/deployment.md`
+- `docs/evals.md`
+- `docs/gstack-workflow.md`
+- `docs/guardrails.md`
+- `docs/observability.md`
+- `docs/prompting-playbook.md`
+- `docs/prompts.md`
+- `docs/threat-model.md`
+- `docs/adr/ADR-001-single-llm-gateway.md`
+- `docs/adr/ADR-002-intake-agent-routing.md`
+- `docs/adr/ADR-003-l3-privacy.md`
+- `docs/adr/ADR-template.md`
+- `evals/datasets/checkin-analyst.jsonl`
+- `evals/datasets/compare.jsonl`
+- `evals/datasets/graph-builder.jsonl`
+- `evals/datasets/intake.jsonl`
+- `evals/datasets/redteam.jsonl`
+- `schemas/checkin.output.json`
+- `schemas/compare.output.json`
+- `schemas/graph.output.json`
+- `schemas/intake.output.json`
+- `scripts/guardrail_audit.sh`
+- `scripts/run_evals.sh`

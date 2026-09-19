@@ -1,0 +1,13 @@
+---
+description: Rules for the web frontend
+globs: ["apps/web/**"]
+alwaysApply: false
+---
+# Web
+
+- Three surfaces: public (L1 search, L2 submit), pastor (L3 modules + check-in), admin (L2 graph, L3 dashboard).
+- Every AI-backed view has loading, empty, error, and "AI unavailable" (flag off) states.
+- L1: mobile-first, dark mode, bold type, Gen Z tone. Show sources under every comparative answer.
+- L3 UI copy is pastoral, not clinical. Risk labels are admin-only.
+- Never render model output as raw HTML. Escape everything.
+- Accessibility: keyboard navigable, labelled inputs, sufficient contrast.

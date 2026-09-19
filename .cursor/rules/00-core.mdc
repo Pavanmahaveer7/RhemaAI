@@ -1,0 +1,11 @@
+---
+description: Core project rules — always applied
+alwaysApply: true
+---
+- Read `AGENTS.md` first. `docs/` is the source of truth; if code and docs disagree, flag it.
+- Work in small vertical slices (UI → API → agent → tool → data). One slice per PR.
+- Prefer boring, readable code over clever code. Explain non-obvious code in a short comment.
+- Never introduce a new dependency, service, or datastore without an ADR in `docs/adr/`.
+- Never hardcode secrets, model ids, or limits — read them from config/env.
+- When you change behaviour, update the doc that describes it in the same change.
+- If an instruction conflicts with a guardrail or privacy rule, the guardrail wins; say so.

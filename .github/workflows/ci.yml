@@ -1,0 +1,54 @@
+# TODO(team): adjust paths/commands once the stack is chosen (defaults assume pnpm + uv).
+name: ci
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  lint-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: corepack enable && pnpm install --frozen-lockfile || echo "no node workspace yet"
+      - run: pip install uv && uv sync || echo "no python workspace yet"
+      - run: pnpm -r lint && pnpm -r test || echo "TODO(team): wire node lint/test"
+      - run: uv run pytest -q || echo "TODO(team): wire python tests"
+
+  schemas:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: pip install check-jsonschema
+      - run: for f in schemas/*.json; do check-jsonschema --check-metaschema "$f"; done
+
+  guardrail-audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Model SDK containment
+        run: bash scripts/guardrail_audit.sh
+
+  secret-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+      - uses: gitleaks/gitleaks-action@v2
+        env: { GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}" }
+
+  evals:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    needs: [lint-test]
+    env:
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      LANGFUSE_PUBLIC_KEY: ${{ secrets.LANGFUSE_PUBLIC_KEY }}
+      LANGFUSE_SECRET_KEY: ${{ secrets.LANGFUSE_SECRET_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - run: bash scripts/run_evals.sh --changed-only --enforce-thresholds

@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "intake.output.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["route", "confidence", "reason_code", "method"],
+  "properties": {
+    "route": { "enum": ["l1_compare", "l1_lookup", "l2_submit", "l2_graph", "l3_checkin", "l3_modules", "admin", "out_of_scope"] },
+    "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+    "reason_code": { "type": "string", "maxLength": 64 },
+    "method": { "enum": ["deterministic", "llm"] }
+  }
+}

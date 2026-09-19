@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "checkin.output.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["checkin_id", "escalation", "score", "status", "flags", "encouragement"],
+  "properties": {
+    "checkin_id": { "type": "string" },
+    "escalation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["required"],
+      "properties": {
+        "required": { "type": "boolean" },
+        "category": { "enum": ["self_harm", "abuse", "immediate_danger", "other"] },
+        "rationale": { "type": "string", "maxLength": 300 }
+      }
+    },
+    "score": { "type": "integer", "minimum": 0, "maximum": 100, "description": "Wellbeing/engagement score; higher = healthier" },
+    "status": { "enum": ["stable", "watch", "needs_support"] },
+    "flags": {
+      "type": "array",
+      "maxItems": 6,
+      "items": { "enum": ["low_mood_trend", "missed_checkins", "no_prayer_streak", "no_visits_streak", "isolation", "conflict", "burnout_signals", "crisis"] }
+    },
+    "encouragement": { "type": "string", "maxLength": 400, "description": "Pastor-facing, pastoral tone, no risk labels" },
+    "admin_note": { "type": "string", "maxLength": 400 }
+  }
+}

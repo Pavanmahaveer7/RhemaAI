@@ -1,0 +1,10 @@
+---
+description: Testing and evaluation rules
+globs: ["**/*.test.*", "**/test_*.py", "evals/**"]
+alwaysApply: false
+---
+- Unit-test: guardrails, schema parsing/retry, permission checks, sync/idempotency, auth.
+- Evals (not unit tests) cover agent quality: each agent has a dataset in `evals/datasets/`.
+- A prompt or model change must not reduce any agent's eval pass rate; CI enforces the thresholds in `docs/evals.md`.
+- Red-team dataset must pass 100% (every attack blocked or neutralised) before release.
+- Tests use recorded/mocked model responses by default; live-model evals run in the eval job only.

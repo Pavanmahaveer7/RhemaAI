@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "compare.output.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["term", "direction", "coverage", "sections", "sources"],
+  "properties": {
+    "term": { "type": "string", "maxLength": 200 },
+    "direction": { "enum": ["hindu_to_christian", "christian_to_hindu"] },
+    "coverage": { "enum": ["full", "partial", "insufficient"] },
+    "sections": {
+      "type": "array",
+      "maxItems": 3,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["tradition", "explanation", "source_ids"],
+        "properties": {
+          "tradition": { "enum": ["hindu", "buddhist", "christian"] },
+          "explanation": { "type": "string", "maxLength": 1200 },
+          "source_ids": { "type": "array", "minItems": 1, "items": { "type": "string" } }
+        }
+      }
+    },
+    "bridge_summary": { "type": "string", "maxLength": 600 },
+    "sources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "work", "reference"],
+        "properties": {
+          "id": { "type": "string" },
+          "work": { "type": "string" },
+          "reference": { "type": "string" },
+          "translation": { "type": "string" }
+        }
+      }
+    }
+  }
+}

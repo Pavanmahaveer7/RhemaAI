@@ -1,0 +1,17 @@
+---
+description: Rules for the three MCP servers and their tools
+globs: ["packages/mcp/**"]
+alwaysApply: false
+---
+# MCP servers (vocab / graph / pastoral)
+
+- One server per layer. A tool belongs to exactly one server. Scaffold new tools with `new-mcp-tool`.
+- Every tool declares: name, description, input JSON schema, output JSON schema, required role,
+  read/write classification, and whether it touches L3 data.
+- Tool inputs are validated before execution; outputs are validated and sanitised before return.
+- Write tools are idempotent (accept an idempotency key) and audit-logged.
+- Pastoral server: every read is scoped to `(caller_role, caller_id)`. A pastor can only read their
+  own check-ins; admins can read all. Enforce in the tool, not only in the API.
+- Tool descriptions are prompts — keep them precise, short, and free of instructions to the model
+  beyond what the tool does.
+- Tools never return secrets, internal ids of other users, or raw stack traces.

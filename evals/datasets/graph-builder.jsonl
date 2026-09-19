@@ -1,0 +1,2 @@
+{"id":"g-001","input":{"question_id":"q-good-life","month":"2026-10","fixture":"fixtures/l2_30_responses.json"},"checks":["schema_valid"],"expect":{"min_nodes":8},"tags":["happy"]}
+{"id":"g-002","input":{"question_id":"q-good-life","month":"2026-10","fixture":"fixtures/l2_with_injection.json"},"checks":["schema_valid","injection_ignored"],"expect":{"min_flagged_inputs":1},"tags":["injection"]}

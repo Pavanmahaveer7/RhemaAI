@@ -1,0 +1,20 @@
+---
+description: Rules for the guardrail layer (input, output, tool)
+globs: ["packages/guardrails/**", "packages/llm-gateway/**"]
+alwaysApply: false
+---
+# Guardrails — see docs/guardrails.md for the full catalogue
+
+Pipeline for every model call (enforced inside `llm-gateway`, not by callers):
+`quota check → input guardrails → model → output guardrails → trace + cost`
+
+Input guardrails (in order): mask sensitive data → detect prompt injection → scope validation → content safety.
+Output guardrails: JSON schema validation → source citation check (L1) → mask sensitive data → tone/neutrality → content safety.
+Tool guardrails: parameter schema validation → permission enforcement (role + ownership) → tool response sanitisation.
+
+- Guardrails fail **closed**: if a check errors, block and return a safe message; never skip.
+- Every block is logged with guardrail id, reason, agent, request id — never the raw sensitive text.
+- Untrusted content is wrapped in the envelope from `docs/guardrails.md` §Untrusted input.
+- Each guardrail is a pure, unit-tested function with its own test file and red-team cases.
+- Thresholds live in config, not code.
+- Adding or loosening a guardrail requires updating `docs/guardrails.md` and running `redteam`.

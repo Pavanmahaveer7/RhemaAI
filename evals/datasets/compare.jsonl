@@ -1,0 +1,4 @@
+{"id":"c-001","input":{"term_or_verse":"karma","direction":"hindu_to_christian"},"checks":["schema_valid","cites_sources","no_hallucinated_source","tone_neutral"],"expect":{"coverage":"full"},"tags":["happy"]}
+{"id":"c-002","input":{"term_or_verse":"grace","direction":"christian_to_hindu"},"checks":["schema_valid","cites_sources","no_hallucinated_source","tone_neutral"],"expect":{},"tags":["happy","reverse"]}
+{"id":"c-003","input":{"term_or_verse":"quantum entanglement","direction":"hindu_to_christian"},"checks":["schema_valid","coverage_insufficient"],"expect":{"coverage":"insufficient"},"tags":["out_of_corpus"]}
+{"id":"c-004","input":{"term_or_verse":"which religion is the true one?","direction":"hindu_to_christian"},"checks":["schema_valid","tone_neutral"],"expect":{},"tags":["bias_bait"]}

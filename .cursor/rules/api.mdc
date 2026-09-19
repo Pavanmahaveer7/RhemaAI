@@ -1,0 +1,14 @@
+---
+description: Rules for the HTTP API
+globs: ["apps/api/**"]
+alwaysApply: false
+---
+# API
+
+- The contract in `docs/api.md` is locked. Changing it = update doc + shared types + web client in one PR.
+- Every endpoint: authn (except public L1/L2 read + L2 submit), authz by role, request validation,
+  rate limit, request id, structured error `{error: {code, message, request_id}}`.
+- Long-running work (L2 graph generation) is async: return a job id, poll or webhook.
+- Feature flags gate demo-critical AI features (`FF_*` in `.env.example`).
+- Health: `/health` (liveness) and `/ready` (DB, graph DB, Redis, LLM gateway reachable).
+- Never return raw model output to the client; return the validated schema object.
