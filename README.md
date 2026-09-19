@@ -13,6 +13,8 @@ guardrail rules, agent/tool scaffolding skills, eval datasets, CI, and a gstack-
 | `.cursorrules` | Legacy Cursor rules file — short, points at `AGENTS.md` + `.cursor/rules/` |
 | `.cursor/rules/*.mdc` | Scoped rules that auto-apply to specific folders (agents, guardrails, MCP, API, web, data) |
 | `.cursor/skills/*/SKILL.md` | Project-specific skills: `new-agent`, `new-mcp-tool`, `guardrail-audit`, `eval-run`, `redteam`, `prompt-change`, `demo-ready` |
+| `docs/build-plan.md` | Your original product + build plan (verbatim, with a status note) |
+| `docs/architecture-diagram.png/.svg` | The architecture diagram (blue = SWE, rest = AI) |
 | `docs/` | Source-of-truth docs: architecture, API contract, guardrails, prompts, evals, data model, threat model, observability, deployment, data ethics, gstack workflow, demo script |
 | `docs/adr/` | Architecture Decision Records — every non-obvious choice gets one |
 | `schemas/` | JSON Schemas for every agent's output (the contract between LLM and code) |
@@ -48,7 +50,9 @@ Web app → Edge (WAF, rate limit) → API → Intake agent ─┬─ Compare ag
             Cross-cutting: AuthN/AuthZ · Observability · Cost & quota · Session store · Eval suite
 ```
 
-Full detail: `docs/architecture.md`.
+![Architecture](docs/architecture-diagram.png)
+
+Full detail: `docs/architecture.md`. Product plan: `docs/build-plan.md`.
 
 ## The one rule
 

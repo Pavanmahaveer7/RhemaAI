@@ -10,7 +10,8 @@ plan prompts, guardrail design) was written for this project by applying these s
 | YC Lightcone — "State-of-the-Art Prompting for AI Agents" (via third-party write-up) | Parahelp-style structured prompts, metaprompting, escape hatches, debug field, evals as the asset | `docs/prompting-playbook.md` §B, `07-metaprompt-agent.md`, agent prompt template |
 | Cursor docs — Plan Mode, "Best practices for coding with agents" | Plan Mode flow, save plans to `.cursor/plans/`, revert-and-replan | `.cursor/plan-prompts/*`, playbook §A |
 | Anthropic — Prompting best practices | Be explicit, give reasons, XML tags, 3–5 examples | Playbook §A5–A6, §B6; all plan prompts |
+| Our architecture diagram (built in chat from the reference bank diagram) | Layout, SWE vs AI colour split | `docs/architecture-diagram.png/.svg`, `docs/architecture.md` |
 | Reference guardrails architecture (video diagram) | Input / output / tool guardrail layers | `docs/guardrails.md`, `.cursor/rules/guardrails.mdc` |
-| Your build plan document | Three layers, agents, cut list, demo flow | `AGENTS.md`, `docs/architecture.md`, `docs/api.md`, `docs/demo-script.md` |
+| Your build plan document | Three layers, agents, cut list, demo flow — kept verbatim in `docs/build-plan.md` | `docs/build-plan.md`, `AGENTS.md`, `docs/architecture.md`, `docs/api.md`, `docs/demo-script.md` |
 
 gstack itself is **not** vendored here — install it with `./setup --host cursor` (see `docs/gstack-workflow.md`).

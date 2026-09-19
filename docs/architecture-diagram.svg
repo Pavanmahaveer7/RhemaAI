@@ -1,0 +1,93 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1020" viewBox="0 0 680 800" role="img"><title>Three-layer agentic AI architecture for the church platform, web version</title><desc>Blue is software engineering; teal, amber, gray and red are AI engineering.</desc>
+<style>
+text{font-family:-apple-system,Segoe UI,Helvetica,Arial,sans-serif}
+.th{font-size:14px;font-weight:500;fill:#2C2C2A}.ts{font-size:12px;fill:#5F5E5A}
+.box{fill:#F8F8F6;stroke:#B4B2A9}
+.arr{stroke:#73726C;stroke-width:1.5;fill:none}
+.c-blue rect,rect.c-blue{fill:#E6F1FB;stroke:#185FA5}.c-blue .th{fill:#0C447C}.c-blue .ts{fill:#185FA5}
+.c-teal rect,rect.c-teal{fill:#E1F5EE;stroke:#0F6E56}.c-teal .th{fill:#085041}.c-teal .ts{fill:#0F6E56}
+.c-amber rect,rect.c-amber{fill:#FAEEDA;stroke:#854F0B}.c-amber .th{fill:#633806}.c-amber .ts{fill:#854F0B}
+.c-gray rect,rect.c-gray{fill:#F1EFE8;stroke:#5F5E5A}.c-gray .th{fill:#444441}.c-gray .ts{fill:#5F5E5A}
+.c-red rect,rect.c-red{fill:#FCEBEB;stroke:#A32D2D}.c-red .th{fill:#791F1F}.c-red .ts{fill:#A32D2D}
+</style>
+<rect width="680" height="800" fill="#FFFFFF"/>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#73726C" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+<rect class="c-blue" x="10" y="24" width="14" height="14" rx="3" stroke-width="0.5"/>
+<text class="ts" x="32" y="31" dominant-baseline="central">Software engineering</text>
+<rect class="c-teal" x="10" y="50" width="14" height="14" rx="3" stroke-width="0.5"/>
+<rect class="c-amber" x="28" y="50" width="14" height="14" rx="3" stroke-width="0.5"/>
+<rect class="c-gray" x="46" y="50" width="14" height="14" rx="3" stroke-width="0.5"/>
+<rect class="c-red" x="64" y="50" width="14" height="14" rx="3" stroke-width="0.5"/>
+<text class="ts" x="86" y="57" dominant-baseline="central">AI engineering</text>
+<g class="c-blue"><rect x="230" y="20" width="160" height="56" rx="8" stroke-width="0.5"/><text class="th" x="310" y="40" text-anchor="middle" dominant-baseline="central">Web app</text><text class="ts" x="310" y="58" text-anchor="middle" dominant-baseline="central">Public, pastor, admin</text></g>
+<g class="c-blue"><rect x="200" y="100" width="220" height="70" rx="8" stroke-width="0.5"/><text class="th" x="310" y="118" text-anchor="middle" dominant-baseline="central">Edge layer</text><text class="ts" x="310" y="138" text-anchor="middle" dominant-baseline="central">WAF, DDoS, rate limits</text><text class="ts" x="310" y="154" text-anchor="middle" dominant-baseline="central">API gateway</text></g>
+<g class="c-blue"><rect x="490" y="107" width="170" height="56" rx="8" stroke-width="0.5"/><text class="th" x="575" y="126" text-anchor="middle" dominant-baseline="central">Authentication</text><text class="ts" x="575" y="144" text-anchor="middle" dominant-baseline="central">Pastor and admin roles</text></g>
+<g class="c-blue"><rect x="260" y="196" width="100" height="44" rx="8" stroke-width="0.5"/><text class="th" x="310" y="218" text-anchor="middle" dominant-baseline="central">API</text></g>
+<g class="c-red"><rect x="494" y="180" width="176" height="156" rx="8" stroke-width="0.5" stroke-dasharray="4 3"/><text class="th" x="582" y="196" text-anchor="middle" dominant-baseline="central">Input guardrails</text></g>
+<rect class="box" x="502" y="210" width="160" height="24" rx="4" stroke-width="0.5"/><text class="ts" x="582" y="222" text-anchor="middle" dominant-baseline="central">Mask sensitive data</text>
+<rect class="box" x="502" y="240" width="160" height="24" rx="4" stroke-width="0.5"/><text class="ts" x="582" y="252" text-anchor="middle" dominant-baseline="central">Detect prompt injection</text>
+<rect class="box" x="502" y="270" width="160" height="24" rx="4" stroke-width="0.5"/><text class="ts" x="582" y="282" text-anchor="middle" dominant-baseline="central">Scope validation</text>
+<rect class="box" x="502" y="300" width="160" height="24" rx="4" stroke-width="0.5"/><text class="ts" x="582" y="312" text-anchor="middle" dominant-baseline="central">Content safety</text>
+<g class="c-amber"><rect x="494" y="356" width="176" height="72" rx="8" stroke-width="0.5"/></g>
+<g class="c-amber"><rect x="502" y="364" width="76" height="56" rx="6" stroke-width="0.5"/><text class="ts" x="540" y="383" text-anchor="middle" dominant-baseline="central">Self-hosted</text><text class="ts" x="540" y="401" text-anchor="middle" dominant-baseline="central">LLM</text></g>
+<g class="c-amber"><rect x="586" y="364" width="76" height="56" rx="6" stroke-width="0.5"/><text class="ts" x="624" y="383" text-anchor="middle" dominant-baseline="central">Third-party</text><text class="ts" x="624" y="401" text-anchor="middle" dominant-baseline="central">LLM</text></g>
+<g class="c-red"><rect x="494" y="448" width="176" height="156" rx="8" stroke-width="0.5" stroke-dasharray="4 3"/><text class="th" x="582" y="464" text-anchor="middle" dominant-baseline="central">Output guardrails</text></g>
+<rect class="box" x="502" y="478" width="160" height="24" rx="4" stroke-width="0.5"/><text class="ts" x="582" y="490" text-anchor="middle" dominant-baseline="central">Source citation check</text>
+<rect class="box" x="502" y="508" width="160" height="24" rx="4" stroke-width="0.5"/><text class="ts" x="582" y="520" text-anchor="middle" dominant-baseline="central">JSON schema validation</text>
+<rect class="box" x="502" y="538" width="160" height="24" rx="4" stroke-width="0.5"/><text class="ts" x="582" y="550" text-anchor="middle" dominant-baseline="central">Mask sensitive data</text>
+<rect class="box" x="502" y="568" width="160" height="24" rx="4" stroke-width="0.5"/><text class="ts" x="582" y="580" text-anchor="middle" dominant-baseline="central">Tone and neutrality</text>
+<g class="c-teal"><rect x="500" y="624" width="160" height="56" rx="8" stroke-width="0.5"/><text class="th" x="580" y="643" text-anchor="middle" dominant-baseline="central">Agent evaluation</text><text class="th" x="580" y="661" text-anchor="middle" dominant-baseline="central">suite</text></g>
+<rect x="142" y="262" width="334" height="218" rx="8" fill="none" stroke="#1D9E75" stroke-width="1" stroke-dasharray="4 4"/>
+<g class="c-teal"><rect x="250" y="280" width="120" height="56" rx="8" stroke-width="0.5"/><text class="th" x="310" y="299" text-anchor="middle" dominant-baseline="central">Intake</text><text class="th" x="310" y="317" text-anchor="middle" dominant-baseline="central">agent</text></g>
+<g class="c-teal"><rect x="152" y="380" width="92" height="56" rx="8" stroke-width="0.5"/><text class="th" x="198" y="399" text-anchor="middle" dominant-baseline="central">Compare</text><text class="th" x="198" y="417" text-anchor="middle" dominant-baseline="central">agent</text></g>
+<g class="c-teal"><rect x="264" y="380" width="92" height="56" rx="8" stroke-width="0.5"/><text class="th" x="310" y="399" text-anchor="middle" dominant-baseline="central">Graph</text><text class="th" x="310" y="417" text-anchor="middle" dominant-baseline="central">builder</text></g>
+<g class="c-teal"><rect x="376" y="380" width="92" height="56" rx="8" stroke-width="0.5"/><text class="th" x="422" y="399" text-anchor="middle" dominant-baseline="central">Check-in</text><text class="th" x="422" y="417" text-anchor="middle" dominant-baseline="central">analyst</text></g>
+<g class="c-blue"><rect x="6" y="286" width="116" height="44" rx="8" stroke-width="0.5"/><text class="th" x="64" y="308" text-anchor="middle" dominant-baseline="central">Authorisation</text></g>
+<rect class="box" x="6" y="350" width="116" height="148" rx="8" stroke-width="0.5"/><text class="th" x="64" y="366" text-anchor="middle" dominant-baseline="central">Observability</text>
+<g class="c-teal"><rect x="12" y="380" width="104" height="50" rx="6" stroke-width="0.5"/><text class="ts" x="64" y="396" text-anchor="middle" dominant-baseline="central">Prompts, agent</text><text class="ts" x="64" y="413" text-anchor="middle" dominant-baseline="central">and tool calls</text></g>
+<g class="c-blue"><rect x="12" y="440" width="104" height="50" rx="6" stroke-width="0.5"/><text class="ts" x="64" y="456" text-anchor="middle" dominant-baseline="central">CPU, memory,</text><text class="ts" x="64" y="473" text-anchor="middle" dominant-baseline="central">disk usage</text></g>
+<g class="c-teal"><rect x="6" y="516" width="116" height="44" rx="8" stroke-width="0.5"/><text class="th" x="64" y="538" text-anchor="middle" dominant-baseline="central">Cost and quota</text></g>
+<g class="c-blue"><rect x="6" y="580" width="116" height="70" rx="8" stroke-width="0.5"/><text class="th" x="64" y="598" text-anchor="middle" dominant-baseline="central">Session store</text><text class="ts" x="64" y="616" text-anchor="middle" dominant-baseline="central">Conversation</text><text class="ts" x="64" y="632" text-anchor="middle" dominant-baseline="central">and shared state</text></g>
+<g class="c-red"><rect x="142" y="500" width="320" height="106" rx="8" stroke-width="0.5" stroke-dasharray="4 3"/><text class="th" x="302" y="514" text-anchor="middle" dominant-baseline="central">Tool guardrails</text></g>
+<rect class="box" x="150" y="526" width="150" height="38" rx="4" stroke-width="0.5"/><text class="ts" x="225" y="537" text-anchor="middle" dominant-baseline="central">Schema and</text><text class="ts" x="225" y="553" text-anchor="middle" dominant-baseline="central">parameter validation</text>
+<rect class="box" x="308" y="526" width="146" height="38" rx="4" stroke-width="0.5"/><text class="ts" x="381" y="537" text-anchor="middle" dominant-baseline="central">Permission</text><text class="ts" x="381" y="553" text-anchor="middle" dominant-baseline="central">enforcement</text>
+<rect class="box" x="150" y="572" width="304" height="26" rx="4" stroke-width="0.5"/><text class="ts" x="302" y="585" text-anchor="middle" dominant-baseline="central">Tool response sanitisation</text>
+<g class="c-teal"><rect x="152" y="626" width="92" height="52" rx="8" stroke-width="0.5"/><text class="ts" x="198" y="643" text-anchor="middle" dominant-baseline="central">L1 vocab</text><text class="ts" x="198" y="660" text-anchor="middle" dominant-baseline="central">MCP server</text></g>
+<g class="c-teal"><rect x="264" y="626" width="92" height="52" rx="8" stroke-width="0.5"/><text class="ts" x="310" y="643" text-anchor="middle" dominant-baseline="central">L2 graph</text><text class="ts" x="310" y="660" text-anchor="middle" dominant-baseline="central">MCP server</text></g>
+<g class="c-teal"><rect x="376" y="626" width="92" height="52" rx="8" stroke-width="0.5"/><text class="ts" x="422" y="643" text-anchor="middle" dominant-baseline="central">L3 pastoral</text><text class="ts" x="422" y="660" text-anchor="middle" dominant-baseline="central">MCP server</text></g>
+<rect class="box" x="10" y="714" width="184" height="64" rx="8" stroke-width="0.5"/>
+<rect class="box" x="204" y="714" width="184" height="64" rx="8" stroke-width="0.5"/>
+<rect class="box" x="398" y="714" width="272" height="64" rx="8" stroke-width="0.5"/>
+<g class="c-gray"><rect x="18" y="722" width="80" height="48" rx="6" stroke-width="0.5"/><text class="ts" x="58" y="738" text-anchor="middle" dominant-baseline="central">Term</text><text class="ts" x="58" y="754" text-anchor="middle" dominant-baseline="central">lookup</text></g>
+<g class="c-gray"><rect x="106" y="722" width="80" height="48" rx="6" stroke-width="0.5"/><text class="ts" x="146" y="738" text-anchor="middle" dominant-baseline="central">RAG source</text><text class="ts" x="146" y="754" text-anchor="middle" dominant-baseline="central">search</text></g>
+<g class="c-gray"><rect x="212" y="722" width="80" height="48" rx="6" stroke-width="0.5"/><text class="ts" x="252" y="738" text-anchor="middle" dominant-baseline="central">Fetch</text><text class="ts" x="252" y="754" text-anchor="middle" dominant-baseline="central">responses</text></g>
+<g class="c-gray"><rect x="300" y="722" width="80" height="48" rx="6" stroke-width="0.5"/><text class="ts" x="340" y="738" text-anchor="middle" dominant-baseline="central">Save graph</text><text class="ts" x="340" y="754" text-anchor="middle" dominant-baseline="central">snapshot</text></g>
+<g class="c-gray"><rect x="406" y="722" width="80" height="48" rx="6" stroke-width="0.5"/><text class="ts" x="446" y="738" text-anchor="middle" dominant-baseline="central">Check-in</text><text class="ts" x="446" y="754" text-anchor="middle" dominant-baseline="central">history</text></g>
+<g class="c-gray"><rect x="494" y="722" width="80" height="48" rx="6" stroke-width="0.5"/><text class="ts" x="534" y="738" text-anchor="middle" dominant-baseline="central">Save</text><text class="ts" x="534" y="754" text-anchor="middle" dominant-baseline="central">analysis</text></g>
+<g class="c-gray"><rect x="582" y="722" width="80" height="48" rx="6" stroke-width="0.5"/><text class="ts" x="622" y="738" text-anchor="middle" dominant-baseline="central">Module</text><text class="ts" x="622" y="754" text-anchor="middle" dominant-baseline="central">progress</text></g>
+<line x1="310" y1="76" x2="310" y2="98" class="arr" marker-end="url(#arrow)"/>
+<line x1="420" y1="135" x2="488" y2="135" class="arr" marker-end="url(#arrow)"/>
+<line x1="310" y1="170" x2="310" y2="194" class="arr" marker-end="url(#arrow)"/>
+<line x1="310" y1="240" x2="310" y2="278" class="arr" marker-end="url(#arrow)"/>
+<line x1="250" y1="308" x2="124" y2="308" class="arr" marker-end="url(#arrow)"/>
+<path d="M310 336 L310 352 L198 352 L198 378" class="arr" marker-end="url(#arrow)"/>
+<line x1="310" y1="352" x2="310" y2="378" class="arr" marker-end="url(#arrow)"/>
+<path d="M310 352 L422 352 L422 378" class="arr" marker-end="url(#arrow)"/>
+<line x1="476" y1="290" x2="492" y2="290" class="arr" marker-end="url(#arrow)"/>
+<line x1="582" y1="336" x2="582" y2="354" class="arr" marker-end="url(#arrow)"/>
+<line x1="582" y1="428" x2="582" y2="446" class="arr" marker-end="url(#arrow)"/>
+<line x1="494" y1="468" x2="478" y2="468" class="arr" marker-end="url(#arrow)"/>
+<path d="M472 480 L472 652 L498 652" class="arr" marker-end="url(#arrow)"/>
+<line x1="142" y1="430" x2="124" y2="430" class="arr" marker-end="url(#arrow)"/>
+<path d="M142 448 L132 448 L132 615 L124 615" class="arr" marker-end="url(#arrow)"/>
+<line x1="132" y1="538" x2="124" y2="538" class="arr" marker-end="url(#arrow)"/>
+<line x1="198" y1="438" x2="198" y2="498" class="arr" marker-start="url(#arrow)" marker-end="url(#arrow)"/>
+<line x1="310" y1="438" x2="310" y2="498" class="arr" marker-start="url(#arrow)" marker-end="url(#arrow)"/>
+<line x1="422" y1="438" x2="422" y2="498" class="arr" marker-start="url(#arrow)" marker-end="url(#arrow)"/>
+<line x1="198" y1="608" x2="198" y2="624" class="arr" marker-start="url(#arrow)" marker-end="url(#arrow)"/>
+<line x1="310" y1="608" x2="310" y2="624" class="arr" marker-start="url(#arrow)" marker-end="url(#arrow)"/>
+<line x1="422" y1="608" x2="422" y2="624" class="arr" marker-start="url(#arrow)" marker-end="url(#arrow)"/>
+<path d="M198 678 L198 696 L102 696 L102 712" class="arr" marker-end="url(#arrow)"/>
+<path d="M310 678 L310 696 L296 696 L296 712" class="arr" marker-end="url(#arrow)"/>
+<path d="M422 678 L422 696 L534 696 L534 712" class="arr" marker-end="url(#arrow)"/>
+</svg>

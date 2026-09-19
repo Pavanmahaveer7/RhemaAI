@@ -5,6 +5,10 @@
 
 ## Diagram
 
+![Architecture](architecture-diagram.png)
+
+Editable/vector version: `architecture-diagram.svg`. Mermaid source below renders on GitHub.
+
 ```mermaid
 flowchart TB
   UI[Web app<br/>public · pastor · admin]:::swe --> EDGE[Edge layer<br/>WAF · DDoS · rate limits · API gateway]:::swe

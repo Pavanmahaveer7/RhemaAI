@@ -57,7 +57,7 @@ packages/mcp/pastoral    # L3 MCP server
 packages/shared-types    # types generated from schemas/
 schemas/                 # JSON Schemas — source of truth for agent outputs
 evals/                   # eval datasets + runner
-docs/                    # architecture, api, guardrails, prompts, ...
+docs/                    # build-plan (product), architecture (+diagram), api, guardrails, prompts, ...
 ```
 
 ## Workflow

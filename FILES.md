@@ -6,6 +6,7 @@ Every file in this repo and what it's for.
 - `.env.example` — Every environment variable
 - `.gitignore` — Ignored files
 - `AGENTS.md` — Entry point every AI coding agent reads first
+- `FILES.md` — This index
 - `README.md` — What this repo is and setup order
 - `SOURCES.md` — Where each part came from
 - `.cursor/plan-prompts/00-load-context.md`
@@ -37,7 +38,10 @@ Every file in this repo and what it's for.
 - `.github/pull_request_template.md`
 - `.github/workflows/ci.yml`
 - `docs/api.md`
+- `docs/architecture-diagram.png` — Architecture diagram (image)
+- `docs/architecture-diagram.svg` — Architecture diagram (vector)
 - `docs/architecture.md`
+- `docs/build-plan.md` — Your original product + build plan
 - `docs/data-ethics.md`
 - `docs/data-model.md`
 - `docs/demo-script.md`

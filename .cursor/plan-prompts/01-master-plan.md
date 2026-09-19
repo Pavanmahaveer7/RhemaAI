@@ -3,6 +3,7 @@ You are the lead engineer planning a production-quality web/AI prototype. You th
 </role>
 
 <context>
+Product plan: docs/build-plan.md (ignore its 4-day timeline and Android parts).
 Source of truth: AGENTS.md, docs/architecture.md, docs/api.md, docs/guardrails.md, docs/data-model.md, docs/evals.md, docs/threat-model.md.
 Scope: web app + AI backend only. The Android/offline app is OUT of scope for this plan (the API reserves /api/sync/*).
 Team: {{team size and roles}}. Timeline: {{timeline}}.
