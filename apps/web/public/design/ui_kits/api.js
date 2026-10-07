@@ -36,9 +36,24 @@
   }
 
   var live = false, session = null, activeAlerts = [];
+  function syncCasession(s) {
+    if (!window.CASession) return;
+    if (!s || s.kind === "agent") { window.CASession.set(null); return; }
+    var kind = s.kind === "user" ? "member" : s.kind;
+    var name = s.pseudonym || s.displayName || (kind === "guest" ? "Guest" : "Signed in");
+    window.CASession.set({ kind: kind, name: name });
+  }
+  function refreshSession() {
+    return call("GET", "/auth/session").then(function (s) {
+      live = true; session = s; syncCasession(s); return s;
+    }, function (e) {
+      if (e.status === 401) { session = null; syncCasession(null); }
+      throw e;
+    });
+  }
   var ready = (function () {
     if (window.CA_DEMO || /(^|[#&])api=0/.test(location.hash)) return Promise.resolve(false);
-    return call("GET", "/auth/session").then(function (s) { live = true; session = s; return true; }, function (e) {
+    return call("GET", "/auth/session").then(function (s) { live = true; session = s; syncCasession(s); return true; }, function (e) {
       live = !!e.requestId; return live;
     }).then(function (ok) {
       if (!ok) return false;
@@ -138,12 +153,12 @@
     return ready.then(function (ok) {
       if (!ok) return null;
       if (session) return session;
-      return call("POST", "/auth/guest").then(function (s) { session = s; return saveOnboarding().then(function () { return s; }); });
+      return call("POST", "/auth/guest").then(function (s) { session = s; syncCasession(s); return saveOnboarding().then(function () { return s; }); });
     });
   }
   function signup(email, name, password) {
     return guest().then(function () { return call("POST", "/auth/signup", { email: email, name: name || "", password: password || "" }); }).then(function (s) {
-      session = s; return saveOnboarding().then(function () { return s; });
+      session = s; syncCasession(s); return saveOnboarding().then(function () { return s; });
     });
   }
 
@@ -163,9 +178,10 @@
     hydratePipeline: hydratePipeline, sendCheckin: sendCheckin,
     ack: function (id) { return call("POST", "/review/packs/" + encodeURIComponent(id) + "/ack"); },
     decide: function (id, v, note) { return call("POST", "/review/packs/" + encodeURIComponent(id) + "/decision", { packId: id, decision: DECISION[v] || v, note: note || "" }); },
-    signin: function (codeName, password) { return call("POST", "/auth/signin", { codeName: codeName, password: password }).then(function (s) { session = s; live = true; return s; }); },
+    signin: function (codeName, password) { return call("POST", "/auth/signin", { codeName: codeName, password: password }).then(function (s) { session = s; live = true; syncCasession(s); return s; }); },
     guest: guest, signup: signup,
-    signout: function () { session = null; return call("POST", "/auth/signout").catch(function () {}); },
-    deleteMe: function () { return call("DELETE", "/me").then(function () { session = null; }); }
+    syncCasession: syncCasession, refreshSession: refreshSession,
+    signout: function () { session = null; syncCasession(null); return call("POST", "/auth/signout").catch(function () {}); },
+    deleteMe: function () { return call("DELETE", "/me").then(function () { session = null; syncCasession(null); }); }
   };
 })();

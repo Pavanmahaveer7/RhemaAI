@@ -227,7 +227,33 @@ function GraphScreen({ admin, offset = 0 }) {
     <GsDialog open={dlg === "rename" || dlg === "merge"} title={dlg === "merge" ? `Merge “${sel}” into…` : `Rename “${sel}”`} onClose={() => setDlg(null)} actions={<><GsButton variant="ghost" onClick={() => setDlg(null)}>Cancel</GsButton><GsButton variant="primary" onClick={() => editNode(dlg)}>{dlg === "merge" ? "Merge" : "Rename"}</GsButton></>}>
       <GsField label={dlg === "merge" ? "Concept to merge into" : "New label"} value={rename} onChange={e => setRename(e.target.value)} placeholder={dlg === "merge" ? "peace" : ""} hint={dlg === "merge" ? `Choose from: ${nodes.filter(n => n.id !== sel).map(n => n.id).join(", ")}` : undefined} />
     </GsDialog>
-    <GsDialog open={dlg === "publish" || dlg === "dismiss"} title={dlg === "publish" ? "Publish this map?" : "Dismiss this draft?"} onClose={() => setDlg(null)} actions={<><GsButton variant="ghost" onClick={() => setDlg(null)}>Cancel</GsButton><GsButton variant={dlg === "publish" ? "accent" : "danger"} disabled={dlg === "publish" && !window.CAMatch(conf, "publish")} onClick={() => { setConf(""); if (dlg === "publish") localStorage.setItem("ca_map_published", JSON.stringify({ id: draft.id, label: "Oct 2026", question: draft.question, term: draft.term, published: true, answers: draft.answers, nodes: draft.nodes.filter(n => n[1] >= 3), links: draft.links })); setToast(dlg === "publish" ? "Published. The public map now shows Oct 2026." : "Draft dismissed. Nothing was published."); setDlg(null); }}>{dlg === "publish" ? "Publish" : "Dismiss"}</GsButton></>}>
+    <GsDialog open={dlg === "publish" || dlg === "dismiss"} title={dlg === "publish" ? "Publish this map?" : "Dismiss this draft?"} onClose={() => setDlg(null)} actions={<><GsButton variant="ghost" onClick={() => setDlg(null)}>Cancel</GsButton><GsButton variant={dlg === "publish" ? "accent" : "danger"} disabled={dlg === "publish" && !window.CAMatch(conf, "publish")} onClick={() => {
+      setConf("");
+      const live = admin && window.CAApi && window.CAApi.isLive();
+      if (dlg === "publish") {
+        if (live) {
+          window.CAApi.post("/maps/draft/publish", { confirm: "publish" }).then(() => {
+            window.CAHydrate && window.CAHydrate();
+            setToast(`Published. The public map now shows ${draft.label}.`);
+            setDlg(null);
+          }, () => setToast("Could not publish."));
+          return;
+        }
+        localStorage.setItem("ca_map_published", JSON.stringify({ id: draft.id, label: draft.label, question: draft.question, term: draft.term, published: true, answers: draft.answers, nodes: draft.nodes.filter(n => n[1] >= 3), links: draft.links }));
+        setToast(`Published. The public map now shows ${draft.label}.`);
+        setDlg(null);
+        return;
+      }
+      if (live) {
+        window.CAApi.post("/maps/draft/dismiss").then(() => {
+          setToast("Draft dismissed. Nothing was published.");
+          setDlg(null);
+        }, () => setToast("Could not dismiss."));
+        return;
+      }
+      setToast("Draft dismissed. Nothing was published.");
+      setDlg(null);
+    }}>{dlg === "publish" ? "Publish" : "Dismiss"}</GsButton></>}>
       <p style={{ font: "var(--type-body)", color: "var(--text-body)", margin: 0 }}>{dlg === "publish" ? `${nodes.filter(n => n.w >= 3).length} concepts become public. Ideas under 3 mentions and answer text are never published. The public map changes only now.` : "The draft stays private and can be rebuilt from answers."}</p>
       {dlg === "publish" && <div style={{ marginTop: 14 }}><window.CATypeConfirm word="publish" value={conf} onChange={setConf} hint="The public map changes for everyone." /></div>}
     </GsDialog>

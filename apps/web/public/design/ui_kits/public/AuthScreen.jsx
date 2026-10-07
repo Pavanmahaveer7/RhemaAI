@@ -27,8 +27,8 @@ function AuthScreen({ go, initialTab }) {
       setErr(e); if (Object.keys(e).length) return;
       setBusy(true);
       window.CAApi.signin(f.email.trim(), f.pw).then(s => {
-        setSession({ kind: s.kind === "user" ? "member" : s.kind, name: s.pseudonym || "Signed in" }); setBusy(false);
-        if (["pastor", "reviewer", "leader", "mentor"].includes(s.kind)) location.href = new URL("../pipeline/index.html", location.href).href;
+        setSession(window.CASession.get()); setBusy(false);
+        if (["pastor", "reviewer", "leader", "mentor", "expert"].includes(s.kind)) location.href = new URL("../pipeline/index.html", location.href).href;
         else go(s.kind === "admin" ? "admin" : "search");
       }, x => { setBusy(false); setErr({ pw: x.message + (x.requestId ? " (" + x.requestId.slice(0, 8) + ")" : "") }); });
       return;
@@ -40,7 +40,7 @@ function AuthScreen({ go, initialTab }) {
     setBusy(true);
     if (window.CAApi && window.CAApi.isLive()) {
       window.CAApi.signup(f.email.trim(), f.name.trim(), f.pw).then(s => {
-        setSession({ kind: "member", name: f.name.trim() || s.pseudonym || "Anonymous reader" }); setBusy(false);
+        setSession(window.CASession.get()); setBusy(false);
         try { if (!localStorage.getItem("ca_team_note_seen")) localStorage.setItem("ca_team_note", "1"); } catch (x) {}
         go(localStorage.getItem("ca_onboarded") ? "search" : "intro");
       }, x => { setBusy(false); setErr({ email: x.message + (x.requestId ? " (" + x.requestId.slice(0, 8) + ")" : "") }); });
@@ -54,7 +54,7 @@ function AuthScreen({ go, initialTab }) {
     const enter = () => { setSession({ kind: "guest", name: "Guest" }); go(localStorage.getItem("ca_onboarded") ? "search" : "intro"); };
     if (!window.CAApi || !window.CAApi.isLive()) return enter();
     setBusy(true);
-    window.CAApi.guest().then(() => { setBusy(false); enter(); }, x => { setBusy(false); setErr({ email: x.message + (x.requestId ? " (" + x.requestId.slice(0, 8) + ")" : "") }); });
+    window.CAApi.guest().then(() => { setSession(window.CASession.get()); setBusy(false); enter(); }, x => { setBusy(false); setErr({ email: x.message + (x.requestId ? " (" + x.requestId.slice(0, 8) + ")" : "") }); });
   };
   return <div style={{ maxWidth: 440, width: "100%", margin: "0 auto", padding: "40px var(--gutter-phone) 32px", display: "flex", flexDirection: "column", gap: 20 }}>
     <div style={{ display: "flex", justifyContent: "flex-end", marginTop: -24 }}><window.CALangPick /></div>

@@ -88,10 +88,13 @@ function App(){
   const hp = new URLSearchParams(location.hash.slice(1));
   if (window.CAApi && window.CAApi.isLive() && hp.get("guest") === "1" && hp.get("preview") !== "1") return window.CAApi.guest().catch(() => {});
 }).then(() => (window.CAHydrate ? window.CAHydrate() : null)).then(() => {
-  if (window.CAApi && window.CAApi.isLive()) {
-    const s = window.CAApi.session(), cur = window.CASession.get();
-    if (s && s.kind !== "guest") window.CASession.set({ kind: s.kind === "admin" ? "admin" : "member", name: s.displayName || s.pseudonym });
-    else if (cur && cur.kind !== "guest") window.CASession.set(null);
+  if (window.CAApi && window.CAApi.isLive() && window.CAApi.syncCasession) {
+    window.CAApi.syncCasession(window.CAApi.session());
+    const s = window.CAApi.session();
+    if (s && ["pastor", "reviewer", "leader", "mentor", "expert"].includes(s.kind) && !location.hash.includes("preview=1")) {
+      location.replace(new URL("../pipeline/index.html", location.href).href);
+      return;
+    }
   }
   ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
 });

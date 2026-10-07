@@ -2,6 +2,19 @@
 
 The UI kit runs today on sample data and `localStorage`. Replace each item below with the API. Keep the screens, routes and wording exactly as they are.
 
+## 0. Layers · live vs demo
+
+| Layer | Screens (`/app` or `/pastor`) | Live API (`CAApi.isLive()`) | Demo / offline |
+|---|---|---|---|
+| **L1 Dictionary** | Search, Term, passages | `GET /terms`, `/terms/:term`, `/passages`, expert `POST …/edits`, `POST /feedback/report` | `data.js` lexicon + local expert store |
+| **L2 Monthly + map** | Monthly, PublicMap, admin MapDraft | `CAHydrate`, `POST /months/current/answer`, admin `/maps/draft*` | `ca_map_published`, local counts |
+| **L3 Pastor / review** | `pipeline/index.html` | `hydratePipeline`, check-ins, review, alerts, churches | `CA_PIPE` sample + `guard.js` |
+| **Admin** | Accounts, Faith review, map tabs | `/admin/*`, `/review/coverage`, `/review/edits` | local `CAExpert` / `ExpertEdits` |
+
+**Session:** HTTP cookie is source of truth. `CAApi.syncCasession()` mirrors API `Session` into `CASession` for the shell (sign-in, sign-out, boot). Staff roles opening `/app` redirect to `/pastor`.
+
+**Model / flourishing:** The browser never calls Gloo or any LLM. Packet and analyst replies run in `llm-gateway` with output guardrails including **`OUT-FLOURISH`** (seven human-flourishing principles, no scores). See `docs/guardrails.md` and `docs/architecture.md`.
+
 ## 1. Sample data → endpoints
 | Global (file) | Replace with |
 |---|---|

@@ -172,9 +172,14 @@ function FaithEntry({ e, expert, setExpert }) {
       return;
     }
     if (kind === "Report") { const rk = "ca_reported_" + e.term + "_" + k; if (localStorage.getItem(rk)) { setDlg(null); setToast("You’ve already told a person about this. Thank you."); return; } localStorage.setItem(rk, "1"); }
-    if (window.CAApi && window.CAApi.isLive() && expert && kind === "Suggest") {
-      window.CAApi.post("/terms/" + encodeURIComponent(e.term) + "/edits", { block: k, proposed: (draft.text || "").trim() }).then(() => {
-        setDlg(null); setToast("Waiting for review.");
+    if (window.CAApi && window.CAApi.isLive() && expert && (kind === "Suggest" || kind === "Make" || kind === "Change")) {
+      const proposed = single
+        ? (draft.text || "").trim()
+        : CF.fields(k).map(([fk]) => (draft[fk] || "").trim()).filter(Boolean).join("\n\n");
+      if (proposed.length < 10) { setToast("Keep it between 10 and 1200 characters."); return; }
+      window.CAApi.post("/terms/" + encodeURIComponent(e.term) + "/edits", { block: k, proposed: proposed }).then(() => {
+        setDlg(null);
+        setToast(kind === "Suggest" ? "Waiting for review." : "Sent for review. Nothing on the page changes until it is approved.");
       }, x => setToast((x.message || "Could not send.") + (x.requestId ? " (" + x.requestId.slice(0, 8) + ")" : "")));
       return;
     }
