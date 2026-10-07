@@ -1,12 +1,29 @@
 # GitHub Pages (static preview)
 
-On every push to **`main`**, [GitHub Pages](https://docs.github.com/en/pages) publishes **`apps/web/public`** (landing + UI kits).
+Workflow **GitHub Pages** copies **`apps/web/public`** to the **`gh-pages`** branch on every push to **`main`**.
 
-| Host | Role |
-|------|------|
-| **https://pavanmahaveer7.github.io/RhemaAI/** | Static browse (use `#api=0` in links for fixtures without API) |
-| **https://rhema-ai-web.vercel.app** | Full **Rhema.ai** app (Next.js + live API) |
+## One-time setup (required)
 
-Enable once in the repo: **Settings → Pages → Build and deployment → Source: GitHub Actions**.
+1. Open **https://github.com/Pavanmahaveer7/RhemaAI/settings/pages**
+2. Under **Build and deployment**:
+   - **Source:** Deploy from a branch
+   - **Branch:** **`gh-pages`** · **`/ (root)`**
+3. Save. After the workflow runs, the site is live at:
 
-Sign-in and `/api/v1` proxy require **Vercel**; GitHub Pages has no server.
+**https://pavanmahaveer7.github.io/RhemaAI/**
+
+If you see 404, wait 1–2 minutes, then check **Actions** → **GitHub Pages** (green check).
+
+## What works on Pages vs Vercel
+
+| | GitHub Pages | Vercel (**rhema-ai-web**) |
+|--|--------------|---------------------------|
+| Landing / UI kits | Yes (static) | Yes |
+| Live API / sign-in | No (use `#api=0` fixtures) | Yes |
+| Beta survey POST | No | Yes |
+
+Full app: **https://church-ai-web.vercel.app**
+
+## Re-run deploy
+
+**Actions** → **GitHub Pages** → **Run workflow**, or push any commit to **`main`**.
