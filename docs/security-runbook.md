@@ -57,6 +57,10 @@ After any leak or first public push: **rotate all of the above** even if git his
 
 Before each release: run CI, update lockfiles, and address high/critical advisories (`pnpm audit`, Python deps in `apps/api`).
 
+## Beta on Render
+
+- `BETA_SHARED_STAFF_LOGIN=true` (in `render.yaml`) lets demo codenames use `DEMO_SIGNIN_PASSWORD` via scrypt. Set to `false` and assign real passwords before public launch.
+
 ## Checklist before beta traffic
 
 - [ ] All secrets rotated from dev defaults
