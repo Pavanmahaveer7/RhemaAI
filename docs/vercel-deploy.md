@@ -1,75 +1,49 @@
 # Deploy on Vercel (Rhema.ai)
 
-**Live (full app):**
+**Production URLs (share these):**
 
 | Service | Vercel project | URL |
 |---------|----------------|-----|
-| **Web** | **rhema-ai-web** | https://church-ai-web.vercel.app |
-| **API** | **rhema-ai-api** | https://church-ai-api.vercel.app |
+| **Web** | `rhema-ai-web` | **https://rhema-ai-web.vercel.app** |
+| **API** | `rhema-ai-api` | **https://rhema-ai-api.vercel.app** |
 
-Static preview on **GitHub Pages**: [github-pages.md](./github-pages.md).
+- App: **https://rhema-ai-web.vercel.app/app**
+- Staff sign-in: **https://rhema-ai-web.vercel.app/app#r=signin&staff=l3**
+- Beta survey: **https://rhema-ai-web.vercel.app/beta-survey**
 
-Web proxies `/api/v1/*` to the API via `API_BASE_URL`.
+Legacy aliases `church-ai-*.vercel.app` may still work; prefer **rhema-ai-*** for branding.
 
-## One-command deploy (CLI)
+Static preview: [github-pages.md](./github-pages.md).
+
+## One-command deploy
 
 ```powershell
 cd church-ai-stack
-npx vercel login          # once
+npx vercel login
 .\scripts\vercel_deploy.ps1
 ```
 
-Secrets for the demo admin password are written to **`.vercel-demo.env.local`** (gitignored). Sign in: **`A-0100`** + that password.
-
-Smoke after deploy:
+Smoke:
 
 ```powershell
-$env:BASE='https://church-ai-web.vercel.app'; .\scripts\beta_smoke.ps1
+$env:BASE='https://rhema-ai-web.vercel.app'; .\scripts\beta_smoke.ps1
 ```
 
-## Two Vercel projects (dashboard)
+## GitHub → Vercel
 
-| Project | Root directory | Config |
-|---------|----------------|--------|
-| **rhema-ai-api** | repo root (`church-ai-stack`) | `vercel.json`, `api/index.py`, `pyproject.toml` `[tool.vercel]` |
-| **rhema-ai-web** | `apps/web` | `apps/web/vercel.json`, standalone `package-lock.json` |
+Connect GitHub at [Login connections](https://vercel.com/account/login-connections), then link **Pavanmahaveer7/RhemaAI**:
 
-### API env (Production)
+| Project | Root directory |
+|---------|----------------|
+| `rhema-ai-api` | `.` (repo root) |
+| `rhema-ai-web` | `apps/web` |
 
-| Variable | Notes |
-|----------|--------|
-| `APP_ENV` | `production` (in `vercel.json`) |
-| `CONTRACT_STORE` | `memory` (demo) or `postgres` + `DATABASE_URL` (Neon) |
-| `LLM_MODE` | `off` |
-| `BETA_SHARED_STAFF_LOGIN` | `true` |
-| `DEMO_SIGNIN_PASSWORD` | from `scripts/generate_render_secrets.ps1` or deploy script |
-| `CHECKIN_ENCRYPTION_KEY` | same |
-| `AGENT_SERVICE_TOKEN` | same |
-| `INTEGRATION_WEBHOOK_SECRET` | same |
-| `APP_BASE_URL` | **`https://church-ai-web.vercel.app`** (set after web deploy, redeploy API) |
+## Env (production)
 
-### Web env (Production)
+| Project | Variable | Value |
+|---------|----------|--------|
+| Web | `API_BASE_URL` | `https://rhema-ai-api.vercel.app` |
+| API | `APP_BASE_URL` | `https://rhema-ai-web.vercel.app` |
+| API | `DEMO_SIGNIN_PASSWORD`, etc. | see `.vercel-demo.env.local` or `generate_render_secrets.ps1` |
 
-| Variable | Value |
-|----------|--------|
-| `API_BASE_URL` | **`https://church-ai-api.vercel.app`** (no trailing slash) |
-| `APP_ENV` | `production` |
-
-## GitHub auto-deploy (Vercel)
-
-1. [Vercel → Account → Login connections → GitHub](https://vercel.com/account/login-connections)
-2. Open each project (**rhema-ai-api**, **rhema-ai-web**) → **Git** → connect **Pavanmahaveer7/RhemaAI** (same root dirs as above).
-3. Pushes to **`main`** deploy production after Git is linked.
-
-Until GitHub is connected, use **`.\scripts\vercel_deploy.ps1`** or push triggers **GitHub Pages** only (see github-pages.md).
-
-## Beta feedback
-
-- Share **`/beta-survey`** on the web URL.
-- Export: **Admin → Beta feedback** as **`A-0100`**, or see [presentation-beta.md](./presentation-beta.md).
-
-## Notes
-
-- **Memory store** resets on serverless cold starts; use **Neon + postgres** for persistent beta surveys.
-- **Deployment Protection** may be on in the Vercel dashboard; turn off for a fully public demo, or use `vercel curl` for checks.
-- Do not commit `.env`, `.vercel-demo.env.local`, or tokens.
+Custom domain **rhema.ai**: Vercel project → **Settings → Domains**.

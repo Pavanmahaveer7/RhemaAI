@@ -17,7 +17,7 @@ function acLoadAll(after, rows) {
 }
 const acHandle = a => a.pseudonym || `${AC_PFX[a.role] || "U"}-${(parseInt(String(a.id).replace(/\D/g, "").slice(-4) || "0", 10) * 7919 % 9000 + 1000)}`;
 const acSeed = [
-  { id: "u1", name: "Grace Mondal", email: "admin@church.ai", role: "Admin", church: "—", status: "active", last: "Now" },
+  { id: "u1", name: "Grace Mondal", email: "admin@rhema.ai", role: "Admin", church: "—", status: "active", last: "Now" },
   { id: "u2", name: "Dr. Miriam Das", email: "miriam.das@example.org", role: "Religion expert", church: "—", status: "active", last: "Today" },
   { id: "u3", name: "Rev. Tenzin Norbu", email: "t.norbu@example.org", role: "Religion expert", church: "—", status: "active", last: "Yesterday" },
   { id: "u4", name: "Daniel Sarkar", email: "daniel.s@example.com", role: "Pastor", church: "Living Water Fellowship, Mirpur", status: "active", last: "Today" },

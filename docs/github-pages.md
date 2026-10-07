@@ -22,7 +22,7 @@ If you see 404, wait 1–2 minutes, then check **Actions** → **GitHub Pages** 
 | Live API / sign-in | No (use `#api=0` fixtures) | Yes |
 | Beta survey POST | No | Yes |
 
-Full app: **https://church-ai-web.vercel.app**
+Full app: **https://rhema-ai-web.vercel.app**
 
 ## Re-run deploy
 

@@ -60,7 +60,7 @@ The row should say **1 of 2 checked**. The button should say **Second check**. S
 
 Say: one reviewer is not enough. A second, different person has to check it before anyone else can see it.
 
-Ignore any “Demo only” note. The live sign-in is `A-0100`, not admin@church.ai.
+Ignore any “Demo only” note. The live sign-in is `A-0100`, not admin@rhema.ai.
 
 ## 4. If you have two extra minutes
 

@@ -1,8 +1,8 @@
-# church.ai: shared contract
+# Rhema.ai: shared contract
 
 **Start here.** This folder is the single source of truth between the designed screens (`/ui_kits`) and the backend. If something isn't in here, it isn't in the product.
 
-## What church.ai is
+## What Rhema.ai is
 A calm faith-vocabulary app for young people and pastors in South and Southeast Asia, in three layers:
 1. **Dictionary** (public): one word explained in Hindu, Buddhist and Christian terms, never ranked. A hidden Faith mode opens by holding the headword.
 2. **Monthly question and Ideas map** (public, anonymous): one question a month; a published map of the concepts people used.
@@ -33,7 +33,7 @@ Also read `../guidelines/words-and-voice.md` (one word per thing) and `../guidel
 - Planning Center is optional and US only.
 
 ## Prompt for Cursor
-> Build the church.ai backend from `/contract`, following `build-order.md` one step at a time. Use `types.ts` as the exact shapes. Enforce `guardrails.md` on the server. Wire the existing screens in `/ui_kits` per `frontend-wiring.md` without changing their layout or wording.
+> Build the Rhema.ai backend from `/contract`, following `build-order.md` one step at a time. Use `types.ts` as the exact shapes. Enforce `guardrails.md` on the server. Wire the existing screens in `/ui_kits` per `frontend-wiring.md` without changing their layout or wording.
 
 ## Rules for changes
 1. Change `types.ts` first, then both sides.

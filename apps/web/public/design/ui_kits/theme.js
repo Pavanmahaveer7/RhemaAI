@@ -28,7 +28,7 @@
   const fire = () => window.dispatchEvent(new Event("ca-prefs"));
   window.CAPrefs = { get: () => prefs, set(patch) { prefs = { ...prefs, ...patch }; localStorage.setItem(PK, JSON.stringify(prefs)); apply(); fire(); } };
   const asHash = hp.get("as");
-  let session = asHash ? { kind: asHash, name: asHash === "admin" ? "Admin" : asHash === "member" ? "Anonymous reader" : "Guest", email: asHash === "admin" ? "admin@church.ai" : "arif@example.com" } : (() => { try { return JSON.parse(localStorage.getItem(SK)); } catch (e) { return null; } })();
+  let session = asHash ? { kind: asHash, name: asHash === "admin" ? "Admin" : asHash === "member" ? "Anonymous reader" : "Guest", email: asHash === "admin" ? "admin@rhema.ai" : "arif@example.com" } : (() => { try { return JSON.parse(localStorage.getItem(SK)); } catch (e) { return null; } })();
   window.CASession = {
     get: () => session,
     set(s) { session = s; if (!asHash) { if (s) localStorage.setItem(SK, JSON.stringify(s)); else localStorage.removeItem(SK); } window.dispatchEvent(new Event("ca-session")); }

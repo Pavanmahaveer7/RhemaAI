@@ -1,4 +1,4 @@
-# Church AI Platform — Project Operating Kit
+# Rhema.ai — Project Operating Kit
 
 This folder is the **operating system for building the project**, not the application code.
 Drop it into the root of your repo. It gives Cursor (and Claude Code) everything it needs to

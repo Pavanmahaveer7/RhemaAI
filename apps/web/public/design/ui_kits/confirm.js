@@ -96,7 +96,7 @@
         })) : null);
   };
   (function () { if (document.getElementById("ca-lang-css")) return; var s = document.createElement("style"); s.id = "ca-lang-css"; s.textContent = "@keyframes ca-pop{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}.ca-lang-btn:hover{border-color:var(--border-strong)!important;background:var(--surface-raised)!important}.ca-lang-btn:active{transform:scale(.97)}.ca-lang-btn:focus-visible{outline:2px solid var(--focus-ring,var(--lamp-400));outline-offset:2px}.ca-lang-opt:hover{background:var(--surface-card)!important}.ca-lang-opt[aria-selected=true]:hover{background:var(--lamp-tint)!important}.ca-lang-opt:focus-visible{box-shadow:inset 0 0 0 1px var(--border-strong)}.ca-lang-opt[aria-selected=true]:focus-visible{box-shadow:none}@media (prefers-reduced-motion:reduce){.ca-lang-btn,.ca-lang-btn svg{transition:none!important}[role=listbox]{animation:none!important}}"; (document.head || document.documentElement).appendChild(s); })();
-  // Voice input — the browser's own speech-to-text. No audio is recorded or stored by church.ai. Hidden where unsupported.
+  // Voice input — the browser's own speech-to-text. No audio is recorded or stored by Rhema.ai. Hidden where unsupported.
   var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   var SR_LANG = { en: "en-US", hi: "hi-IN", bn: "bn-BD", ne: "ne-NP", my: "my-MM", km: "km-KH" };
   window.CAMic = function (props) {

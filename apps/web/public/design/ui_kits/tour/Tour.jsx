@@ -1,4 +1,4 @@
-// Church AI product tour — one continuous composition keyed to T and CUES.
+// Rhema.ai product tour — one continuous composition keyed to T and CUES.
 const C = { ink0: "#0B0F0C", ink1: "#121813", ink2: "#1A211B", ink3: "#243025", ink4: "#324034", muted: "#95A08B", faint: "#808A77", bone7: "#C2CCB8", bone8: "#E3EADB", bone9: "#F3F7EE", lamp: "#CFDA5C", info: "#9DB8C9", warn: "#E9B949", ok: "#7CC08A",
   trad: { Hindu: ["#E3875C", "rgba(227,135,92,.14)"], Buddhist: ["#62B39B", "rgba(98,179,155,.14)"], Christian: ["#86A6E0", "rgba(134,166,224,.14)"] } };
 const F = { d: '"Bricolage Grotesque", sans-serif', b: '"Atkinson Hyperlegible", sans-serif', m: '"IBM Plex Mono", monospace' };

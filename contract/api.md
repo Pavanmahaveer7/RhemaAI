@@ -1,4 +1,4 @@
-# church.ai API contract
+# Rhema.ai API contract
 
 Base `/api/v1`. JSON only. Every shape is in `types.ts`; send no extra fields.
 Roles are checked **on the server** for every call. "Who" is the minimum role.

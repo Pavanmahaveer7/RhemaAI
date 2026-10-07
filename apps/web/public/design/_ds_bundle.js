@@ -2053,7 +2053,7 @@ Object.assign(__ds_scope, { TextField });
 
 // contract/types.ts
 try { (() => {
-// church.ai shared contract. Frontend and backend both import these types.
+// Rhema.ai shared contract. Frontend and backend both import these types.
 // Rule: the server sends exactly these shapes. Anything not listed here must not be sent.
 
 // ---------- Common ----------
@@ -2689,7 +2689,7 @@ try { (() => {
     s.textContent = "@keyframes ca-pop{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}.ca-lang-btn:hover{border-color:var(--border-strong)!important;background:var(--surface-raised)!important}.ca-lang-btn:active{transform:scale(.97)}.ca-lang-btn:focus-visible{outline:2px solid var(--focus-ring,var(--lamp-400));outline-offset:2px}.ca-lang-opt:hover{background:var(--surface-card)!important}.ca-lang-opt[aria-selected=true]:hover{background:var(--lamp-tint)!important}.ca-lang-opt:focus-visible{box-shadow:inset 0 0 0 1px var(--border-strong)}.ca-lang-opt[aria-selected=true]:focus-visible{box-shadow:none}@media (prefers-reduced-motion:reduce){.ca-lang-btn,.ca-lang-btn svg{transition:none!important}[role=listbox]{animation:none!important}}";
     (document.head || document.documentElement).appendChild(s);
   })();
-  // Voice input — the browser's own speech-to-text. No audio is recorded or stored by church.ai. Hidden where unsupported.
+  // Voice input — the browser's own speech-to-text. No audio is recorded or stored by Rhema.ai. Hidden where unsupported.
   var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   var SR_LANG = {
     en: "en-US",
@@ -2880,7 +2880,7 @@ try { (() => {
       g.fillRect(96, H - 170, 64, 6);
       g.fillStyle = ink;
       g.font = "800 44px " + disp;
-      g.fillText("church.ai", 96, H - 96);
+      g.fillText("Rhema.ai", 96, H - 96);
       g.fillStyle = mute;
       g.font = "400 30px " + body;
       g.textAlign = "right";
@@ -2895,7 +2895,7 @@ try { (() => {
         setMsg("Could not make the image.");
         return;
       }
-      var file = new File([blob], "church-ai-" + w.term + ".png", {
+      var file = new File([blob], "rhema-ai-" + w.term + ".png", {
         type: "image/png"
       });
       try {
@@ -3096,8 +3096,8 @@ try { (() => {
   var KEEP = {
     church: 1,
     ai: 1,
-    "church.ai": 1,
-    "Church AI": 1,
+    "Rhema.ai": 1,
+    "Rhema.ai": 1,
     "Planning Center": 1
   };
   function lang() {
@@ -3123,7 +3123,7 @@ try { (() => {
     return s && !KEEP[s] && s.length > 1 && s.length < 220 && /[A-Za-z]{2}/.test(s) && !/^[\w.+-]+@|^https?:|^[A-Z]-\d|^[\d\s·.,:%/-]+$/.test(s);
   }
   function skip(el) {
-    return !el || el.closest("[data-no-tr],[aria-label*=\"church.ai\" i],[aria-label*=\"Church AI\"],[data-wordmark],script,style,code,pre,textarea,input,select,option,svg,[contenteditable],[lang]:not(html)");
+    return !el || el.closest("[data-no-tr],[aria-label*=\"Rhema.ai\" i],[aria-label*=\"Rhema.ai\"],[data-wordmark],script,style,code,pre,textarea,input,select,option,svg,[contenteditable],[lang]:not(html)");
   }
   function look(s, l, c) {
     var r = window.CAtr ? window.CAtr(s) : s;
@@ -3215,7 +3215,7 @@ try { (() => {
     busy = true;
     var got = 0;
     try {
-      var p = "Translate these app interface strings from English into " + NAMES[l] + ". This is a calm, respectful faith-vocabulary app for pastors and students. Keep these exactly as written: church.ai, Planning Center, numbers, ids, and religious terms such as karma, dharma, moksha, nirvana, saṃsāra, mūrti, deva, Theravāda, avatāra, anattā. Use plain everyday words, polite register. Reply ONLY with a JSON object mapping each English string to its translation.\n\n" + JSON.stringify(list);
+      var p = "Translate these app interface strings from English into " + NAMES[l] + ". This is a calm, respectful faith-vocabulary app for pastors and students. Keep these exactly as written: Rhema.ai, Planning Center, numbers, ids, and religious terms such as karma, dharma, moksha, nirvana, saṃsāra, mūrti, deva, Theravāda, avatāra, anattā. Use plain everyday words, polite register. Reply ONLY with a JSON object mapping each English string to its translation.\n\n" + JSON.stringify(list);
       var r = await Promise.race([window.claude.complete(p), new Promise(function (_, no) {
         setTimeout(function () {
           no(new Error("timeout"));
@@ -3848,7 +3848,7 @@ function TourCard({
       background: "var(--ink-0)"
     }
   }, load ? /*#__PURE__*/React.createElement("iframe", {
-    title: "church.ai one-minute tour",
+    title: "Rhema.ai one-minute tour",
     src: `../tour/index.html#layout=${wide ? "16:9" : "9:16"}`,
     loading: "lazy",
     style: {
@@ -4264,7 +4264,7 @@ function Landing() {
     }
   }, /*#__PURE__*/React.createElement("a", {
     href: "#top",
-    "aria-label": "Church AI home",
+    "aria-label": "Rhema.ai home",
     style: {
       display: "flex",
       alignItems: "center",
@@ -5721,7 +5721,7 @@ function EmbedPreview({
   }, t)))), leader && /*#__PURE__*/React.createElement(EmCard, {
     title: "Monthly pack is ready",
     icon: "package",
-    foot: "Leaders only. No names. Opens in church.ai."
+    foot: "Leaders only. No names. Opens in Rhema.ai."
   }, /*#__PURE__*/React.createElement("p", {
     style: {
       margin: 0,
@@ -5746,7 +5746,7 @@ function EmbedPreview({
   }, /*#__PURE__*/React.createElement(EmIcon, {
     name: "shield",
     size: 16
-  }), "church.ai \xB7 counts only, never names"))), /*#__PURE__*/React.createElement("p", {
+  }), "Rhema.ai \xB7 counts only, never names"))), /*#__PURE__*/React.createElement("p", {
     style: {
       font: "var(--type-source)",
       color: "var(--text-faint)",
@@ -5881,7 +5881,7 @@ function InRow({
     label: "Planning Center gets",
     items: opens
   }), see, /*#__PURE__*/React.createElement(InList, {
-    label: "church.ai reads",
+    label: "Rhema.ai reads",
     items: sends
   }), /*#__PURE__*/React.createElement("div", {
     style: {
@@ -6091,7 +6091,7 @@ function IntegrationsScreen({
       color: "var(--text-faint)",
       margin: 0
     }
-  }, "When Planning Center is connected, ministry and community rows are labelled \u201CPlanning Center\u201D. Optional. Offered for churches in the United States that already use Planning Center. Elsewhere, church.ai works fully without it."), phase === "away" && /*#__PURE__*/React.createElement("div", {
+  }, "When Planning Center is connected, ministry and community rows are labelled \u201CPlanning Center\u201D. Optional. Offered for churches in the United States that already use Planning Center. Elsewhere, Rhema.ai works fully without it."), phase === "away" && /*#__PURE__*/React.createElement("div", {
     role: "dialog",
     "aria-label": "Leaving for Planning Center",
     style: {
@@ -8289,7 +8289,7 @@ function ChurchSignin({
       color: "var(--text-muted)",
       margin: "6px 0 0"
     }
-  }, "This is Planning Center\u2019s page. church.ai never sees your password.")), /*#__PURE__*/React.createElement(PfField, {
+  }, "This is Planning Center\u2019s page. Rhema.ai never sees your password.")), /*#__PURE__*/React.createElement(PfField, {
     label: "Email",
     type: "email",
     autoComplete: "username",
@@ -8315,7 +8315,7 @@ function ChurchSignin({
     onClick: () => signin(null, true)
   }, "Use a demo church")), step === "consent" && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("h1", {
     style: window.psH1
-  }, "Connect church.ai?"), /*#__PURE__*/React.createElement("p", {
+  }, "Connect Rhema.ai?"), /*#__PURE__*/React.createElement("p", {
     style: {
       font: "var(--type-body)",
       fontSize: 16,
@@ -8323,7 +8323,7 @@ function ChurchSignin({
       margin: "6px 0 0"
     }
   }, demo ? "Demo church" : "Living Water Fellowship", " \xB7 you can disconnect any time.")), /*#__PURE__*/React.createElement(Perm, {
-    title: "church.ai can read",
+    title: "Rhema.ai can read",
     icon: "file-text",
     items: ["Services you led", "Groups you run", "Your own profile"]
   }), /*#__PURE__*/React.createElement(Perm, {
@@ -8362,7 +8362,7 @@ function ChurchSignin({
     name: "circle-check",
     size: 20,
     color: "var(--ok-400)"
-  }), "Allowed. Returning to church.ai\u2026"))));
+  }), "Allowed. Returning to Rhema.ai\u2026"))));
 }
 function ConnectedChurch({
   back,
@@ -9229,7 +9229,7 @@ const acHandle = a => `${AC_PFX[a.role] || "U"}-${parseInt(String(a.id).replace(
 const acSeed = [{
   id: "u1",
   name: "Grace Mondal",
-  email: "admin@church.ai",
+  email: "admin@rhema.ai",
   role: "Admin",
   church: "—",
   status: "active",
@@ -10316,7 +10316,7 @@ function AuthScreen({
     if (Object.keys(e).length) return;
     setBusy(true);
     setTimeout(() => {
-      const admin = f.email.trim().toLowerCase() === "admin@church.ai";
+      const admin = f.email.trim().toLowerCase() === "admin@rhema.ai";
       setSession({
         kind: admin ? "admin" : "member",
         name: admin ? "Admin" : f.name.trim() || "Anonymous reader",
@@ -10573,7 +10573,7 @@ function AuthScreen({
     style: {
       margin: "4px 0 0"
     }
-  }, "Sign in as admin@church.ai to open admin.")));
+  }, "Sign in as admin@rhema.ai to open admin.")));
 }
 Object.assign(window, {
   AuthScreen,
@@ -14746,7 +14746,7 @@ function MonthlyScreen({
       font: "700 13px/1.2 var(--font-body)",
       color: "var(--text-strong)"
     }
-  }, "church.ai"), /*#__PURE__*/React.createElement("span", {
+  }, "Rhema.ai"), /*#__PURE__*/React.createElement("span", {
     style: {
       font: "400 13px/1.3 var(--font-body)",
       color: "var(--text-body)"
@@ -16574,7 +16574,7 @@ function SettingsScreen({
       label: "Large"
     }]
   }))), /*#__PURE__*/React.createElement(SeSection, {
-    label: "What church.ai remembers"
+    label: "What Rhema.ai remembers"
   }, /*#__PURE__*/React.createElement(SeRow, {
     title: "On this device only",
     sub: "Nothing here is sent anywhere. Delete any of it.",
@@ -16678,7 +16678,7 @@ function SettingsScreen({
       reduceMotion: v
     }, v ? "Motion reduced" : "Motion on")
   }))), (kind === "member" || kind === "admin") && /*#__PURE__*/React.createElement(SeSection, {
-    label: "Leave church.ai"
+    label: "Leave Rhema.ai"
   }, /*#__PURE__*/React.createElement(SeRow, {
     title: "Delete account",
     sub: "Removes your email, display name and settings. Past answers stay only as anonymous counts and can\u2019t be traced to you.",
@@ -16807,7 +16807,7 @@ function PublicShell({
     }
   }, /*#__PURE__*/React.createElement("button", {
     onClick: () => go("search"),
-    "aria-label": "Church AI home",
+    "aria-label": "Rhema.ai home",
     style: {
       background: "none",
       border: 0,
@@ -18263,8 +18263,8 @@ try { (() => {
     }
   };
   window.CATeamNote = {
-    lines: ["We built church.ai because the same word can carry", "very different hopes. Take your time with each one."],
-    sign: "— the church.ai team"
+    lines: ["We built Rhema.ai because the same word can carry", "very different hopes. Take your time with each one."],
+    sign: "— the Rhema.ai team"
   };
 })();
 })(); } catch (e) { __ds_ns.__errors.push({ path: "ui_kits/public/curious.js", error: String((e && e.message) || e) }); }
@@ -18937,12 +18937,12 @@ try { (() => {
         return String(n).padStart(2, "0");
       };
     var day = d.getFullYear() + p(d.getMonth() + 1) + p(d.getDate());
-    var body = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//church.ai//monthly//EN", "BEGIN:VEVENT", "UID:churchai-" + day + "@church.ai", "DTSTART;VALUE=DATE:" + day, "SUMMARY:church.ai — a new question", "DESCRIPTION:One question this month. No account, no name.", "END:VEVENT", "END:VCALENDAR"].join("\r\n");
+    var body = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Rhema.ai//monthly//EN", "BEGIN:VEVENT", "UID:churchai-" + day + "@Rhema.ai", "DTSTART;VALUE=DATE:" + day, "SUMMARY:Rhema.ai — a new question", "DESCRIPTION:One question this month. No account, no name.", "END:VEVENT", "END:VCALENDAR"].join("\r\n");
     var a = document.createElement("a");
     a.href = URL.createObjectURL(new Blob([body], {
       type: "text/calendar"
     }));
-    a.download = "church-ai-next-question.ics";
+    a.download = "rhema-ai-next-question.ics";
     document.body.appendChild(a);
     a.click();
     a.remove();
@@ -19134,7 +19134,7 @@ try { (() => {
   let session = asHash ? {
     kind: asHash,
     name: asHash === "admin" ? "Admin" : asHash === "member" ? "Anonymous reader" : "Guest",
-    email: asHash === "admin" ? "admin@church.ai" : "arif@example.com"
+    email: asHash === "admin" ? "admin@rhema.ai" : "arif@example.com"
   } : (() => {
     try {
       return JSON.parse(localStorage.getItem(SK));
@@ -19157,7 +19157,7 @@ try { (() => {
 
 // ui_kits/tour/Tour.jsx
 try { (() => {
-// Church AI product tour — one continuous composition keyed to T and CUES.
+// Rhema.ai product tour — one continuous composition keyed to T and CUES.
 const C = {
   ink0: "#0B0F0C",
   ink1: "#121813",
@@ -20259,7 +20259,7 @@ function ScreenEnd({
     }
   }, "Search"));
 }
-const TOUR_TEXT = [["Dictionary", "Look up any word.", "Hindu, Buddhist and Christian words, side by side, with sources."], ["Question", "Answer one question a month.", "No account. No name. Not tied to any pastor."], ["Map", "See the map of ideas.", "Ideas are counted, never people. A person publishes it."], ["Pastor", "Pastors check in.", "A mentor reads it. Hard notes go to a person."], ["Connect", "Connect your church app.", "Sign in with Planning Center. It sends activity in. Only leaders move a stage."], ["Review", "Leaders review with care.", "The draft is prepared. A person still decides."], ["Promises", null, null], ["Close", "Look up a word.", "church.ai"]];
+const TOUR_TEXT = [["Dictionary", "Look up any word.", "Hindu, Buddhist and Christian words, side by side, with sources."], ["Question", "Answer one question a month.", "No account. No name. Not tied to any pastor."], ["Map", "See the map of ideas.", "Ideas are counted, never people. A person publishes it."], ["Pastor", "Pastors check in.", "A mentor reads it. Hard notes go to a person."], ["Connect", "Connect your church app.", "Sign in with Planning Center. It sends activity in. Only leaders move a stage."], ["Review", "Leaders review with care.", "The draft is prepared. A person still decides."], ["Promises", null, null], ["Close", "Look up a word.", "Rhema.ai"]];
 const MODULES = [["Dictionary", "Dictionary"], ["Question", "Monthly question"], ["Map", "Map"], ["Pastor", "Pastors"], ["Connect", "Church app"], ["Review", "Review"]];
 function TourPiece({
   captions,
@@ -20321,7 +20321,7 @@ function TourPiece({
       lineHeight: 1,
       whiteSpace: "nowrap"
     }
-  }, "Church AI"), /*#__PURE__*/React.createElement("div", {
+  }, "Rhema.ai"), /*#__PURE__*/React.createElement("div", {
     style: {
       fontFamily: F.b,
       fontSize: 48,

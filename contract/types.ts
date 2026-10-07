@@ -1,4 +1,4 @@
-// church.ai shared contract. Frontend and backend both import these types.
+// Rhema.ai shared contract. Frontend and backend both import these types.
 // Rule: the server sends exactly these shapes. Anything not listed here must not be sent.
 
 // ---------- Common ----------

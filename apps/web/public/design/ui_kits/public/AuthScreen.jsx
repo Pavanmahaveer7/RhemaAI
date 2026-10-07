@@ -83,7 +83,7 @@ function AuthScreen({ go, initialTab }) {
       }, x => { setBusy(false); setErr({ email: x.message + (x.requestId ? " (" + x.requestId.slice(0, 8) + ")" : "") }); });
       return;
     }
-    setTimeout(() => { const admin = f.email.trim().toLowerCase() === "admin@church.ai";
+    setTimeout(() => { const admin = f.email.trim().toLowerCase() === "admin@rhema.ai";
       setSession({ kind: admin ? "admin" : "member", name: admin ? "Admin" : (f.name.trim() || "Anonymous reader"), email: f.email.trim() }); if (tab === "create" && !admin) { try { if (!localStorage.getItem("ca_team_note_seen")) localStorage.setItem("ca_team_note", "1"); } catch (x) {} }
       setBusy(false); go(admin ? "admin" : (localStorage.getItem("ca_onboarded") ? "search" : "intro")); }, 700);
   };
@@ -117,7 +117,7 @@ function AuthScreen({ go, initialTab }) {
         <ul style={{ listStyle: "none", margin: 0, padding: 0, display: innerWidth < 700 ? "none" : "grid", gridTemplateColumns: "repeat(auto-fit,minmax(170px,1fr))", gap: 6 }}>{["Look up any word", "Answer the monthly question", "See the map of ideas", "Flag an entry for review"].map(t => <li key={t} style={{ display: "flex", gap: 8, alignItems: "center", font: "var(--type-source)", color: "var(--text-body)" }}><window.ChurchAIDesignSystem_06db43.Icon name="check" size={16} color="var(--ok-400)" />{t}</li>)}</ul>
       </div>
     </div>
-    {tab === "signin" && <details data-demo="" style={{ font: "var(--type-source)", color: "var(--text-muted)", textAlign: "center" }}><summary style={{ cursor: "pointer", minHeight: 44, display: "inline-flex", alignItems: "center" }}>Demo only</summary><p style={{ margin: "4px 0 0" }}>Pastor <strong>P-0233</strong> · Leader <strong>L-0100</strong> · Reviewer <strong>R-0100</strong> · password <strong>dev-only-change-me</strong>. Dictionary admin: <strong>admin@church.ai</strong>. Preview without login: <a href="/pastor#r=tracks&api=0">Three tracks</a>.</p></details>}
+    {tab === "signin" && <details data-demo="" style={{ font: "var(--type-source)", color: "var(--text-muted)", textAlign: "center" }}><summary style={{ cursor: "pointer", minHeight: 44, display: "inline-flex", alignItems: "center" }}>Demo only</summary><p style={{ margin: "4px 0 0" }}>Pastor <strong>P-0233</strong> · Leader <strong>L-0100</strong> · Reviewer <strong>R-0100</strong> · password <strong>dev-only-change-me</strong>. Dictionary admin: <strong>admin@rhema.ai</strong>. Preview without login: <a href="/pastor#r=tracks&api=0">Three tracks</a>.</p></details>}
   </div>;
 }
 Object.assign(window, { AuthScreen, useSession, usePrefs });
