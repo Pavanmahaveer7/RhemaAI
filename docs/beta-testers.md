@@ -16,11 +16,15 @@ Send testers these links only. **Do not** share staff codes or `DEMO_SIGNIN_PASS
 - **Create account** with any email — they get a pseudonym like `U-A3F2`, not their email in the UI.
 - Submit **beta survey** (saved on the server when Postgres is connected — see [vercel-live.md](./vercel-live.md)).
 
+## Pastor / leader / reviewer beta (private cohort)
+
+See **[beta-pastor-invite.md](./beta-pastor-invite.md)** — share staff sign-in + codes + password by DM (not public).
+
 ## What you use internally
 
 | Link | Who |
 |------|-----|
-| https://rhema-ai-web.vercel.app/app#r=signin&staff=l3 | Staff demo (P-0233, L-0100, R-0100) |
+| https://rhema-ai-web.vercel.app/app#r=signin&staff=l3 | Staff demo (P-0233, L-0100, R-0100, …) |
 | https://rhema-ai-web.vercel.app/app#r=admin&tab=feedback&as=admin | Admin beta export (**A-0100** + demo password) |
 
 Password is in `.vercel-demo.env.local` on your machine (`DEMO_SIGNIN_PASSWORD`).
