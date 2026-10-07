@@ -100,21 +100,33 @@
   var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   var SR_LANG = { en: "en-US", hi: "hi-IN", bn: "bn-BD", ne: "ne-NP", my: "my-MM", km: "km-KH" };
   window.CAMic = function (props) {
-    var e = React.createElement, st = React.useState(false), on = st[0], setOn = st[1], rec = React.useRef(null);
+    var e = React.createElement, st = React.useState(false), on = st[0], setOn = st[1], rec = React.useRef(null), errSt = React.useState(""), err = errSt[0], setErr = errSt[1];
     React.useEffect(function () { return function () { try { rec.current && rec.current.abort(); } catch (x) {} }; }, []);
-    if (!SR || (window.CAGuard && window.CAGuard.lockdown && window.CAGuard.lockdown())) return null;
+    if (window.CAGuard && window.CAGuard.lockdown && window.CAGuard.lockdown()) {
+      return e("p", { style: { margin: 0, font: "600 13px/1.35 var(--font-body)", color: "var(--text-muted)" } }, "Voice input is paused while a safety alert is on.");
+    }
+    if (!SR) {
+      return e("p", { style: { margin: 0, font: "600 13px/1.35 var(--font-body)", color: "var(--text-muted)" } }, "Voice search needs Chrome, Edge, or Safari on HTTPS (or localhost). Type your word instead.");
+    }
     var toggle = function () {
       if (on) { try { rec.current.stop(); } catch (x) {} return; }
       var r = new SR(); rec.current = r; r.lang = SR_LANG[window.CA_LANG] || "en-US"; r.interimResults = false; r.maxAlternatives = 1;
-      r.onresult = function (ev) { var t = ev.results[0] && ev.results[0][0] && ev.results[0][0].transcript; if (t) props.onText(t.trim()); };
-      r.onend = function () { setOn(false); }; r.onerror = function () { setOn(false); };
+      r.onresult = function (ev) { var t = ev.results[0] && ev.results[0][0] && ev.results[0][0].transcript; if (t) { setErr(""); props.onText(t.trim()); } };
+      r.onend = function () { setOn(false); };
+      r.onerror = function (ev) {
+        setOn(false);
+        var code = ev && ev.error;
+        if (code === "not-allowed" || code === "service-not-allowed") setErr("Microphone blocked. Allow mic for this site in browser settings, then try again.");
+        else if (code === "no-speech") setErr("Didn’t catch that. Try again closer to the mic.");
+        else setErr("Voice didn’t work this time. Type instead.");
+      };
       try { r.start(); setOn(true); window.CAHaptic && window.CAHaptic("light"); } catch (x) { setOn(false); }
     };
     var mic = e("svg", { width: props.inline ? 16 : 20, height: props.inline ? 16 : 20, viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: 1.8, strokeLinecap: "round", strokeLinejoin: "round", "aria-hidden": "true" }, e("rect", { x: 9, y: 3, width: 6, height: 11, rx: 3 }), e("path", { d: "M5 11a7 7 0 0 0 14 0M12 18v3" }));
     var label = on ? "Listening… tap to stop" : "Speak instead";
-    if (props.inline) return e("button", { type: "button", onClick: toggle, "aria-pressed": on, className: "ca-mic", style: { alignSelf: "flex-start", display: "inline-flex", alignItems: "center", gap: 6, minHeight: 44, padding: "0 2px", background: "none", border: 0, cursor: "pointer", font: "600 13px/1.3 var(--font-body)", color: on ? "var(--lamp-400)" : "var(--text-muted)" } }, e("span", { className: on ? "ca-mic-on" : "", style: { display: "grid", placeItems: "center", width: 28, height: 28, borderRadius: 99 } }, mic), label);
+    if (props.inline) return e(React.Fragment, null, e("button", { type: "button", onClick: toggle, "aria-pressed": on, className: "ca-mic", style: { alignSelf: "flex-start", display: "inline-flex", alignItems: "center", gap: 6, minHeight: 44, padding: "0 2px", background: "none", border: 0, cursor: "pointer", font: "600 13px/1.3 var(--font-body)", color: on ? "var(--lamp-400)" : "var(--text-muted)" } }, e("span", { className: on ? "ca-mic-on" : "", style: { display: "grid", placeItems: "center", width: 28, height: 28, borderRadius: 99 } }, mic), label), err ? e("p", { role: "alert", style: { margin: "4px 0 0", font: "600 13px/1.35 var(--font-body)", color: "var(--clay-400, var(--text-muted))" } }, err) : null);
     var sz = props.size || 52;
-    return e("button", { type: "button", onClick: toggle, "aria-pressed": on, "aria-label": on ? "Stop listening" : "Speak a word", className: "ca-mic ca-mic-btn" + (on ? " ca-mic-on" : ""), style: { width: sz, height: sz, flex: "none", display: "grid", placeItems: "center", borderRadius: 999, border: "1px solid " + (on ? "var(--lamp-400)" : "var(--border-default)"), background: on ? "var(--lamp-tint)" : "var(--surface-card)", color: on ? "var(--lamp-400)" : "var(--text-body)", cursor: "pointer" } }, mic);
+    return e("div", { style: { display: "flex", flexDirection: "column", alignItems: "center", gap: 6 } }, e("button", { type: "button", onClick: toggle, "aria-pressed": on, "aria-label": on ? "Stop listening" : "Speak a word", className: "ca-mic ca-mic-btn" + (on ? " ca-mic-on" : ""), style: { width: sz, height: sz, flex: "none", display: "grid", placeItems: "center", borderRadius: 999, border: "1px solid " + (on ? "var(--lamp-400)" : "var(--border-default)"), background: on ? "var(--lamp-tint)" : "var(--surface-card)", color: on ? "var(--lamp-400)" : "var(--text-body)", cursor: "pointer" } }, mic), err ? e("span", { role: "alert", style: { maxWidth: 140, textAlign: "center", font: "600 11px/1.3 var(--font-body)", color: "var(--text-muted)" } }, err) : null);
   };
   (function () { if (document.getElementById("ca-mic-css")) return; var s = document.createElement("style"); s.id = "ca-mic-css"; s.textContent = "@keyframes ca-mic-pulse{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--lamp-400) 45%,transparent)}100%{box-shadow:0 0 0 10px transparent}}.ca-mic-on{animation:ca-mic-pulse 1.6s ease-out infinite}.ca-mic-btn{transition:border-color 200ms var(--ease-out),background 200ms var(--ease-out),transform 120ms var(--ease-out)}.ca-mic-btn:hover{border-color:var(--border-strong)!important}.ca-mic-btn:active,.ca-save:active{transform:scale(.96)}.ca-mic:focus-visible,.ca-save:focus-visible{outline:2px solid var(--lamp-400);outline-offset:2px}.ca-mic:hover,.ca-save:hover{color:var(--text-body)!important}@media (prefers-reduced-motion:reduce){.ca-mic-on{animation:none}}"; (document.head || document.documentElement).appendChild(s); })();
   window.CACrisisLine = { Bangladesh: ["999", "national emergency"], India: ["112", "emergency"], Nepal: ["1166", "suicide prevention line"], "Sri Lanka": ["1926", "mental health helpline"], "United States": ["988", "Suicide & Crisis Lifeline"] };

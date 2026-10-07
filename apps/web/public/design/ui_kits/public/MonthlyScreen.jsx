@@ -24,6 +24,10 @@ function MonthlyScreen({ go }) {
   const toggleChip = c => { window.CAHaptic && window.CAHaptic("light"); setChips(x => x.includes(c) ? x.filter(y => y !== c) : x.length < 3 ? [...x, c] : x); if (phase === "invalid") setPhase("form"); };
   const [fix, setFix] = React.useState(false); const [confirmed, setConfirmed] = React.useState(false);
   const [phase, setPhase] = React.useState(prior ? "done" : "form");
+  React.useEffect(() => {
+    if (!window.CAApi || !window.CAApi.isLive() || window.CA_DEMO || window.CAApi.session()) return;
+    window.CAApi.guest().catch(function () {});
+  }, []);
   const [removed, setRemoved] = React.useState(0);
   const [support, setSupport] = React.useState(false);
   const piiNow = window.CAGuard.pii(text);
@@ -83,7 +87,9 @@ function MonthlyScreen({ go }) {
   return <div style={{ maxWidth: "var(--content-read)", width: "100%", margin: "0 auto", padding: "40px var(--gutter-phone) 24px" }}>
     <h1 style={{ font: "800 clamp(44px,13vw,68px)/.98 var(--font-display)", letterSpacing: "var(--tracking-display)", color: "var(--text-strong)", margin: "0 0 14px", textWrap: "balance" }}><CAQuestionText month={cur} /></h1>
     <p style={{ font: "var(--type-body)", fontSize: 18, color: "var(--text-muted)", margin: "0 0 28px" }}>{cur.label}. Say it your way. No account, never tied to a pastor.</p>
-    {closed ? <section aria-live="polite" style={{ border: "1px solid var(--border-subtle)", borderRadius: "var(--radius-lg)", padding: 22, background: "var(--surface-card)" }}><div style={{ font: "800 24px/1.1 var(--font-display)", color: "var(--text-strong)", marginBottom: 6 }}>This month has ended.</div><p style={{ font: "var(--type-body)", color: "var(--text-muted)", margin: 0 }}>{cur.label} is no longer taking answers. You can still <a href="#r=graph">see what people said on the map</a>.</p><Next /></section> : !["done"].includes(phase) ? <form onSubmit={submit} style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+    {closed ? <section aria-live="polite" style={{ border: "1px solid var(--border-subtle)", borderRadius: "var(--radius-lg)", padding: 22, background: "var(--surface-card)" }}><div style={{ font: "800 24px/1.1 var(--font-display)", color: "var(--text-strong)", marginBottom: 6 }}>This month has ended.</div><p style={{ font: "var(--type-body)", color: "var(--text-muted)", margin: 0 }}>{cur.label} is no longer taking answers. You can still <a href="#r=graph">see what people said on the map</a>.</p><Next /></section> : <>
+    {phase === "done" && <div role="status" style={{ marginBottom: 16, padding: "14px 16px", borderRadius: "var(--radius-md)", background: "var(--ok-tint)", border: "1px solid var(--ok-400)", display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}><MqIcon name="circle-check" size={20} color="var(--ok-400)" /><span style={{ flex: 1, font: "600 16px/1.35 var(--font-body)", color: "var(--text-strong)" }}>Your answer for {cur.label} is counted. You can update it below.</span></div>}
+    <form onSubmit={submit} style={{ display: "flex", flexDirection: "column", gap: 12 }}>
       {phase === "blocked" && <MqState kind="unavailable" compact title="Blocked" message={`This answer was blocked. It reads like an instruction to the system, so it was not sent. Request id: ${rid}`} />}
       {prior && <p style={{ font: "var(--type-source)", color: "var(--text-muted)", margin: 0 }}>This replaces your earlier answer for {cur.label}. One answer per person per month.</p>}
       <fieldset style={{ border: 0, margin: 0, padding: 0, display: "flex", flexDirection: "column", gap: 8 }}>
@@ -92,8 +98,9 @@ function MonthlyScreen({ go }) {
       </fieldset>
       <MqArea label="Your answer" rows={6} maxLength={280} value={text} onChange={e => { setText(e.target.value); if (phase === "invalid" || phase === "blocked") setPhase("form"); }} error={phase === "invalid" ? errMsg || "Pick an idea or write a few words." : undefined} hint={piiNow ? "That looks like a name, phone number, email or address. We remove it before anything reaches the map." : "Optional. We keep the idea, not your words: the text is deleted within 24 hours."} placeholder="Honestly? Peace at home. Real friends…" />
       <window.CAMic inline onText={t => { setText(x => ((x ? x + " " : "") + t).slice(0, 280)); if (phase === "invalid") setPhase("form"); }} />
-      <MqButton type="submit" variant="accent" size="lg" fullWidth loading={phase === "sending"} icon={phase === "sent" ? undefined : "send"}>{phase === "sent" ? <span style={{ display: "inline-flex", alignItems: "center", gap: 8 }}><span style={{ display: "inline-flex", animation: "ca-turn 420ms var(--ease-out) both" }}><window.ChurchAIDesignSystem_06db43.Icon name="check" size={20} /></span>Counted</span> : "Send answer"}</MqButton>
-    </form> : <section aria-live="polite" style={{ border: "1px solid var(--border-subtle)", borderRadius: "var(--radius-lg)", padding: 22, background: "var(--surface-card)" }}>
+      <MqButton type="submit" variant="accent" size="lg" fullWidth loading={phase === "sending"} icon={phase === "sent" ? undefined : "send"}>{phase === "sent" ? <span style={{ display: "inline-flex", alignItems: "center", gap: 8 }}><span style={{ display: "inline-flex", animation: "ca-turn 420ms var(--ease-out) both" }}><window.ChurchAIDesignSystem_06db43.Icon name="check" size={20} /></span>Counted</span> : prior ? "Update answer" : "Send answer"}</MqButton>
+    </form>
+    {phase === "done" && <section aria-live="polite" style={{ marginTop: 20, border: "1px solid var(--border-subtle)", borderRadius: "var(--radius-lg)", padding: 22, background: "var(--surface-card)" }}>
       <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }}><span aria-hidden="true" style={{ width: 36, height: 36, flex: "none", borderRadius: 99, display: "grid", placeItems: "center", background: "var(--ok-tint)", color: "var(--ok-400)" }}><MqIcon name="check" size={18} /></span><span style={{ font: "800 24px/1.1 var(--font-display)", color: "var(--text-strong)" }}>Counted.</span></div>
       {cur.answers > 0 && <p style={{ font: "var(--type-body)", color: "var(--text-body)", margin: "0 0 12px" }}>You and {cur.answers} others answered in {cur.label.split(" ")[0]}.</p>}
       {sent && <div aria-hidden={stage < 2} style={{ position: "relative", height: 48, margin: "4px 0 14px" }}>
@@ -119,8 +126,8 @@ function MonthlyScreen({ go }) {
         {rem === "yes" ? <span style={{ display: "inline-flex", gap: 6, alignItems: "center", font: "600 13px/1 var(--font-body)", color: "var(--ok-400)" }}><MqIcon name="circle-check" size={16} />Reminder on</span>
           : <MqButton size="sm" variant="secondary" icon="bell" onClick={async () => { await askRemind(); if (localStorage.getItem("ca_remind") !== "yes" && RH) RH.ics(); }}>Remind me</MqButton>}
       </div>}
-      <button onClick={() => { setRemoved(0); setSupport(false); setSent(null); setPhase("form"); }} style={{ marginTop: 14, height: 40, padding: 0, background: "none", border: 0, cursor: "pointer", font: "600 13px/1 var(--font-body)", color: "var(--text-muted)", textDecoration: "underline", textUnderlineOffset: 3 }}>Change my answer</button>
     </section>}
+    </>}
   </div>;
 }
 window.MonthlyScreen = MonthlyScreen;

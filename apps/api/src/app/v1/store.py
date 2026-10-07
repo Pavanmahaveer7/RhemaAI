@@ -203,10 +203,12 @@ class ContractStore:
         return os.getenv("BETA_SHARED_STAFF_LOGIN", "").strip().lower() in ("1", "true", "yes")
 
     def _apply_beta_staff_passwords(self) -> None:
-        """Render beta: individual scrypt hashes so production sign-in works with DEMO_SIGNIN_PASSWORD."""
-        if os.getenv("APP_ENV") != "production" or not self._beta_shared_staff_login():
+        """Beta/demo: set scrypt hashes from DEMO_SIGNIN_PASSWORD (production + local dev)."""
+        if os.getenv("APP_ENV") == "production" and not self._beta_shared_staff_login():
             return
         password = os.getenv("DEMO_SIGNIN_PASSWORD", "").strip()
+        if not password and os.getenv("APP_ENV", "development") != "production":
+            password = "dev-only-change-me"
         if not password:
             return
         for account in self.accounts.values():
