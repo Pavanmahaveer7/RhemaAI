@@ -130,14 +130,13 @@ function Landing() {
   const [q, setQ] = React.useState("");
   React.useEffect(() => { const f = () => setSolid(scrollY > 8); addEventListener("scroll", f, { passive: true }); return () => removeEventListener("scroll", f); }, []);
   const submit = ev => { ev.preventDefault(); const t = q.trim().toLowerCase(); if (!t) return; location.href = lpLex(t) ? `${lpApp}#r=term&t=${encodeURIComponent(t)}` : `${lpApp}#r=search`; };
-  const nav = [["Dictionary", "#top"], ...(lk ? [] : [["This month", "#month"]]), ["Tour", lpTourFull(wide ? "16:9" : "9:16")], ["Staff sign in", lpStaffSignIn]];
+  const nav = [["Dictionary", "#top"], ...(lk ? [] : [["This month", "#month"]]), ["Tour", lpTourFull(wide ? "16:9" : "9:16")]];
   const hdrLink = { height: 44, padding: "0 10px", display: "inline-flex", alignItems: "center", font: "600 15px/1 var(--font-body)", textDecoration: "none", whiteSpace: "nowrap" };
   return <>
     <header style={{ position: "sticky", top: 0, zIndex: 30, height: 64, display: "flex", alignItems: "center", gap: 8, padding: "0 var(--gutter-phone)", background: solid ? "color-mix(in srgb, var(--ink-0) 94%, transparent)" : "transparent", borderBottom: "1px solid " + (solid ? "var(--border-subtle)" : "transparent"), backdropFilter: solid ? "blur(10px)" : "none", transition: "background 200ms var(--ease-out), border-color 200ms var(--ease-out)" }}>
       <a href="#top" aria-label="Rhema.ai home" style={{ display: "flex", alignItems: "center", minHeight: 44, textDecoration: "none" }}><LpWordmark size={20} /></a>
       <div style={{ flex: 1 }}></div>
       {wide && <nav aria-label="Primary" style={{ display: "flex", gap: 4 }}>{nav.map(([l, h]) => <a key={l} href={h} className="lp-nav" style={{ ...hdrLink, borderRadius: 999 }}>{l}</a>)}</nav>}
-      {!wide && <a href={lpStaffSignIn} className="lp-nav" style={{ ...hdrLink, color: "var(--text-body)" }}>Staff sign in</a>}
       <a href={`${lpApp}#r=signin`} className="lp-nav" style={{ ...hdrLink, color: "var(--text-muted)" }}>Sign in</a>
       <LpButton size="sm" variant={solid ? "accent" : "secondary"} onClick={() => { location.href = lpTourFull(wide ? "16:9" : "9:16"); }}>Get started</LpButton>
     </header>
@@ -170,7 +169,7 @@ function Landing() {
     <footer style={{ borderTop: "1px solid var(--border-subtle)", padding: "24px var(--gutter-phone) 32px" }}>
       <div style={{ maxWidth: 1180, margin: "0 auto", display: "flex", gap: 16, flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", font: "var(--type-source)", color: "var(--text-muted)" }}>
         <span>We map ideas, never people.</span>
-        <nav aria-label="Footer" style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>{[["Tour", lpTourFull("16:9")], ["Continue to app", lpOnboard], ["Dictionary", lpEveryone], ["Beta feedback", "/beta-survey?from=landing-footer"], ["Staff sign in", lpStaffSignIn], ["All screens", "/screens"]].map(([l, h]) => <a key={l} href={h} className="lp-nav" style={{ minHeight: 44, display: "inline-flex", alignItems: "center", textDecoration: "none" }}>{l}</a>)}<a href={`${lpApp}#r=settings&as=guest`} className="lp-nav" style={{ minHeight: 44, display: "inline-flex", alignItems: "center", textDecoration: "none" }}>What we store</a></nav>
+        <nav aria-label="Footer" style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>{[["Tour", lpTourFull("16:9")], ["Continue to app", lpOnboard], ["Dictionary", lpEveryone], ["Beta feedback", "/beta-survey?from=landing-footer"], ["Pastor & staff", lpStaffSignIn], ["All screens", "/screens"]].map(([l, h]) => <a key={l} href={h} className="lp-nav" style={{ minHeight: 44, display: "inline-flex", alignItems: "center", textDecoration: "none" }}>{l}</a>)}<a href={`${lpApp}#r=settings&as=guest`} className="lp-nav" style={{ minHeight: 44, display: "inline-flex", alignItems: "center", textDecoration: "none" }}>What we store</a></nav>
       </div>
     </footer>
   </>;

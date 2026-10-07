@@ -26,7 +26,8 @@ https://rhema-ai-web.vercel.app/app#guest=1&r=search
 | Beta feedback form | https://rhema-ai-web.vercel.app/beta-survey |
 | Pastor / staff app | https://rhema-ai-web.vercel.app/pastor |
 
-Staff sign-in for L3 demo lives at  
+Public **Sign in** on the landing header is for **email members** only.  
+**Pastor & staff** (footer only, or the link on the sign-in screen) →  
 https://rhema-ai-web.vercel.app/app#r=signin&staff=l3  
 (codes + password — **private DM only**; see [beta-pastor-invite.md](./beta-pastor-invite.md)).
 

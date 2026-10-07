@@ -44,7 +44,7 @@ Sample data: `ui_kits/pipeline/data.js` (`window.CA_PIPE`).
 ## Marketing
 | Screen | File | Notes |
 |---|---|---|
-| Landing | `ui_kits/landing/index.html`, `Landing.jsx` | **Get started** → `/tour?from=landing`; then tour **Continue** → `#r=intro&step=1` |
+| Landing | `ui_kits/landing/index.html`, `Landing.jsx` | **Get started** → tour; header **Sign in** = email members; **Pastor & staff** in footer → `#r=signin&staff=l3` |
 | Tour video | `ui_kits/tour/index.html` | `?from=landing` shows continue bar; `#layout=16:9\|9:16`; `#bare=1` / iframe = no chrome |
 
 Canonical URLs and first-time journey: [../docs/screen-flow.md](../docs/screen-flow.md).
