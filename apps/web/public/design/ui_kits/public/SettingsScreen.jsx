@@ -67,7 +67,7 @@ function SettingsScreen({ go }) {
       </SeRow>
     </SeSection>
 
-    <SeSection label="What church.ai remembers">
+    <SeSection label="What Rhema.ai remembers">
       <SeRow title="On this device only" sub="Nothing here is sent anywhere. Delete any of it." stack>
         {mem.length === 0 ? <span style={{ font: "var(--type-body)", fontSize: 16, color: "var(--text-muted)" }}>Nothing yet.</span> :
         <ul style={{ listStyle: "none", margin: 0, padding: 0, width: "100%", display: "flex", flexDirection: "column" }}>{mem.map((m, i) => <li key={m.label} style={{ display: "flex", alignItems: "center", gap: 12, padding: "10px 0", borderTop: i ? "1px solid var(--border-subtle)" : 0 }}>
@@ -85,7 +85,7 @@ function SettingsScreen({ go }) {
       <SeRow title="Reduce motion" sub="Turns off slides, pops and hints."><SeSwitch aria-label="Reduce motion" checked={!!p.reduceMotion} onChange={v => upd({ reduceMotion: v }, v ? "Motion reduced" : "Motion on")} /></SeRow>
     </SeSection>
 
-    {(kind === "member" || kind === "admin") && <SeSection label="Leave church.ai">
+    {(kind === "member" || kind === "admin") && <SeSection label="Leave Rhema.ai">
         <SeRow title="Delete account" sub="Removes your email, display name and settings. Past answers stay only as anonymous counts and can’t be traced to you." stack>
           {delAsk ? <div style={{ display: "flex", flexDirection: "column", gap: 10, width: "100%" }}><window.CATypeConfirm word="delete" value={delTxt} onChange={setDelTxt} hint="This can’t be undone." /><div style={{ display: "flex", gap: 8 }}><SeButton size="sm" variant="danger" disabled={!window.CAMatch(delTxt, "delete")} onClick={() => { const gone = () => { forget(true); setSession(null); go("search"); }; if (!window.CAApi || !window.CAApi.isLive()) return gone(); window.CAApi.deleteMe().then(gone, x => setToast(x.message + (x.requestId ? " (" + x.requestId.slice(0, 8) + ")" : ""))); }}>Delete account</SeButton><SeButton size="sm" variant="ghost" onClick={() => { setDelAsk(false); setDelTxt(""); }}>Keep it</SeButton></div></div>
           : <div><SeButton size="sm" variant="danger" icon="trash-2" onClick={() => setDelAsk(true)}>Delete account…</SeButton></div>}

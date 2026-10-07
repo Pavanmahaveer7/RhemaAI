@@ -164,20 +164,20 @@ function ChurchSignin({ back, done }) {
       <div style={{ display: "flex", alignItems: "center", gap: 8, height: 40, padding: "0 14px", background: "var(--surface-raised)", borderBottom: "1px solid var(--border-subtle)", font: "600 13px/1 var(--font-body)", color: "var(--text-muted)" }}><PfIcon name="lock" size={16} />accounts.planningcenteronline.com</div>
       <div style={{ padding: 20, display: "flex", flexDirection: "column", gap: 16 }}>
         {step === "signin" && <form onSubmit={signin} style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-          <div><h1 style={window.psH1}>Sign in to Planning Center</h1><p style={{ font: "var(--type-body)", fontSize: 16, color: "var(--text-muted)", margin: "6px 0 0" }}>This is Planning Center’s page. church.ai never sees your password.</p></div>
+          <div><h1 style={window.psH1}>Sign in to Planning Center</h1><p style={{ font: "var(--type-body)", fontSize: 16, color: "var(--text-muted)", margin: "6px 0 0" }}>This is Planning Center’s page. Rhema.ai never sees your password.</p></div>
           <PfField label="Email" type="email" autoComplete="username" value={email} onChange={e => setEmail(e.target.value)} error={err && !email.trim() ? err : undefined} />
           <PfField label="Password" type="password" autoComplete="current-password" value={pw} onChange={e => setPw(e.target.value)} error={err && email.trim() && !pw ? err : undefined} />
           <PfButton type="submit" variant="primary" size="lg" fullWidth>Sign in</PfButton>
           <PfButton type="button" variant="ghost" fullWidth onClick={() => signin(null, true)}>Use a demo church</PfButton>
         </form>}
         {step === "consent" && <>
-          <div><h1 style={window.psH1}>Connect church.ai?</h1><p style={{ font: "var(--type-body)", fontSize: 16, color: "var(--text-muted)", margin: "6px 0 0" }}>{demo ? "Demo church" : "Living Water Fellowship"} · you can disconnect any time.</p></div>
-          <Perm title="church.ai can read" icon="file-text" items={["Services you led", "Groups you run", "Your own profile"]} />
+          <div><h1 style={window.psH1}>Connect Rhema.ai?</h1><p style={{ font: "var(--type-body)", fontSize: 16, color: "var(--text-muted)", margin: "6px 0 0" }}>{demo ? "Demo church" : "Living Water Fellowship"} · you can disconnect any time.</p></div>
+          <Perm title="Rhema.ai can read" icon="file-text" items={["Services you led", "Groups you run", "Your own profile"]} />
           <Perm title="Planning Center gets" icon="book-open" items={["The dictionary inside your church app", "This month’s question for your congregation", "A notice when your monthly pack is ready"]} />
           <Perm title="Never" tone="no" items={["Move a pastor’s stage", "Put names on the map", "See donor names"]} />
           <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}><PfButton variant="primary" size="lg" onClick={allow}>Allow</PfButton><PfButton variant="ghost" size="lg" onClick={back}>Don’t allow</PfButton></div>
         </>}
-        {step === "return" && <div role="status" style={{ display: "flex", gap: 12, alignItems: "center", minHeight: 120, font: "700 18px/1.3 var(--font-body)", color: "var(--text-strong)" }}><PfIcon name="circle-check" size={20} color="var(--ok-400)" />Allowed. Returning to church.ai…</div>}
+        {step === "return" && <div role="status" style={{ display: "flex", gap: 12, alignItems: "center", minHeight: 120, font: "700 18px/1.3 var(--font-body)", color: "var(--text-strong)" }}><PfIcon name="circle-check" size={20} color="var(--ok-400)" />Allowed. Returning to Rhema.ai…</div>}
       </div>
     </div>
   </div>;

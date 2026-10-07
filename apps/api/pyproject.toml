@@ -12,6 +12,7 @@ dependencies = [
   "guardrails",
   "agents",
   "vocab-mcp",
+  "mangum>=0.19",
 ]
 
 [tool.uv.sources]
@@ -32,3 +33,6 @@ where = ["src"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+
+[tool.vercel]
+entrypoint = "app.main:app"

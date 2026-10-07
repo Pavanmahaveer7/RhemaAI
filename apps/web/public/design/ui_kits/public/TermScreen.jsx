@@ -70,7 +70,7 @@ function TsPassages({ term }) {
       <TsButton variant="secondary" icon="book-open" type="submit" disabled={st.kind === "loading"}>Find passages</TsButton>
     </form>
     {st.kind === "loading" && <div style={{ marginTop: 12 }}><TsState kind="loading" compact /></div>}
-    {st.kind === "error" && <p role="alert" style={{ margin: "12px 0 0", font: "var(--type-source)", color: "var(--text-muted)" }}>{st.err && st.err.code === "no_api" ? "Passages need the live server." : (st.err && st.err.message) || "Could not reach church.ai."}{st.err && st.err.requestId ? ` (ref ${st.err.requestId.slice(0, 8)})` : ""}</p>}
+    {st.kind === "error" && <p role="alert" style={{ margin: "12px 0 0", font: "var(--type-source)", color: "var(--text-muted)" }}>{st.err && st.err.code === "no_api" ? "Passages need the live server." : (st.err && st.err.message) || "Could not reach Rhema.ai."}{st.err && st.err.requestId ? ` (ref ${st.err.requestId.slice(0, 8)})` : ""}</p>}
     {st.kind === "done" && !r.found && <p style={{ margin: "12px 0 0", font: "var(--type-body)", fontStyle: "italic", color: "var(--text-muted)" }}>Not in verified sources.</p>}
     {st.kind === "done" && r.found && <>
       <ol style={{ listStyle: "none", margin: "12px 0 0", padding: 0, display: "flex", flexDirection: "column" }}>{r.passages.map((p, i) => <li key={p.tradition + p.work + p.reference} style={{ padding: "12px 0", borderTop: i ? "1px solid var(--border-subtle)" : 0, display: "flex", flexDirection: "column", gap: 6 }}>

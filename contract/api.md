@@ -125,3 +125,5 @@ Every assistant-written text (check-in encouragement, review draft, map draft la
 | PATCH | `/admin/accounts/:id` | admin | `{role?, status?}` → `AccountRow` |
 | POST | `/admin/accounts/:id/resend-invite` | admin | → `204` |
 | POST | `/admin/accounts/:id/password-reset` | admin | → `204` (logged; email delivery not wired) |
+| GET | `/admin/beta-surveys` | admin | `{ total, summary, items[] }` — beta survey responses for slides |
+| GET | `/admin/beta-surveys?format=csv` | admin | CSV download (`rhema-beta-feedback.csv`) |

@@ -17,3 +17,20 @@ def test_beta_survey_accepts_payload():
     }
     r = client.post("/api/v1/feedback/beta-survey", json=payload)
     assert r.status_code == 204
+
+
+def test_admin_can_list_and_export_beta_surveys():
+    client.post("/api/v1/feedback/beta-survey", json={"version": "beta-1", "answers": {"role": "reader", "again": "yes", "easy": 5}, "from": "test"})
+    denied = client.get("/api/v1/admin/beta-surveys")
+    assert denied.status_code == 401
+    jar = TestClient(app)
+    jar.post("/api/v1/auth/signin", json={"codeName": "A-0100", "password": "dev-only-change-me"})
+    listed = jar.get("/api/v1/admin/beta-surveys")
+    assert listed.status_code == 200
+    body = listed.json()
+    assert body["total"] >= 1
+    assert body["summary"]["againYes"] >= 1
+    csv = jar.get("/api/v1/admin/beta-surveys?format=csv")
+    assert csv.status_code == 200
+    assert "role" in csv.text
+    assert "reader" in csv.text

@@ -124,25 +124,33 @@ function PastorHome({ go, church, stage, pco, setPco, decision, joined, ckDone }
 function PastorTracks({ go, pco }) {
   const T0 = window.CA_PIPE.tracks; const T = { ...T0, ministry: pco ? T0.ministry : T0.ministry.filter(r => !r.src) }, wide = window.useWide(1000);
   return <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
-    <h1 style={psH1}>Three tracks</h1>
+    <div><div style={psLabel}>Pastor development</div><h1 style={{ ...psH1, marginTop: 6 }}>Three tracks</h1><p style={{ margin: "8px 0 0", font: "var(--type-body)", fontSize: 17, color: "var(--text-muted)", textWrap: "pretty" }}>Training, ministry, and character — side by side. Switch tabs below any time.</p>
+      {window.CAHasLeaderCap && window.CAHasLeaderCap() && go && <div style={{ marginTop: 14, display: "flex", flexWrap: "wrap", gap: 10, alignItems: "center" }}><PsButton variant="secondary" icon="siren" onClick={() => go("alerts")}>Regional alerts</PsButton><span style={{ font: "var(--type-source)", color: "var(--text-muted)", maxWidth: 420 }}>Raise, confirm, or clear a regional alert for your area.</span></div>}
+    </div>
     {!wide && <nav aria-label="Jump to track" style={{ display: "flex", gap: 8, flexWrap: "wrap", marginTop: -8 }}>{[["Training", "trk-training"], ["Ministry", "trk-ministry"], ["Character", "trk-character"]].map(([l, id]) => <a key={id} href={"#" + id} onClick={e => { e.preventDefault(); const el = document.getElementById(id); el && window.scrollTo({ top: el.getBoundingClientRect().top + scrollY - 76, behavior: "smooth" }); }} style={{ minHeight: 44, display: "inline-flex", alignItems: "center", padding: "0 14px", borderRadius: 999, border: "1px solid var(--border-default)", color: "var(--text-body)", font: "600 13px/1 var(--font-body)", textDecoration: "none" }}>{l}</a>)}</nav>}
     <div style={{ display: "grid", gridTemplateColumns: wide ? "repeat(3,minmax(0,1fr))" : "1fr", gap: 16, alignItems: "start" }}>
-      <div id="trk-training"></div><PsCard eyebrow="Training" title="Courses">
-        {T.training.map(c => <div key={c.t} style={{ ...psRow, flexDirection: "column", gap: 8 }}>
-          <div style={{ display: "flex", width: "100%", gap: 8 }}><span style={{ flex: 1 }}>{c.t}</span>{c.cert && <PsTag tone="lamp">Certificate</PsTag>}</div>
-          <span style={{ display: "inline-flex", gap: 6, alignItems: "center", font: "600 13px/1 var(--font-body)", color: c.p === 100 ? "var(--ok-400)" : c.p > 0 ? "var(--text-body)" : "var(--text-muted)" }}><PsIcon name={c.p === 100 ? "circle-check" : c.p > 0 ? "circle-dot" : "circle-dashed"} size={16} />{c.p === 100 ? "Done" : c.p > 0 ? "In progress" : "Not started"}</span>
-        </div>)}
-        <div style={{ ...psLabel, marginTop: 14, marginBottom: 2 }}>Documents</div>
-        {T.documents.map(([n, f]) => <a key={n} href="#" onClick={e => e.preventDefault()} style={{ ...psRow, alignItems: "center", textDecoration: "none" }}><PsIcon name="file-text" size={18} color="var(--text-muted)" /><span style={{ flex: 1 }}>{n}</span><PsIcon name="external-link" size={16} color="var(--text-faint)" /></a>)}
-      </PsCard>
-      <div id="trk-ministry"></div><PsCard eyebrow="Ministry" title="What you did">
-        {!pco && <p style={{ font: "var(--type-source)", color: "var(--text-muted)", margin: "0 0 8px" }}>Planning Center is not connected. Service plans will appear here once it is.</p>}
-        {T.ministry.map(r => <div key={r.t} style={{ ...psRow, flexDirection: "column", gap: 4 }}><span>{r.t}</span><span style={{ display: "flex", gap: 10 }}><span style={{ font: "var(--type-source)", color: "var(--text-faint)" }}>{r.d}</span><PsSrc src={r.src} /></span></div>)}
-      </PsCard>
-      <div id="trk-character"></div><PsCard eyebrow="Character" title="Notes for you">
-        {T.character.map(r => <div key={r.t} style={{ ...psRow, flexDirection: "column", gap: 4 }}><span style={psLabel}>{r.k}</span><span style={{ fontWeight: 700 }}>{r.t}</span><span style={{ color: "var(--text-muted)" }}>{r.n}</span><span style={{ font: "var(--type-source)", color: "var(--text-faint)" }}>{r.d}</span></div>)}
-        <div style={{ ...psRow, alignItems: "center" }}><PsIcon name="heart-handshake" size={18} color="var(--lamp-400)" /><span style={{ flex: 1 }}>Check-ins this month: {T.checkins.count} of {T.checkins.days} days</span>{go && <PsButton size="sm" variant="ghost" onClick={() => go("checkin")}>Log today’s check-in</PsButton>}</div>
-      </PsCard>
+      <div id="trk-training" style={{ minWidth: 0 }}>
+        <PsCard eyebrow="Training" title="Courses">
+          {T.training.map(c => <div key={c.t} style={{ ...psRow, flexDirection: "column", gap: 8 }}>
+            <div style={{ display: "flex", width: "100%", gap: 8 }}><span style={{ flex: 1 }}>{c.t}</span>{c.cert && <PsTag tone="lamp">Certificate</PsTag>}</div>
+            <span style={{ display: "inline-flex", gap: 6, alignItems: "center", font: "600 13px/1 var(--font-body)", color: c.p === 100 ? "var(--ok-400)" : c.p > 0 ? "var(--text-body)" : "var(--text-muted)" }}><PsIcon name={c.p === 100 ? "circle-check" : c.p > 0 ? "circle-dot" : "circle-dashed"} size={16} />{c.p === 100 ? "Done" : c.p > 0 ? "In progress" : "Not started"}</span>
+          </div>)}
+          <div style={{ ...psLabel, marginTop: 14, marginBottom: 2 }}>Documents</div>
+          {T.documents.map(([n, f]) => <a key={n} href="#" onClick={e => e.preventDefault()} style={{ ...psRow, alignItems: "center", textDecoration: "none" }}><PsIcon name="file-text" size={18} color="var(--text-muted)" /><span style={{ flex: 1 }}>{n}</span><PsIcon name="external-link" size={16} color="var(--text-faint)" /></a>)}
+        </PsCard>
+      </div>
+      <div id="trk-ministry" style={{ minWidth: 0 }}>
+        <PsCard eyebrow="Ministry" title="What you did">
+          {!pco && <p style={{ font: "var(--type-source)", color: "var(--text-muted)", margin: "0 0 8px" }}>Planning Center is not connected. Service plans will appear here once it is.</p>}
+          {T.ministry.map(r => <div key={r.t} style={{ ...psRow, flexDirection: "column", gap: 4 }}><span>{r.t}</span><span style={{ display: "flex", gap: 10 }}><span style={{ font: "var(--type-source)", color: "var(--text-faint)" }}>{r.d}</span><PsSrc src={r.src} /></span></div>)}
+        </PsCard>
+      </div>
+      <div id="trk-character" style={{ minWidth: 0 }}>
+        <PsCard eyebrow="Character" title="Notes for you">
+          {T.character.map(r => <div key={r.t} style={{ ...psRow, flexDirection: "column", gap: 4 }}><span style={psLabel}>{r.k}</span><span style={{ fontWeight: 700 }}>{r.t}</span><span style={{ color: "var(--text-muted)" }}>{r.n}</span><span style={{ font: "var(--type-source)", color: "var(--text-faint)" }}>{r.d}</span></div>)}
+          <div style={{ ...psRow, alignItems: "center" }}><PsIcon name="heart-handshake" size={18} color="var(--lamp-400)" /><span style={{ flex: 1 }}>Check-ins this month: {T.checkins.count} of {T.checkins.days} days</span>{go && <PsButton size="sm" variant="ghost" onClick={() => go("checkin")}>Log today’s check-in</PsButton>}</div>
+        </PsCard>
+      </div>
     </div>
   </div>;
 }

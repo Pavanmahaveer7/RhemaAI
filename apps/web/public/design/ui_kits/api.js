@@ -10,7 +10,7 @@
     this.status = status;
     this.kind = e.kind || (status === 0 ? "error" : "unavailable");
     this.code = e.code || (status === 0 ? "network" : "unknown");
-    this.message = e.message || "Could not reach church.ai. Try again.";
+    this.message = e.message || "Could not reach Rhema.ai. Try again.";
     this.requestId = e.requestId || null;
     this.retryable = status === 0 || !!e.retryable;
   }
@@ -123,12 +123,40 @@
     });
   }
 
+  var PASTOR_ROUTES = ["home", "tracks", "pack", "checkin", "result", "integrations", "signin", "church", "register", "embed"];
+  function pipelineRoleFromHash() {
+    var h = new URLSearchParams(location.hash.slice(1));
+    var r = h.get("r");
+    if (h.get("role")) return h.get("role");
+    if (r === "alerts") return "leader";
+    if (r === "queue" || r === "review") return "reviewer";
+    if (r && PASTOR_ROUTES.indexOf(r) >= 0) return "pastor";
+    return null;
+  }
+
   // Fills window.CA_PIPE from the API for the signed-in role. Resolves to the role, or null to keep sample data.
   function hydratePipeline() {
     return ready.then(function (ok) {
       if (!ok) return null;
-      if (!session) { location.replace(new URL("../public/index.html#r=signin", location.href).href); return new Promise(function () {}); }
-      var role = session.kind === "admin" ? "reviewer" : session.kind;
+      if (!session) {
+        var h = new URLSearchParams(location.hash.slice(1));
+        var r = h.get("r");
+        var dest = "/app#r=signin";
+        if (r === "alerts" || h.get("role") === "leader") {
+          dest = "/app#r=signin&staff=leader";
+          if (r && r !== "alerts") dest += "&next=" + encodeURIComponent(r);
+        } else if (r === "queue" || r === "review" || h.get("role") === "reviewer") {
+          dest = "/app#r=signin&staff=reviewer&next=" + encodeURIComponent(r || "queue");
+        }         else if (r && PASTOR_ROUTES.indexOf(r) >= 0) {
+          dest = "/app#r=signin&staff=l3";
+          if (r !== "signin") dest += "&next=" + encodeURIComponent(r);
+        }
+        location.replace(dest);
+        return new Promise(function () {});
+      }
+      var hashRole = pipelineRoleFromHash();
+      var role = session.kind === "admin" ? (hashRole || "reviewer") : session.kind;
+      if (session.kind === "admin" && hashRole) role = hashRole;
       var job = role === "pastor" ? hydratePastor() : role === "reviewer" ? hydrateReviewer() : Promise.resolve();
       return job.then(function () { return role; });
     });
@@ -172,9 +200,21 @@
     };
   }
 
+  function hasLeaderCap() {
+    if (session) {
+      if (session.kind === "leader") return true;
+      if (session.alsoRoles && session.alsoRoles.indexOf("leader") >= 0) return true;
+    }
+    try {
+      if (window.CA_PIPE && window.CA_PIPE.me && window.CA_PIPE.me.alsoLeader) return true;
+    } catch (x) {}
+    return false;
+  }
+
   window.CAApi = {
     get: whenLive("GET"), post: whenLive("POST"), put: whenLive("PUT"), patch: whenLive("PATCH"), del: whenLive("DELETE"),
     call: call, ready: ready, isLive: function () { return live; }, session: function () { return session; },
+    hasLeaderCap: hasLeaderCap,
     hydratePipeline: hydratePipeline, sendCheckin: sendCheckin,
     ack: function (id) { return call("POST", "/review/packs/" + encodeURIComponent(id) + "/ack"); },
     decide: function (id, v, note) { return call("POST", "/review/packs/" + encodeURIComponent(id) + "/decision", { packId: id, decision: DECISION[v] || v, note: note || "" }); },
@@ -184,4 +224,5 @@
     signout: function () { session = null; syncCasession(null); return call("POST", "/auth/signout").catch(function () {}); },
     deleteMe: function () { return call("DELETE", "/me").then(function () { session = null; syncCasession(null); }); }
   };
+  window.CAHasLeaderCap = function () { return window.CAApi && window.CAApi.hasLeaderCap(); };
 })();

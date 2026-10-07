@@ -191,7 +191,7 @@ const TOUR_TEXT = [
   ["Connect", "Connect your church app.", "Sign in with Planning Center. It sends activity in. Only leaders move a stage."],
   ["Review", "Leaders review with care.", "The draft is prepared. A person still decides."],
   ["Promises", null, null],
-  ["Close", "Look up a word.", "church.ai"],
+  ["Close", "Look up a word.", "Rhema.ai"],
 ];
 const MODULES = [["Dictionary", "Dictionary"], ["Question", "Monthly question"], ["Map", "Map"], ["Pastor", "Pastors"], ["Connect", "Church app"], ["Review", "Review"]];
 
@@ -218,7 +218,7 @@ function TourPiece({ captions, vertical }) {
   const prOut = 1 - MOTION.enter(CUES.Close - 0.45, 0.35)(T);
   return <div data-screen-label={`Tour ${Math.floor(T)}s`} style={{ position: "absolute", inset: 0, background: C.ink0, overflow: "hidden", fontFamily: F.b }}>
     <div style={{ position: "absolute", left: 0, top: 0, transformOrigin: "0 0", transform: `translate(${wx}px, ${wy}px) scale(${ws})`, width: wmW, textAlign: "center" }}>
-      <div style={{ ...h, fontSize: 200, lineHeight: 1, whiteSpace: "nowrap" }}>Church AI</div>
+      <div style={{ ...h, fontSize: 200, lineHeight: 1, whiteSpace: "nowrap" }}>Rhema.ai</div>
       <div style={{ fontFamily: F.b, fontSize: 48, color: C.bone8, marginTop: 24, opacity: tag }}>One word. Three faiths.</div>
     </div>
     {captions && TOUR_TEXT.filter(x => x[1]).map(([n, t, s]) => { const p = MOTION.enter(CUES[n] + 0.15, 0.6)(T) * (1 - MOTION.enter(n === "Close" ? CUES.Close + 2.6 : end(n) - 0.45, 0.35)(T));

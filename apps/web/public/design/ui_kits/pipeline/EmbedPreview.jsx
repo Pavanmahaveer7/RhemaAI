@@ -55,11 +55,11 @@ function EmbedPreview({ back, provider = "Planning Center" }) {
           <p style={{ margin: 0, font: "var(--type-body)", fontSize: 16 }}>{word ? word.def : ""}</p>
           <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>{[["Hindu", "hindu"], ["Buddhist", "buddhist"], ["Christian", "christian"]].map(([t, c]) => <span key={t} style={{ height: 26, padding: "0 10px", display: "inline-flex", alignItems: "center", borderRadius: 999, background: `var(--trad-${c}-tint)`, color: `var(--trad-${c})`, font: "600 13px/1 var(--font-body)" }}>{t}</span>)}</div>
         </EmCard>
-        {leader && <EmCard title="Monthly pack is ready" icon="package" foot="Leaders only. No names. Opens in church.ai.">
+        {leader && <EmCard title="Monthly pack is ready" icon="package" foot="Leaders only. No names. Opens in Rhema.ai.">
           <p style={{ margin: 0, font: "var(--type-body)", fontSize: 16 }}>September’s counts and encouragement for your pastors.</p>
           <div><EmButton size="sm" variant="secondary" iconRight="arrow-right" onClick={() => window.open("index.html#r=pack&pco=on", "_blank")}>Open the pack</EmButton></div>
         </EmCard>}
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 6, padding: "4px 0 2px", font: "600 13px/1 var(--font-body)", color: emHost.muted }}><EmIcon name="shield" size={16} />church.ai · counts only, never names</div>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 6, padding: "4px 0 2px", font: "600 13px/1 var(--font-body)", color: emHost.muted }}><EmIcon name="shield" size={16} />Rhema.ai · counts only, never names</div>
       </div>
     </div>
     <p style={{ font: "var(--type-source)", color: "var(--text-faint)", margin: 0 }}>The church app shows these cards. It never receives answer text, names or a pastor’s stage.</p>

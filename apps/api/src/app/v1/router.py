@@ -55,11 +55,21 @@ def _actor(request: Request) -> dict | None:
     return read_session(store, token)
 
 
+def _account_roles(store, actor: dict) -> set[str]:
+    roles = {actor["role"]}
+    account = store.accounts.get(actor.get("account_id") or "")
+    if account:
+        roles.add(account["role"])
+        for extra in account.get("also_roles") or []:
+            roles.add(extra)
+    return roles
+
+
 def _require(request: Request, roles: set[str]):
     actor = _actor(request)
     if actor is None:
         return None, _fail(request, 401, "unavailable", "unauthenticated", "Sign in to continue.")
-    if actor["role"] not in roles:
+    if not roles & _account_roles(get_store(), actor):
         return None, _fail(request, 403, "unavailable", "forbidden", "You cannot open this.")
     return actor, None
 
@@ -79,7 +89,11 @@ def _session_body(store, actor: dict) -> dict:
     account = store.accounts.get(actor.get("account_id") or "")
     if account is None:
         return {"kind": actor["role"], "displayName": None}
-    return {"kind": actor["role"], "displayName": None, "pseudonym": account["code_name"]}
+    body = {"kind": actor["role"], "displayName": None, "pseudonym": account["code_name"]}
+    also = list(account.get("also_roles") or [])
+    if also:
+        body["alsoRoles"] = also
+    return body
 
 
 def _paused(request: Request, feature: str):
@@ -1399,6 +1413,109 @@ def _admin_audit(actor: dict, action: str, account_id: str, detail: str = "") ->
             "at": _today(),
         }
     )
+
+
+def _beta_survey_summary(rows: list[dict]) -> dict:
+    total = len(rows)
+    if not total:
+        return {"total": 0}
+    answers_list = [r.get("answers") or {} for r in rows]
+    easy_vals = [a.get("easy") for a in answers_list if isinstance(a.get("easy"), (int, float))]
+    feel_counts: dict[str, int] = {}
+    for a in answers_list:
+        for w in a.get("feel") or []:
+            feel_counts[str(w)] = feel_counts.get(str(w), 0) + 1
+    top_feel = sorted(feel_counts.items(), key=lambda x: (-x[1], x[0]))[:5]
+
+    def count_answer(key: str, value) -> int:
+        return sum(1 for a in answers_list if a.get(key) == value)
+
+    return {
+        "total": total,
+        "avgEasy": round(sum(easy_vals) / len(easy_vals), 2) if easy_vals else None,
+        "usefulYes": count_answer("useful", "yes"),
+        "fairYes": count_answer("fair", "yes"),
+        "fairMostly": count_answer("fair", "mostly"),
+        "againYes": count_answer("again", "yes"),
+        "againMaybe": count_answer("again", "maybe"),
+        "withEmail": sum(1 for r in rows if r.get("email")),
+        "withBrokenNote": sum(1 for a in answers_list if (a.get("broken") or "").strip()),
+        "roles": {
+            "reader": count_answer("role", "reader"),
+            "pastor": count_answer("role", "pastor"),
+            "mentor": count_answer("role", "mentor"),
+            "church": count_answer("role", "church"),
+            "other": count_answer("role", "other"),
+        },
+        "topFeel": [{"word": w, "count": c} for w, c in top_feel],
+    }
+
+
+def _beta_survey_csv(rows: list[dict]) -> str:
+    import csv
+    import io
+
+    out = io.StringIO()
+    writer = csv.writer(out)
+    writer.writerow(
+        [
+            "day",
+            "submittedAt",
+            "from",
+            "device",
+            "lang",
+            "version",
+            "email",
+            "role",
+            "easy",
+            "useful",
+            "fair",
+            "push",
+            "feel",
+            "again",
+            "broken",
+        ]
+    )
+    for r in rows:
+        ans = r.get("answers") or {}
+        feel = ans.get("feel")
+        writer.writerow(
+            [
+                r.get("day") or "",
+                r.get("submittedAt") or "",
+                r.get("from") or "",
+                r.get("device") or "",
+                r.get("lang") or "",
+                r.get("version") or "",
+                r.get("email") or "",
+                ans.get("role") or "",
+                ans.get("easy") or "",
+                ans.get("useful") or "",
+                ans.get("fair") or "",
+                ans.get("push") or "",
+                "; ".join(feel) if isinstance(feel, list) else (feel or ""),
+                ans.get("again") or "",
+                (ans.get("broken") or "").replace("\n", " ").strip(),
+            ]
+        )
+    return out.getvalue()
+
+
+@router.get("/admin/beta-surveys")
+def admin_beta_surveys(request: Request, format: str = ""):
+    _actor_row, denied = _require(request, {"admin"})
+    if denied:
+        return denied
+    rows = list(reversed(get_store().beta_surveys))
+    if (format or "").lower() == "csv":
+        body = _beta_survey_csv(list(reversed(rows)))
+        return Response(
+            content=body,
+            media_type="text/csv; charset=utf-8",
+            headers={"Content-Disposition": 'attachment; filename="rhema-beta-feedback.csv"'},
+        )
+    summary = _beta_survey_summary(rows)
+    return {"total": summary["total"], "summary": summary, "items": rows[:200]}
 
 
 @router.get("/admin/accounts")

@@ -16,12 +16,14 @@ const nextConfig: NextConfig = {
   },
   async redirects() {
     return [
+      // Public entry points (use these in links and when sharing)
       { source: "/", destination: "/design/ui_kits/landing/index.html", permanent: false },
+      { source: "/tour", destination: "/design/ui_kits/tour/index.html", permanent: false },
       { source: "/app", destination: "/design/ui_kits/public/index.html", permanent: false },
       { source: "/pastor", destination: "/design/ui_kits/pipeline/index.html", permanent: false },
-      { source: "/tour", destination: "/design/ui_kits/tour/index.html", permanent: false },
       { source: "/beta-survey", destination: "/design/ui_kits/beta-survey.html", permanent: false },
       { source: "/screens", destination: "/design/All%20Screens.html", permanent: false },
+      { source: "/all", destination: "/design/All%20Screens.html", permanent: false },
     ];
   },
 };

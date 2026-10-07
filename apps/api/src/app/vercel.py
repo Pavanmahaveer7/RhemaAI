@@ -1,8 +1,8 @@
-"""Vercel Python entry — adds monorepo src paths, then serves FastAPI via Mangum."""
+"""Vercel serverless entry (see pyproject.toml [tool.vercel])."""
 from pathlib import Path
 import sys
 
-ROOT = Path(__file__).resolve().parents[2]
+ROOT = Path(__file__).resolve().parents[4]
 for rel in (
     "apps/api/src",
     "packages/llm-gateway/src",
@@ -10,7 +10,9 @@ for rel in (
     "packages/agents/src",
     "packages/mcp/vocab/src",
 ):
-    sys.path.insert(0, str(ROOT / rel))
+    p = str(ROOT / rel)
+    if p not in sys.path:
+        sys.path.insert(0, p)
 
 from mangum import Mangum  # noqa: E402
 from app.main import app  # noqa: E402

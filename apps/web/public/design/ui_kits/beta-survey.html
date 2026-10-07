@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>church.ai beta — quick feedback</title>
+<title>Rhema.ai beta — quick feedback</title>
 <meta name="robots" content="noindex">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Kalam&display=swap" rel="stylesheet">
@@ -58,7 +58,7 @@ textarea:hover,input:hover{border-color:var(--line2)}textarea:focus,input:focus{
 </head>
 <body>
 <main class="wrap">
-  <div class="top"><div class="brand">church<span>.ai</span><span class="beta">Beta</span></div><div class="dots" id="dots" aria-hidden="true"></div></div>
+  <div class="top"><div class="brand">Rhema<span>.ai</span><span class="beta">Beta</span></div><div class="dots" id="dots" aria-hidden="true"></div></div>
   <div id="stage" aria-live="polite"></div>
   <div class="bar" id="bar">
     <button class="ghost" id="back" type="button"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>Back</button>
@@ -194,7 +194,7 @@ async function send() {
   window.dispatchEvent(new CustomEvent("beta-survey:sent", { detail: payload }));
   if (window.parent !== window) window.parent.postMessage({ type: "beta-survey:sent", payload }, "*");
   $("bar").hidden = true; $("dots").innerHTML = "";
-  $("stage").innerHTML = `<div class="done"><div class="step">Sent</div><h1 tabindex="-1">Thank you. That really helps.</h1><p class="hand">— the church.ai team</p><div><a class="btn" href="${esc(SURVEY_CONFIG.appUrl)}">Back to the app</a></div></div>`;
+  $("stage").innerHTML = `<div class="done"><div class="step">Sent</div><h1 tabindex="-1">Thank you. That really helps.</h1><p class="hand">— the Rhema.ai team</p><div><a class="btn" href="${esc(SURVEY_CONFIG.appUrl)}">Back to the app</a></div></div>`;
   $("stage").querySelector("h1").focus();
 }
 function showErr() {

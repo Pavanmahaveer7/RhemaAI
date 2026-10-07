@@ -189,6 +189,8 @@ class ContractStore:
 
     def seed(self) -> None:
         password = os.getenv("DEMO_SIGNIN_PASSWORD", "").strip()
+        if not password and os.getenv("APP_ENV", "development") != "production":
+            password = "dev-only-change-me"
         self.password_hash = _hash(self.password_salt + password) if password else ""
         self._people()
         self._lexicon()
@@ -211,7 +213,15 @@ class ContractStore:
             if not stored.startswith("scrypt$"):
                 account["password_hash"] = hash_password(password)
 
-    def _add_account(self, account_id: str, role: str, code_name: str, real_name: str | None) -> None:
+    def _add_account(
+        self,
+        account_id: str,
+        role: str,
+        code_name: str,
+        real_name: str | None,
+        *,
+        also_roles: list[str] | None = None,
+    ) -> None:
         self.accounts[account_id] = {
             "id": account_id,
             "role": role,
@@ -220,6 +230,8 @@ class ContractStore:
             "status": "active",
             "created_at": "2026-01-15",
         }
+        if also_roles:
+            self.accounts[account_id]["also_roles"] = list(also_roles)
         if real_name and key_bytes() is not None:
             self.identities[account_id] = {"real_name": encrypt(real_name), "email": None}
         self.preferences[account_id] = {
@@ -231,7 +243,7 @@ class ContractStore:
 
     def _people(self) -> None:
         self._add_account("admin-1", "admin", "A-0100", "Ada Admin")
-        self._add_account("pastor-0233", "pastor", "P-0233", "Daniel Sarkar")
+        self._add_account("pastor-0233", "pastor", "P-0233", "Daniel Sarkar", also_roles=["leader"])
         self._add_account("reviewer-1", "reviewer", "R-0100", "Rita Reviewer")
         self._add_account("leader-1", "leader", "L-0100", "Leela Leader")
         self._add_account("leader-2", "leader", "L-0101", "Luis Leader")

@@ -137,11 +137,11 @@ function AdminScreen({ tab: initialTab }) {
   return <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
     <div style={{ minHeight: 56, display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap", padding: "8px var(--gutter-phone)", borderBottom: "1px solid var(--border-subtle)", background: "var(--surface-card)" }}>
       <a href="#r=search" style={{ font: "600 13px/1 var(--font-body)", color: "var(--text-muted)", textDecoration: "none", minHeight: 44, minWidth: 44, display: "inline-flex", alignItems: "center" }}>← App</a><span style={{ ...asLabel, color: "var(--lamp-400)" }}>Admin</span>
-      <AsSeg size="sm" label="Draft section" value={tab} onChange={setTab} options={[{ value: "accounts", label: "Accounts" }, { value: "map", label: "Ideas list" }, { value: "draftmap", label: "Ideas map" }, { value: "edits", label: "Faith review" }]} />
+      <AsSeg size="sm" label="Draft section" value={tab} onChange={setTab} options={[{ value: "accounts", label: "Accounts" }, { value: "feedback", label: "Beta feedback" }, { value: "map", label: "Ideas list" }, { value: "draftmap", label: "Ideas map" }, { value: "edits", label: "Faith review" }]} />
       <div style={{ flex: 1 }}></div>
       <a href="../pipeline/index.html#role=reviewer&r=queue" style={{ font: "600 13px/1 var(--font-body)", color: "var(--text-muted)", textDecoration: "none", minHeight: 44, display: "inline-flex", gap: 6, alignItems: "center" }}>Review queue →</a>
     </div>
-    {tab === "accounts" ? <AccountsScreen /> : tab === "draftmap" ? (window.CAGuard.lockdown() ? null : <DraftMap />) : tab === "map" ? (window.CAGuard.lockdown() ? <div style={{ maxWidth: 520, width: "100%", margin: "0 auto", padding: "32px var(--gutter-phone)" }}><AsState kind="unavailable" compact title="Unavailable" message="" /></div> : <MapDraft />) : window.CAApi && window.CAApi.isLive() ? <ExpertEditsLive /> : <ExpertEdits />}
+    {tab === "feedback" ? <window.BetaFeedbackAdmin /> : tab === "accounts" ? <AccountsScreen /> : tab === "draftmap" ? (window.CAGuard.lockdown() ? null : <DraftMap />) : tab === "map" ? (window.CAGuard.lockdown() ? <div style={{ maxWidth: 520, width: "100%", margin: "0 auto", padding: "32px var(--gutter-phone)" }}><AsState kind="unavailable" compact title="Unavailable" message="" /></div> : <MapDraft />) : window.CAApi && window.CAApi.isLive() ? <ExpertEditsLive /> : <ExpertEdits />}
   </div>;
 }
 window.AdminScreen = AdminScreen;

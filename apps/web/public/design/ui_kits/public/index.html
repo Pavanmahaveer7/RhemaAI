@@ -1,5 +1,5 @@
 <!-- @dsCard group="Public" viewport="1280x800" name="Public web" subtitle="Search, dictionary word, monthly question, ideas map" -->
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Church AI — Public</title>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Rhema.ai — App</title>
 <link rel="stylesheet" href="../../styles.css">
 <script src="../theme.js"></script>
 <style>body{margin:0}a{color:var(--lamp-400)}a:hover{color:var(--lamp-300)}::view-transition-group(ca-headword){animation-duration:420ms;animation-timing-function:cubic-bezier(.2,.8,.2,1)}::view-transition-old(root),::view-transition-new(root){animation-duration:200ms}@media (prefers-reduced-motion:reduce){::view-transition-group(*),::view-transition-old(*),::view-transition-new(*){animation:none!important}}</style>
@@ -33,6 +33,7 @@
 <script type="text/babel" src="SettingsScreen.jsx"></script>
 <script type="text/babel" src="AccountsScreen.jsx"></script>
 <script type="text/babel" src="MapDraft.jsx"></script>
+<script type="text/babel" src="BetaFeedbackAdmin.jsx"></script>
 <script type="text/babel" src="AdminScreen.jsx"></script>
 <script type="text/babel">
 const StatesBlockNA = () => { const { StateBlock } = window.ChurchAIDesignSystem_06db43; return <StateBlock kind="unavailable" title="Admins only" message="Sign in with an admin account to open accounts and draft tools." />; };
@@ -91,8 +92,9 @@ function App(){
   if (window.CAApi && window.CAApi.isLive() && window.CAApi.syncCasession) {
     window.CAApi.syncCasession(window.CAApi.session());
     const s = window.CAApi.session();
-    if (s && ["pastor", "reviewer", "leader", "mentor", "expert"].includes(s.kind) && !location.hash.includes("preview=1")) {
-      location.replace(new URL("../pipeline/index.html", location.href).href);
+    if (s && ["pastor", "reviewer", "leader", "mentor", "expert", "admin"].includes(s.kind) && !location.hash.includes("preview=1")) {
+      const pipe = s.kind === "leader" ? "/pastor#role=leader&r=alerts" : s.kind === "reviewer" || s.kind === "admin" ? "/pastor#role=reviewer&r=queue" : s.kind === "pastor" ? "/pastor#r=tracks" : "/pastor#r=home";
+      location.replace(pipe);
       return;
     }
   }

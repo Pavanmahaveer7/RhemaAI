@@ -20,7 +20,7 @@ function InRow({ name, status, statusTone, action, opens, sends, limit, dim, how
       {how && <div style={{ display: "flex", flexDirection: "column", gap: 4 }}><span style={{ font: "700 13px/1.3 var(--font-body)", color: "var(--text-strong)" }}>How does it work?</span><p style={{ font: "var(--type-body)", fontSize: 16, color: "var(--text-muted)", margin: 0, textWrap: "pretty" }}>{how}</p></div>}
       <InList label="Planning Center gets" items={opens} />
       {see}
-      <InList label="church.ai reads" items={sends} />
+      <InList label="Rhema.ai reads" items={sends} />
       <div style={{ display: "flex", gap: 8, alignItems: "flex-start", padding: 14, borderRadius: "var(--radius-md)", background: "var(--surface-raised)", font: "600 13px/1.45 var(--font-body)", color: "var(--text-strong)" }}><InIcon name="shield" size={18} color="var(--lamp-400)" style={{ marginTop: 1, flex: "none" }} />{limit}</div>
     </div>
   </InCard>;
@@ -80,7 +80,7 @@ function IntegrationsScreen({ back, pco, setPco, go, flash }) {
         <li>The connection cannot move a stage or put names on the map.</li>
       </ul>
     </InCard>
-    <p style={{ font: "var(--type-source)", color: "var(--text-faint)", margin: 0 }}>When Planning Center is connected, ministry and community rows are labelled “Planning Center”. Optional. Offered for churches in the United States that already use Planning Center. Elsewhere, church.ai works fully without it.</p>
+    <p style={{ font: "var(--type-source)", color: "var(--text-faint)", margin: 0 }}>When Planning Center is connected, ministry and community rows are labelled “Planning Center”. Optional. Offered for churches in the United States that already use Planning Center. Elsewhere, Rhema.ai works fully without it.</p>
     {phase === "away" && <div role="dialog" aria-label="Leaving for Planning Center" style={{ position: "fixed", inset: 0, zIndex: 150, background: "var(--scrim)", display: "grid", placeItems: "center", padding: 20 }}>
       <div style={{ maxWidth: 360, width: "100%", padding: 24, borderRadius: "var(--radius-xl)", background: "var(--surface-raised)", border: "1px solid var(--border-default)", boxShadow: "var(--shadow-overlay)", display: "flex", flexDirection: "column", gap: 12, alignItems: "center", textAlign: "center" }}>
         <span style={{ width: 22, height: 22, borderRadius: 99, border: "2px solid var(--lamp-400)", borderRightColor: "transparent", animation: "ca-spin .8s linear infinite" }}></span>

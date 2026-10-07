@@ -1,5 +1,5 @@
 export const metadata = {
-  title: "Church AI",
+  title: "Rhema.ai",
   description: "Phase 0 local status",
 };
 

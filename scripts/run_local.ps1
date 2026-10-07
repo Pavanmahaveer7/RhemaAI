@@ -2,7 +2,8 @@
 param(
   [int]$ApiPort = 8000,
   [int]$WebPort = 3000,
-  [switch]$Postgres
+  [switch]$Postgres,
+  [switch]$Docker
 )
 
 $root = Split-Path -Parent $PSScriptRoot
@@ -15,7 +16,8 @@ if (-not $env:CHECKIN_ENCRYPTION_KEY) { $env:CHECKIN_ENCRYPTION_KEY = "local-dev
 if (-not $env:AGENT_SERVICE_TOKEN) { $env:AGENT_SERVICE_TOKEN = "local-agent-token" }
 if (-not $env:INTEGRATION_WEBHOOK_SECRET) { $env:INTEGRATION_WEBHOOK_SECRET = "local-webhook-secret" }
 
-if ($Postgres) {
+if ($Docker -or $Postgres) {
+  if ($Docker) { docker compose up -d postgres | Out-Null; Start-Sleep -Seconds 3 }
   $env:CONTRACT_STORE = "postgres"
   if (-not $env:DATABASE_URL) { $env:DATABASE_URL = "postgresql://app:app@localhost:5432/church_ai" }
 } else {
@@ -32,7 +34,7 @@ $api = Start-Process -PassThru -WindowStyle Hidden -WorkingDirectory $root -File
 
 Start-Sleep -Seconds 3
 Write-Host "Starting Next on http://localhost:$WebPort"
-$webArgs = @("/c", "corepack enable && pnpm --filter web exec next dev -H 127.0.0.1 -p $WebPort")
+$webArgs = @("/c", "cd apps\web && set API_BASE_URL=http://127.0.0.1:$ApiPort&& npx next dev -H 127.0.0.1 -p $WebPort")
 $web = Start-Process -PassThru -WindowStyle Hidden -WorkingDirectory $root -FilePath "cmd.exe" -ArgumentList $webArgs
 
 Write-Host ""

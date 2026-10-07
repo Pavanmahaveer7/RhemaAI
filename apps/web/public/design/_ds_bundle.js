@@ -874,7 +874,7 @@ function Wordmark({
   style
 }) {
   return /*#__PURE__*/React.createElement("span", {
-    "aria-label": "church.ai",
+    "aria-label": "Rhema.ai",
     "data-wordmark": "",
     "data-no-tr": "",
     translate: "no",
@@ -885,7 +885,7 @@ function Wordmark({
       whiteSpace: "nowrap",
       ...style
     }
-  }, "church", /*#__PURE__*/React.createElement("span", {
+  }, "Rhema", /*#__PURE__*/React.createElement("span", {
     style: {
       color: "var(--lamp-400)"
     }

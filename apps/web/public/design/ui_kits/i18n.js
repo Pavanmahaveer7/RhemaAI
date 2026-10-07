@@ -6,12 +6,12 @@
   var NAMES = { hi: "Hindi", bn: "Bengali", ne: "Nepali", my: "Burmese (Myanmar)", km: "Khmer" };
   var orig = new WeakMap(), origAttr = new WeakMap(), ATTRS = ["aria-label", "placeholder", "title"];
   var pending = {}, timer = null, busy = false, applying = false, fails = 0;
-  var KEEP = { church: 1, ai: 1, "church.ai": 1, "Church AI": 1, "Planning Center": 1 };
+  var KEEP = { Rhema: 1, ai: 1, "Rhema.ai": 1, "church.ai": 1, "Church AI": 1, "Planning Center": 1 };
   function lang() { return window.CA_LANG || "en"; }
   function cache(l) { try { var c = JSON.parse(localStorage.getItem("ca_tr_" + l)) || {}; Object.keys(KEEP).forEach(function (k) { delete c[k]; }); return c; } catch (e) { return {}; } }
   function save(l, c) { try { localStorage.setItem("ca_tr_" + l, JSON.stringify(c)); } catch (e) {} }
   function wanted(s) { return s && !KEEP[s] && s.length > 1 && s.length < 220 && /[A-Za-z]{2}/.test(s) && !/^[\w.+-]+@|^https?:|^[A-Z]-\d|^[\d\s·.,:%/-]+$/.test(s); }
-  function skip(el) { return !el || el.closest("[data-no-tr],[aria-label*=\"church.ai\" i],[aria-label*=\"Church AI\"],[data-wordmark],script,style,code,pre,textarea,input,select,option,svg,[contenteditable],[lang]:not(html)"); }
+  function skip(el) { return !el || el.closest("[data-no-tr],[aria-label*=\"Rhema.ai\" i],[aria-label*=\"church.ai\" i],[aria-label*=\"Church AI\"],[data-wordmark],script,style,code,pre,textarea,input,select,option,svg,[contenteditable],[lang]:not(html)"); }
   function look(s, l, c) {
     var r = window.CAtr ? window.CAtr(s) : s; if (r !== s) return r;
     if (c[s]) return c[s];

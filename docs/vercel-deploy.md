@@ -1,71 +1,69 @@
 # Deploy on Vercel (shareable demo)
 
-Two Vercel projects: **API** (Python) + **Web** (Next.js). The UI proxies `/api/v1` to the API using `API_BASE_URL`.
+**Live (production):**
 
-## 1. Local — run everything
+| Service | URL |
+|---------|-----|
+| **Web** | https://church-ai-web.vercel.app |
+| **API** | https://church-ai-api.vercel.app |
+
+Web proxies `/api/v1/*` to the API via `API_BASE_URL`.
+
+## One-command deploy (CLI)
 
 ```powershell
 cd church-ai-stack
-.\scripts\run_local.ps1
+npx vercel login          # once
+.\scripts\vercel_deploy.ps1
 ```
 
-Optional Postgres: `.\scripts\run_local.ps1 -Postgres`
+Secrets for the demo admin password are written to **`.vercel-demo.env.local`** (gitignored). Sign in: **`A-0100`** + that password.
 
-Smoke: `$env:BASE='http://localhost:3000'; .\scripts\beta_smoke.ps1`
+Smoke after deploy:
 
-## 2. Vercel — API project
+```powershell
+$env:BASE='https://church-ai-web.vercel.app'; .\scripts\beta_smoke.ps1
+```
 
-1. [Vercel Dashboard](https://vercel.com/new) → Import **Pavanmahaveer7/RhemaAI**.
-2. **Root Directory:** `.` (repo root — `vercel.json` at root deploys FastAPI; includes `apps/api` + `packages`)
-3. **Environment variables** (Production):
+## Two Vercel projects (dashboard)
 
-| Variable | Demo value |
-|----------|------------|
-| `APP_ENV` | `production` |
-| `CONTRACT_STORE` | `memory` (quick demo; resets on cold starts) or `postgres` with Neon |
+| Project | Root directory | Config |
+|---------|----------------|--------|
+| **church-ai-api** | repo root (`church-ai-stack`) | `vercel.json`, `api/index.py`, `pyproject.toml` `[tool.vercel]` |
+| **church-ai-web** | `apps/web` | `apps/web/vercel.json`, standalone `package-lock.json` |
+
+### API env (Production)
+
+| Variable | Notes |
+|----------|--------|
+| `APP_ENV` | `production` (in `vercel.json`) |
+| `CONTRACT_STORE` | `memory` (demo) or `postgres` + `DATABASE_URL` (Neon) |
 | `LLM_MODE` | `off` |
 | `BETA_SHARED_STAFF_LOGIN` | `true` |
-| `DEMO_SIGNIN_PASSWORD` | from `scripts/generate_render_secrets.ps1` |
-| `CHECKIN_ENCRYPTION_KEY` | from script |
-| `AGENT_SERVICE_TOKEN` | from script |
-| `INTEGRATION_WEBHOOK_SECRET` | from script |
-| `DATABASE_URL` | only if `CONTRACT_STORE=postgres` ([Neon](https://vercel.com/marketplace/neon) via Vercel Storage) |
-| `APP_BASE_URL` | set **after** web deploy — your `https://….vercel.app` web URL |
+| `DEMO_SIGNIN_PASSWORD` | from `scripts/generate_render_secrets.ps1` or deploy script |
+| `CHECKIN_ENCRYPTION_KEY` | same |
+| `AGENT_SERVICE_TOKEN` | same |
+| `INTEGRATION_WEBHOOK_SECRET` | same |
+| `APP_BASE_URL` | **`https://church-ai-web.vercel.app`** (set after web deploy, redeploy API) |
 
-4. Deploy → copy the API URL (e.g. `https://rhema-api-xxx.vercel.app`).
-
-## 3. Vercel — Web project
-
-1. New project → same repo.
-2. **Root Directory:** `apps/web`
-3. **Environment:**
+### Web env (Production)
 
 | Variable | Value |
 |----------|--------|
-| `API_BASE_URL` | API project URL (no trailing slash) |
+| `API_BASE_URL` | **`https://church-ai-api.vercel.app`** (no trailing slash) |
 | `APP_ENV` | `production` |
 
-4. Deploy → open `/app`, sign in `A-0100` with your `DEMO_SIGNIN_PASSWORD`.
+## GitHub (optional)
 
-5. Update **API** project `APP_BASE_URL` to this web URL (CORS + cookies), redeploy API.
+Link GitHub in Vercel **Account → Login connections** if you want auto-deploy on push. CLI deploy works without it.
 
-## 4. CLI (optional)
+## Beta feedback
 
-```powershell
-npm i -g vercel
-cd apps/api-vercel
-vercel link
-vercel env add DEMO_SIGNIN_PASSWORD
-vercel --prod
-
-cd ../web
-vercel link
-vercel env add API_BASE_URL
-vercel --prod
-```
+- Share **`/beta-survey`** on the web URL.
+- Export: **Admin → Beta feedback** as **`A-0100`**, or see [presentation-beta.md](./presentation-beta.md).
 
 ## Notes
 
-- **Memory store** on serverless is fine for a quick link share; use **Neon + postgres** if you need data to stick.
-- Render blueprint in `render.yaml` is still supported; Vercel is an alternative host for the web + API split.
-- Do not commit `.env` or Vercel tokens.
+- **Memory store** resets on serverless cold starts; use **Neon + postgres** for persistent beta surveys.
+- **Deployment Protection** may be on in the Vercel dashboard; turn off for a fully public demo, or use `vercel curl` for checks.
+- Do not commit `.env`, `.vercel-demo.env.local`, or tokens.

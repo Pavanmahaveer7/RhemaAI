@@ -21,12 +21,13 @@ function PublicShell({ route, go, children, bleed, bare }) {
   return (
     <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", background: "var(--surface-page)" }}>
       <header style={{ position: "sticky", top: 0, zIndex: 20, height: 60, display: "flex", alignItems: "center", gap: 16, padding: "0 var(--gutter-phone)", background: "color-mix(in srgb, var(--ink-0) 82%, transparent)", backdropFilter: "var(--blur-bar)", WebkitBackdropFilter: "var(--blur-bar)", borderBottom: "1px solid var(--border-subtle)" }}>
-        <button onClick={() => go("search")} aria-label="Church AI home" style={{ background: "none", border: 0, padding: 0, cursor: "pointer", minHeight: 44, display: "flex", alignItems: "center" }}><Wordmark size={20} /></button>
+        <button onClick={() => go("search")} aria-label="Rhema.ai home" style={{ background: "none", border: 0, padding: 0, cursor: "pointer", minHeight: 44, display: "flex", alignItems: "center" }}><Wordmark size={20} /></button>
         <div style={{ flex: 1 }} />
         {wide && !lk && <nav aria-label="Primary" style={{ display: "flex", gap: 4 }}>
           {nav.map(([id, label]) => <button key={id} onClick={() => goTab(id)} aria-current={top === id ? "page" : undefined} style={{ height: 40, padding: "0 14px", borderRadius: 999, border: 0, cursor: "pointer", font: "600 13px/1 var(--font-body)", background: top === id ? "var(--surface-raised)" : "transparent", color: top === id ? "var(--text-strong)" : "var(--text-muted)" }}>{label}</button>)}
         </nav>}
         {!bare && (signedIn || wide) && <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+          {wide && !lk && <ShButton size="sm" variant="ghost" onClick={() => { location.href = "/app#r=signin&staff=l3"; }}>Staff sign in</ShButton>}
           {!signedIn && <ShButton size="sm" variant="secondary" onClick={() => go("signin")}>Sign in</ShButton>}
           {session && session.kind === "admin" && wide && <ShButton size="sm" variant="ghost" onClick={() => go("admin")}>Admin</ShButton>}
         </div>}

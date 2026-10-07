@@ -39,7 +39,7 @@ async def lifespan(app: FastAPI):
     yield
 
 
-app = FastAPI(title="Church AI API", version="0.1.0", lifespan=lifespan)
+app = FastAPI(title="Rhema.ai API", version="0.1.0", lifespan=lifespan)
 
 
 def _request_id(request: Request) -> str:

@@ -1,12 +1,19 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "installCommand": "pip install -r apps/api-vercel/requirements.txt",
+  "env": {
+    "APP_ENV": "production",
+    "CONTRACT_STORE": "memory",
+    "LLM_MODE": "off",
+    "BETA_SHARED_STAFF_LOGIN": "true",
+    "AUTH_SIGNIN_RATE_PER_HOUR": "10",
+    "AUTH_SIGNUP_RATE_PER_HOUR": "5"
+  },
   "functions": {
-    "apps/api-vercel/index.py": {
+    "api/index.py": {
       "maxDuration": 60,
       "memory": 1024,
       "includeFiles": "apps/api/**,packages/**"
     }
-  },
-  "rewrites": [{ "source": "/(.*)", "destination": "/apps/api-vercel/index.py" }]
+  }
 }

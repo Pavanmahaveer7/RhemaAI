@@ -1,5 +1,5 @@
 window.CA_PIPE = {
-me: { name: "Daniel Sarkar", first: "Daniel", pid: "P-0233", church: "Living Water Fellowship, Mirpur", country: "Bangladesh", region: "Dhaka Division", stage: 1, mentor: "Pastor Samuel Roy", mentorSince: "Jan 2026", mentorNote: { id: "2026-09-28", text: "I read your notes this week. You kept visiting even when you were tired, and that matters. I am praying for your Sunday.", date: "Sep 28" }, since: "In the pipeline since Jan 2026",
+me: { name: "Daniel Sarkar", first: "Daniel", pid: "P-0233", alsoLeader: true, church: "Living Water Fellowship, Mirpur", country: "Bangladesh", region: "Dhaka Division", stage: 1, mentor: "Pastor Samuel Roy", mentorSince: "Jan 2026", mentorNote: { id: "2026-09-28", text: "I read your notes this week. You kept visiting even when you were tired, and that matters. I am praying for your Sunday.", date: "Sep 28" }, since: "With us since Jan 2026",
  history: [["Sep 2026", "Leadership review: Continue in Training"], ["Jun 2026", "Moved to Training after review"], ["Jan 2026", "Welcomed as a candidate"]] },
 tracks: {
  training: [{ t: "Foundations of Scripture", p: 100, cert: true }, { t: "Pastoral care basics", p: 60 }, { t: "Preaching workshop", p: 20 }],

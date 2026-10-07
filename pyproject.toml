@@ -16,3 +16,6 @@ testpaths = ["apps/api/tests"]
 
 [tool.uv.workspace]
 members = ["apps/api", "packages/llm-gateway", "packages/guardrails", "packages/agents", "packages/mcp/vocab"]
+
+[tool.vercel]
+entrypoint = "api.index:app"
