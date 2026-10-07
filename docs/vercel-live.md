@@ -66,10 +66,16 @@ Look for `"Database","status":"up"` (not `degraded`).
 
 Submit a test survey at `/beta-survey`, then check **Admin → Beta feedback** as **A-0100**.
 
-## GitHub auto-deploy (optional)
+## GitHub auto-deploy
 
-1. [Connect GitHub to Vercel](https://vercel.com/account/login-connections).
-2. Import **Pavanmahaveer7/RhemaAI** twice (or one monorepo with two projects):
+```powershell
+cd "C:\Users\pavan.singara\Downloads\church-ai-platform-repo\church-ai-stack"
+.\scripts\vercel_git_connect.ps1
+```
+
+1. Browser opens → [Login connections](https://vercel.com/account/login-connections) → connect **GitHub** to Vercel.
+2. Press Enter → script links **Pavanmahaveer7/RhemaAI** to both projects.
+3. Dashboard → each project → **Settings → General → Root Directory**:
 
 | Project | Root directory |
 |---------|----------------|
