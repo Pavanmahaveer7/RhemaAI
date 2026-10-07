@@ -1,7 +1,7 @@
 # Deploy API + Web to Vercel (production). Requires: npx vercel login OR $env:VERCEL_TOKEN
 param(
-  [string]$ApiProject = "church-ai-api",
-  [string]$WebProject = "church-ai-web",
+  [string]$ApiProject = "rhema-ai-api",
+  [string]$WebProject = "rhema-ai-web",
   [string]$ApiBaseUrl = $env:VERCEL_API_BASE_URL
 )
 

@@ -1,11 +1,13 @@
-# Deploy on Vercel (shareable demo)
+# Deploy on Vercel (Rhema.ai)
 
-**Live (production):**
+**Live (full app):**
 
-| Service | URL |
-|---------|-----|
-| **Web** | https://church-ai-web.vercel.app |
-| **API** | https://church-ai-api.vercel.app |
+| Service | Vercel project | URL |
+|---------|----------------|-----|
+| **Web** | **rhema-ai-web** | https://church-ai-web.vercel.app |
+| **API** | **rhema-ai-api** | https://church-ai-api.vercel.app |
+
+Static preview on **GitHub Pages**: [github-pages.md](./github-pages.md).
 
 Web proxies `/api/v1/*` to the API via `API_BASE_URL`.
 
@@ -29,8 +31,8 @@ $env:BASE='https://church-ai-web.vercel.app'; .\scripts\beta_smoke.ps1
 
 | Project | Root directory | Config |
 |---------|----------------|--------|
-| **church-ai-api** | repo root (`church-ai-stack`) | `vercel.json`, `api/index.py`, `pyproject.toml` `[tool.vercel]` |
-| **church-ai-web** | `apps/web` | `apps/web/vercel.json`, standalone `package-lock.json` |
+| **rhema-ai-api** | repo root (`church-ai-stack`) | `vercel.json`, `api/index.py`, `pyproject.toml` `[tool.vercel]` |
+| **rhema-ai-web** | `apps/web` | `apps/web/vercel.json`, standalone `package-lock.json` |
 
 ### API env (Production)
 
@@ -53,9 +55,13 @@ $env:BASE='https://church-ai-web.vercel.app'; .\scripts\beta_smoke.ps1
 | `API_BASE_URL` | **`https://church-ai-api.vercel.app`** (no trailing slash) |
 | `APP_ENV` | `production` |
 
-## GitHub (optional)
+## GitHub auto-deploy (Vercel)
 
-Link GitHub in Vercel **Account → Login connections** if you want auto-deploy on push. CLI deploy works without it.
+1. [Vercel → Account → Login connections → GitHub](https://vercel.com/account/login-connections)
+2. Open each project (**rhema-ai-api**, **rhema-ai-web**) → **Git** → connect **Pavanmahaveer7/RhemaAI** (same root dirs as above).
+3. Pushes to **`main`** deploy production after Git is linked.
+
+Until GitHub is connected, use **`.\scripts\vercel_deploy.ps1`** or push triggers **GitHub Pages** only (see github-pages.md).
 
 ## Beta feedback
 
