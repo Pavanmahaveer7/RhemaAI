@@ -44,8 +44,10 @@ Sample data: `ui_kits/pipeline/data.js` (`window.CA_PIPE`).
 ## Marketing
 | Screen | File | Notes |
 |---|---|---|
-| Landing | `ui_kits/landing/index.html`, `Landing.jsx` | header Sign in / Get started; inline tour; footer links |
-| Tour video | `ui_kits/tour/index.html` | `#layout=16:9\|9:16`, `#bare=1` hides the timeline |
+| Landing | `ui_kits/landing/index.html`, `Landing.jsx` | **Get started** → `/tour?from=landing`; then tour **Continue** → `#r=intro&step=1` |
+| Tour video | `ui_kits/tour/index.html` | `?from=landing` shows continue bar; `#layout=16:9\|9:16`; `#bare=1` / iframe = no chrome |
+
+Canonical URLs and first-time journey: [../docs/screen-flow.md](../docs/screen-flow.md).
 
 ## Shared scripts (load order matters)
 `../styles.css` → `guard.js` (offline, alert, demo, plain page) → `confirm.js` (typed confirm, Why, Helped, crisis line, language picker, mic, save image) → `i18n.js` (interface translation) → screen files.

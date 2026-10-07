@@ -2,8 +2,8 @@
 <link rel="stylesheet" href="../../styles.css">
 <style>html,body{margin:0;height:100%;background:#060806}a{color:#CFDA5C}a:hover{color:#E1E899}</style>
 <script>window.OM_SCENES = '[{"name":"Opening","dur":3.5,"desc":"Rhema.ai title and One word. Three faiths."},{"name":"Dictionary","dur":7,"desc":"karma is typed and the word page builds with three tradition labels"},{"name":"Question","dur":6,"desc":"The monthly question is answered and sent with no name"},{"name":"Map","dur":6.5,"desc":"The map moves from August to September; new ideas turn lime"},{"name":"Pastor","dur":7,"desc":"Pastor home with the season ring and a daily check-in"},{"name":"Connect","dur":7,"desc":"Sign in to Planning Center; the row turns Connected; the other app is not available yet"},{"name":"Review","dur":7,"desc":"The review is prepared, then held for a person to decide"},{"name":"Promises","dur":8,"desc":"Four promises: no names, sources, a person decides, works offline"},{"name":"Close","dur":5,"desc":"Look up a word, then back to the title"}]';</script>
-<script>(function(){var b=/(^|[#&])bare=1/.test(location.hash);try{b=b||window.self!==window.top}catch(e){b=true}window.TOUR_BARE=b;if(b)document.documentElement.classList.add('tour-bare')})();</script>
-<style>.tour-bare [data-omelette-chrome],.tour-bare .tour-home{display:none!important}.tour-pp{position:fixed;right:16px;bottom:16px;z-index:60;width:44px;height:44px;border-radius:999px;border:1px solid rgba(243,247,238,.18);background:rgba(11,15,12,.55);color:#F3F7EE;display:grid;place-items:center;cursor:pointer;opacity:.35;transition:opacity .2s ease,transform .12s ease,background .2s ease}.tour-pp:hover,.tour-pp:focus-visible{opacity:1;background:rgba(11,15,12,.8)}.tour-pp:active{transform:scale(.94)}.tour-pp:focus-visible{outline:2px solid #CFDA5C;outline-offset:2px}body:hover .tour-pp{opacity:.8}</style>
+<script>(function(){var b=/(^|[#&])bare=1/.test(location.hash);try{b=b||window.self!==window.top}catch(e){b=true}window.TOUR_BARE=b;if(b)document.documentElement.classList.add('tour-bare');var fl=new URLSearchParams(location.search).get('from');if(fl==='landing'&&!b)document.documentElement.classList.add('tour-from-landing')})();</script>
+<style>.tour-bare [data-omelette-chrome],.tour-bare .tour-home{display:none!important}.tour-from-landing [data-omelette-chrome]{display:none!important}.tour-pp{position:fixed;right:16px;bottom:16px;z-index:60;width:44px;height:44px;border-radius:999px;border:1px solid rgba(243,247,238,.18);background:rgba(11,15,12,.55);color:#F3F7EE;display:grid;place-items:center;cursor:pointer;opacity:.35;transition:opacity .2s ease,transform .12s ease,background .2s ease}.tour-pp:hover,.tour-pp:focus-visible{opacity:1;background:rgba(11,15,12,.8)}.tour-pp:active{transform:scale(.94)}.tour-pp:focus-visible{outline:2px solid #CFDA5C;outline-offset:2px}body:hover .tour-pp{opacity:.8}</style>
 <script>window.OM_PLAYBACK = '{"mode":"loop"}';</script>
 <script>const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{"motionEditor":true,"captions":true,"layout":"16:9"}/*EDITMODE-END*/;</script>
 <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
@@ -19,15 +19,24 @@ function App() {
   const [t, setTweak] = useTweaks(TWEAK_DEFAULTS);
   const layout = new URLSearchParams(location.hash.slice(1)).get("layout") || t.layout;
   const V = layout === "9:16";
+  const fromLanding = new URLSearchParams(location.search).get("from") === "landing" && !window.TOUR_BARE;
   return <>
     <CompositionStage key={layout} width={V ? 1080 : 1920} height={V ? 1920 : 1080} scenes={window.OM_SCENES} playback={window.OM_PLAYBACK} bg="#0B0F0C"><TourPiece captions={t.captions} vertical={V} /></CompositionStage>
-    <TweaksPanel>
+    {!fromLanding && <TweaksPanel>
       <TweakToggle label="Motion editor" value={t.motionEditor} onChange={v => setTweak("motionEditor", v)} />
       <TweakRadio label="Layout" value={t.layout} options={["16:9", "9:16"]} onChange={v => setTweak("layout", v)} />
       <TweakToggle label="Captions" value={t.captions} onChange={v => setTweak("captions", v)} />
-    </TweaksPanel>
+    </TweaksPanel>}
     {window.TOUR_BARE && <TourPause />}
+    {fromLanding && <TourContinue />}
   </>;
+}
+function TourContinue() {
+  const btn = (primary) => ({ minHeight: 44, padding: "0 18px", borderRadius: 999, display: "inline-flex", alignItems: "center", font: "700 15px/1 system-ui,sans-serif", textDecoration: "none", border: primary ? "0" : "1px solid rgba(243,247,238,.22)", background: primary ? "#CFDA5C" : "transparent", color: primary ? "#0B0F0C" : "#F3F7EE" });
+  return <div role="region" aria-label="Next step" style={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 55, padding: "14px 16px calc(14px + env(safe-area-inset-bottom))", display: "flex", gap: 10, justifyContent: "center", flexWrap: "wrap", background: "rgba(6,8,6,.94)", borderTop: "1px solid rgba(243,247,238,.12)" }}>
+    <a href="/app#r=intro&step=1" style={btn(true)}>Continue into the app</a>
+    <a href="/app#guest=1&r=search" style={btn(false)}>Skip — try the dictionary</a>
+  </div>;
 }
 function TourPause() {
   const rm = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;

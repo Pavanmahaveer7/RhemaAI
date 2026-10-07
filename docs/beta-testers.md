@@ -6,9 +6,12 @@ Send testers these links only. **Do not** share staff codes or `DEMO_SIGNIN_PASS
 
 | Link | Purpose |
 |------|---------|
-| https://rhema-ai-web.vercel.app/ | Landing + dictionary |
-| https://rhema-ai-web.vercel.app/app | Full public app (guest or create account) |
+| https://rhema-ai-web.vercel.app/ | **Start here** — landing page |
+| https://rhema-ai-web.vercel.app/tour?from=landing | One-minute product tour (after **Get started**) |
+| https://rhema-ai-web.vercel.app/app | Public app — dictionary, monthly question, map |
 | https://rhema-ai-web.vercel.app/beta-survey | **Beta feedback** (~1 min, no account) |
+
+Recommended path: **Home → Tour → App → Survey**. Details: [screen-flow.md](./screen-flow.md).
 
 ## What testers can do
 

@@ -3,7 +3,8 @@ const { TextField: LpField, Button: LpButton, Icon: LpIcon, Wordmark: LpWordmark
 const lpReduce = () => document.documentElement.hasAttribute("data-reduce-motion") || matchMedia("(prefers-reduced-motion: reduce)").matches;
 const lpTrad = { Hindu: "hindu", Buddhist: "buddhist", Christian: "christian" };
 const lpApp = "/app";
-const lpTour = (layout) => `/tour#layout=${layout}`;
+const lpTourFull = (layout) => `/tour?from=landing#layout=${layout}`;
+const lpOnboard = `${lpApp}#r=intro&step=1`;
 const lpLex = t => window.CA_DATA.lexicon.find(x => x.term === t);
 
 const lpEveryone = `${lpApp}#guest=1&r=search`;
@@ -60,8 +61,8 @@ function TourCard({ wide }) {
       <span style={{ font: "var(--type-source)", color: "var(--text-muted)" }}>No sound.</span>
     </div>
     <div style={{ width: wide ? "100%" : "min(100%, 420px)", alignSelf: "center", aspectRatio: wide ? "16 / 9" : "9 / 16", maxHeight: wide ? "none" : "78svh", borderRadius: "var(--radius-lg)", overflow: "hidden", border: "1px solid var(--border-subtle)", background: "var(--ink-0)" }}>
-      {load ? <iframe title="Rhema.ai one-minute tour" src={lpTour(wide ? "16:9" : "9:16")} loading="lazy" style={{ width: "100%", height: "100%", border: 0, display: "block" }}></iframe>
-      : <a href={lpTour(wide ? "16:9" : "9:16")} className="lp-card" style={{ width: "100%", height: "100%", display: "grid", placeItems: "center", textDecoration: "none", color: "var(--text-strong)" }}><span style={{ display: "inline-flex", gap: 10, alignItems: "center", font: "700 18px/1 var(--font-body)" }}><span aria-hidden="true" style={{ width: 56, height: 56, borderRadius: 99, display: "grid", placeItems: "center", background: "var(--lamp-400)", color: "var(--ink-0)" }}><LpIcon name="play" size={24} /></span>Play the tour</span></a>}
+      {load ? <iframe title="Rhema.ai one-minute tour" src={`/tour?from=landing-embed#layout=${wide ? "16:9" : "9:16"}&bare=1`} loading="lazy" style={{ width: "100%", height: "100%", border: 0, display: "block" }}></iframe>
+      : <a href={lpTourFull(wide ? "16:9" : "9:16")} className="lp-card" style={{ width: "100%", height: "100%", display: "grid", placeItems: "center", textDecoration: "none", color: "var(--text-strong)" }}><span style={{ display: "inline-flex", gap: 10, alignItems: "center", font: "700 18px/1 var(--font-body)" }}><span aria-hidden="true" style={{ width: 56, height: 56, borderRadius: 999, display: "grid", placeItems: "center", background: "var(--lamp-400)", color: "var(--ink-0)" }}><LpIcon name="play" size={24} /></span>Play the tour</span></a>}
     </div>
   </section>;
 }
@@ -129,7 +130,7 @@ function Landing() {
   const [q, setQ] = React.useState("");
   React.useEffect(() => { const f = () => setSolid(scrollY > 8); addEventListener("scroll", f, { passive: true }); return () => removeEventListener("scroll", f); }, []);
   const submit = ev => { ev.preventDefault(); const t = q.trim().toLowerCase(); if (!t) return; location.href = lpLex(t) ? `${lpApp}#r=term&t=${encodeURIComponent(t)}` : `${lpApp}#r=search`; };
-  const nav = [["Dictionary", "#top"], ...(lk ? [] : [["This month", "#month"]]), ["Tour", lpTour(wide ? "16:9" : "9:16")], ["Staff sign in", lpStaffSignIn]];
+  const nav = [["Dictionary", "#top"], ...(lk ? [] : [["This month", "#month"]]), ["Tour", lpTourFull(wide ? "16:9" : "9:16")], ["Staff sign in", lpStaffSignIn]];
   const hdrLink = { height: 44, padding: "0 10px", display: "inline-flex", alignItems: "center", font: "600 15px/1 var(--font-body)", textDecoration: "none", whiteSpace: "nowrap" };
   return <>
     <header style={{ position: "sticky", top: 0, zIndex: 30, height: 64, display: "flex", alignItems: "center", gap: 8, padding: "0 var(--gutter-phone)", background: solid ? "color-mix(in srgb, var(--ink-0) 94%, transparent)" : "transparent", borderBottom: "1px solid " + (solid ? "var(--border-subtle)" : "transparent"), backdropFilter: solid ? "blur(10px)" : "none", transition: "background 200ms var(--ease-out), border-color 200ms var(--ease-out)" }}>
@@ -138,13 +139,14 @@ function Landing() {
       {wide && <nav aria-label="Primary" style={{ display: "flex", gap: 4 }}>{nav.map(([l, h]) => <a key={l} href={h} className="lp-nav" style={{ ...hdrLink, borderRadius: 999 }}>{l}</a>)}</nav>}
       {!wide && <a href={lpStaffSignIn} className="lp-nav" style={{ ...hdrLink, color: "var(--text-body)" }}>Staff sign in</a>}
       <a href={`${lpApp}#r=signin`} className="lp-nav" style={{ ...hdrLink, color: "var(--text-muted)" }}>Sign in</a>
-      <LpButton size="sm" variant={solid ? "accent" : "secondary"} onClick={() => location.href = `${lpApp}#r=intro&step=1`}>Get started</LpButton>
+      <LpButton size="sm" variant={solid ? "accent" : "secondary"} onClick={() => { location.href = lpTourFull(wide ? "16:9" : "9:16"); }}>Get started</LpButton>
     </header>
     <main id="top">
       <section style={{ maxWidth: 1180, margin: "0 auto", padding: wide ? "40px var(--gutter-phone) 24px" : "20px var(--gutter-phone) 24px", display: "flex", flexDirection: "column", alignItems: "center", gap: wide ? 40 : 32 }}>
         <div style={{ display: "flex", flexDirection: "column", gap: 20, maxWidth: 720, width: "100%", alignItems: wide ? "center" : "stretch", textAlign: wide ? "center" : "left" }}>
           <h1 style={{ margin: 0, font: "800 clamp(52px,13vw,96px)/.92 var(--font-display)", letterSpacing: "var(--tracking-display)", color: "var(--text-strong)", textWrap: "balance" }}>One word. Three faiths.</h1>
           <p style={{ margin: 0, font: "var(--type-body)", fontSize: 18, lineHeight: 1.5, color: "var(--text-body)", textWrap: "pretty" }}>Look up a word to see what it means in Hindu, Buddhist and Christian traditions. Free. Side by side, with sources, so the same word is not mistaken for the same idea. No account.</p>
+          <p style={{ margin: 0, font: "var(--type-source)", color: "var(--text-muted)" }}>New here? <a href={lpTourFull(wide ? "16:9" : "9:16")} className="lp-link" style={{ fontWeight: 700, color: "var(--lamp-400)" }}>Watch the one-minute tour</a>, then continue into the app.</p>
           <form onSubmit={submit} style={{ display: "flex", flexDirection: wide ? "row" : "column", gap: 10, alignItems: wide ? "flex-end" : "stretch", width: "100%", maxWidth: 560, textAlign: "left" }}>
             <div style={{ flex: 1 }}><LpField label="Word" size="lg" icon="search" type="search" placeholder="karma" value={q} onChange={e => setQ(e.target.value)} autoComplete="off" /></div>
             <LpButton type="submit" variant="accent" size="lg">Search a word</LpButton>
@@ -168,7 +170,7 @@ function Landing() {
     <footer style={{ borderTop: "1px solid var(--border-subtle)", padding: "24px var(--gutter-phone) 32px" }}>
       <div style={{ maxWidth: 1180, margin: "0 auto", display: "flex", gap: 16, flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", font: "var(--type-source)", color: "var(--text-muted)" }}>
         <span>We map ideas, never people.</span>
-        <nav aria-label="Footer" style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>{[["All screens", "/screens"], ["Staff sign in", lpStaffSignIn], ["Dictionary", lpEveryone], ["Beta feedback", "/beta-survey?from=landing-footer"], ["What we store", `${lpApp}#r=settings&as=guest`]].map(([l, h]) => <a key={l} href={h} className="lp-nav" style={{ minHeight: 44, display: "inline-flex", alignItems: "center", textDecoration: "none" }}>{l}</a>)}<a href={`${lpApp}#r=status`} className="lp-nav" style={{ minHeight: 44, display: "inline-flex", alignItems: "center", textDecoration: "none" }}>System status</a></nav>
+        <nav aria-label="Footer" style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>{[["Tour", lpTourFull("16:9")], ["Continue to app", lpOnboard], ["Dictionary", lpEveryone], ["Beta feedback", "/beta-survey?from=landing-footer"], ["Staff sign in", lpStaffSignIn], ["All screens", "/screens"]].map(([l, h]) => <a key={l} href={h} className="lp-nav" style={{ minHeight: 44, display: "inline-flex", alignItems: "center", textDecoration: "none" }}>{l}</a>)}<a href={`${lpApp}#r=settings&as=guest`} className="lp-nav" style={{ minHeight: 44, display: "inline-flex", alignItems: "center", textDecoration: "none" }}>What we store</a></nav>
       </div>
     </footer>
   </>;

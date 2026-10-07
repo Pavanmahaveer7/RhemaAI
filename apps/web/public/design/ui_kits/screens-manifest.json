@@ -23,7 +23,7 @@
     { "id": "settings", "name": "Settings", "url": "public/index.html#r=settings&as=member", "expect": "Settings|guest|account" },
     { "id": "states", "name": "States", "url": "public/index.html#r=states", "expect": "." },
     { "id": "admin-accounts", "name": "Admin accounts", "url": "public/index.html#r=admin&tab=accounts&as=admin", "expect": "Admin|account" },
-    { "id": "admin-feedback", "name": "Admin beta feedback", "url": "public/index.html#r=admin&tab=feedback&as=admin", "expect": "Beta feedback|feedback" },
+    { "id": "admin-feedback", "name": "Admin beta feedback", "url": "public/index.html#r=admin&tab=feedback&as=admin", "expect": "Admins only|Beta feedback" },
     { "id": "admin-map", "name": "Admin map draft", "url": "public/index.html#r=admin&tab=map&as=admin", "expect": "Admin|map|draft" },
     { "id": "admin-draftmap", "name": "Admin draft map", "url": "public/index.html#r=admin&tab=draftmap&as=admin", "expect": "Admin|draft" },
     { "id": "admin-faith", "name": "Admin faith review", "url": "public/index.html#r=admin&tab=edits&as=admin", "expect": "Admin|Faith|review" },
