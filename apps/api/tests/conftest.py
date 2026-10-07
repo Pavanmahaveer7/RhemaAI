@@ -12,6 +12,7 @@ from app.v1.store import reset_store
 
 
 @pytest.fixture(autouse=True)
-def fresh_contract_store():
+def fresh_contract_store(tmp_path, monkeypatch):
+    monkeypatch.setenv("FEEDBACK_CSV_PATH", str(tmp_path / "rhema-beta-feedback.csv"))
     reset_store()
     yield

@@ -20,3 +20,6 @@ evals/results/
 
 .vercel
 .env*
+data/*.csv
+!data/*.example.csv
+data/*.csv.tmp

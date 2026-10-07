@@ -90,7 +90,18 @@ def _cors_origins() -> list[str]:
     extra = [x.strip().rstrip("/") for x in os.getenv("CORS_ORIGINS", "").split(",") if x.strip()]
     if os.getenv("APP_ENV") == "production":
         return list({o for o in (base, *extra) if o})
-    return list({base, "http://localhost:3000", "http://127.0.0.1:3000", *extra})
+    return list(
+        {
+            base,
+            "http://localhost:3000",
+            "http://127.0.0.1:3000",
+            "http://localhost:3010",
+            "http://127.0.0.1:3010",
+            "http://localhost:3030",
+            "http://127.0.0.1:3030",
+            *extra,
+        }
+    )
 
 
 app.add_middleware(

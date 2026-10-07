@@ -36,11 +36,12 @@ if ($Docker -or $Postgres) {
   $env:CONTRACT_STORE = "memory"
   Remove-Item Env:DATABASE_URL -ErrorAction SilentlyContinue
 }
+if (-not $env:FEEDBACK_CSV_PATH) { $env:FEEDBACK_CSV_PATH = Join-Path $root "data\rhema-beta-feedback.csv" }
 
 $env:API_BASE_URL = "http://127.0.0.1:$ApiPort"
 
 Write-Host "Starting API on http://127.0.0.1:$ApiPort (CONTRACT_STORE=$env:CONTRACT_STORE)"
-$apiEnv = "set DEMO_SIGNIN_PASSWORD=dev-only-change-me&& set APP_ENV=development&& set CONTRACT_STORE=$env:CONTRACT_STORE&& set STAFF_PHONE_OTP_DEMO=true&& set STAFF_PHONE_REGISTER=true&& set BETA_SHARED_STAFF_LOGIN=true&& set LLM_MODE=off&& "
+$apiEnv = "set DEMO_SIGNIN_PASSWORD=dev-only-change-me&& set APP_ENV=development&& set CONTRACT_STORE=$env:CONTRACT_STORE&& set FEEDBACK_CSV_PATH=$env:FEEDBACK_CSV_PATH&& set STAFF_PHONE_OTP_DEMO=true&& set STAFF_PHONE_REGISTER=true&& set BETA_SHARED_STAFF_LOGIN=true&& set LLM_MODE=off&& "
 if ($env:CONTRACT_STORE -eq "postgres" -and $env:DATABASE_URL) {
   $apiEnv += "set DATABASE_URL=$($env:DATABASE_URL)&& "
 } elseif ($env:CONTRACT_STORE -eq "memory") {
@@ -66,6 +67,7 @@ Write-Host "  http://127.0.0.1:$ApiPort/api/v1/status  (API direct)"
 Write-Host "Sign-in: A-0100 / dev-only-change-me (default); staff P-0233 same password"
 Write-Host "Different ports: .\scripts\run_local_demo.ps1  (web :3010, API :8010)"
 Write-Host "  or: .\scripts\run_local.ps1 -WebPort 3010 -ApiPort 8010"
+Write-Host "Feedback CSV: $env:FEEDBACK_CSV_PATH"
 Write-Host "Feedback map: docs/feedback-where.md"
 Write-Host ""
 Write-Host "API PID $($api.Id)  Web PID $($web.Id)  - stop: Stop-Process -Id $($api.Id),$($web.Id)"

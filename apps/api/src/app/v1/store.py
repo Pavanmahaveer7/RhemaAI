@@ -192,6 +192,7 @@ class ContractStore:
         self._saved: dict[str, str] = {}
         self._lock = threading.Lock()
         self.seed()
+        self._hydrate_surveys_from_csv()
 
     def seed(self) -> None:
         password = os.getenv("DEMO_SIGNIN_PASSWORD", "").strip()
@@ -226,6 +227,19 @@ class ContractStore:
                 "meToo": 1,
             },
         ]
+
+    def _hydrate_surveys_from_csv(self) -> None:
+        """Reload surveys from the live CSV after a restart when Postgres is off."""
+        if self.beta_surveys:
+            return
+        try:
+            from app.v1.feedback_csv import load_surveys
+
+            loaded = load_surveys()
+        except Exception:
+            return
+        if loaded:
+            self.beta_surveys = loaded
 
     def _beta_shared_staff_login(self) -> bool:
         return os.getenv("BETA_SHARED_STAFF_LOGIN", "").strip().lower() in ("1", "true", "yes")

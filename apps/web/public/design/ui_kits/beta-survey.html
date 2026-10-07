@@ -194,7 +194,7 @@ async function send() {
   window.dispatchEvent(new CustomEvent("beta-survey:sent", { detail: payload }));
   if (window.parent !== window) window.parent.postMessage({ type: "beta-survey:sent", payload }, "*");
   $("bar").hidden = true; $("dots").innerHTML = "";
-  $("stage").innerHTML = `<div class="done"><div class="step">Sent</div><h1 tabindex="-1">Thank you. That really helps.</h1><p class="hand">— the Rhema.ai team</p><div><a class="btn" href="${esc(SURVEY_CONFIG.appUrl)}">Back to the app</a></div></div>`;
+  $("stage").innerHTML = `<div class="done"><div class="step">Sent</div><h1 tabindex="-1">Thank you. That really helps.</h1><p class="note">Your answers were saved to our feedback file.</p><p class="hand">— the Rhema.ai team</p><div><a class="btn" href="${esc(SURVEY_CONFIG.appUrl)}">Back to the app</a></div></div>`;
   $("stage").querySelector("h1").focus();
 }
 function showErr() {

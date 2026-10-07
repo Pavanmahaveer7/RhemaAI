@@ -25,6 +25,7 @@ from app.v1.staff_phone import (
     staff_phone_register_enabled,
     verify_otp,
 )
+from app.v1.feedback_csv import surveys_to_csv, write_surveys
 from app.v1.store import (
     PAUSES_WHEN_ON,
     answer_device_hash,
@@ -1461,18 +1462,18 @@ async def beta_survey(request: Request):
     email = str(body.get("email") or "").strip()
     if email and len(email) > 120:
         return _fail(request, 422, "error", "validation", "That email doesn't look right.")
-    store.beta_surveys.append(
-        {
-            "version": str(body.get("version") or "")[:32],
-            "submittedAt": str(body.get("submittedAt") or "")[:40],
-            "from": str(body.get("from") or "")[:200],
-            "device": str(body.get("device") or "")[:16],
-            "lang": str(body.get("lang") or "")[:16],
-            "answers": answers,
-            "email": email or None,
-            "day": _today(),
-        }
-    )
+    row = {
+        "version": str(body.get("version") or "")[:32],
+        "submittedAt": str(body.get("submittedAt") or "")[:40],
+        "from": str(body.get("from") or "")[:200],
+        "device": str(body.get("device") or "")[:16],
+        "lang": str(body.get("lang") or "")[:16],
+        "answers": answers,
+        "email": email or None,
+        "day": _today(),
+    }
+    store.beta_surveys.append(row)
+    write_surveys(store.beta_surveys)
     return Response(status_code=204)
 
 
@@ -1636,53 +1637,7 @@ def _beta_survey_summary(rows: list[dict]) -> dict:
 
 
 def _beta_survey_csv(rows: list[dict]) -> str:
-    import csv
-    import io
-
-    out = io.StringIO()
-    writer = csv.writer(out)
-    writer.writerow(
-        [
-            "day",
-            "submittedAt",
-            "from",
-            "device",
-            "lang",
-            "version",
-            "email",
-            "role",
-            "easy",
-            "useful",
-            "fair",
-            "push",
-            "feel",
-            "again",
-            "broken",
-        ]
-    )
-    for r in rows:
-        ans = r.get("answers") or {}
-        feel = ans.get("feel")
-        writer.writerow(
-            [
-                r.get("day") or "",
-                r.get("submittedAt") or "",
-                r.get("from") or "",
-                r.get("device") or "",
-                r.get("lang") or "",
-                r.get("version") or "",
-                r.get("email") or "",
-                ans.get("role") or "",
-                ans.get("easy") or "",
-                ans.get("useful") or "",
-                ans.get("fair") or "",
-                ans.get("push") or "",
-                "; ".join(feel) if isinstance(feel, list) else (feel or ""),
-                ans.get("again") or "",
-                (ans.get("broken") or "").replace("\n", " ").strip(),
-            ]
-        )
-    return out.getvalue()
+    return surveys_to_csv(rows)
 
 
 @router.get("/admin/analytics")

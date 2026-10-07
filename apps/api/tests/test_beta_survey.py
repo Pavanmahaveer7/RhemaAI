@@ -1,6 +1,8 @@
 from fastapi.testclient import TestClient
 
 from app.main import app
+from app.v1.feedback_csv import csv_path, load_surveys
+from app.v1.store import reset_store
 
 client = TestClient(app)
 
@@ -17,6 +19,22 @@ def test_beta_survey_accepts_payload():
     }
     r = client.post("/api/v1/feedback/beta-survey", json=payload)
     assert r.status_code == 204
+    path = csv_path()
+    assert path.exists()
+    text = path.read_text(encoding="utf-8")
+    assert "reader" in text
+    assert "Calm" in text
+
+
+def test_beta_survey_csv_reloads_after_restart():
+    client.post(
+        "/api/v1/feedback/beta-survey",
+        json={"version": "beta-1", "answers": {"role": "pastor", "again": "yes", "easy": 5}, "from": "share"},
+    )
+    assert csv_path().exists()
+    reset_store()
+    rows = load_surveys()
+    assert any((row.get("answers") or {}).get("role") == "pastor" for row in rows)
 
 
 def test_admin_can_list_and_export_beta_surveys():
