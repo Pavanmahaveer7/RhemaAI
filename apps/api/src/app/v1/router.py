@@ -15,6 +15,14 @@ from llm_gateway import mode as gateway_mode
 from app.v1.crypto import encrypt, key_bytes
 from app.v1.errors import api_error
 from app.v1.moderate import CRISIS, INJECTION, classify, group_ideas, redact
+from app.v1.staff_phone import (
+    issue_otp,
+    normalize_phone,
+    otp_demo_visible,
+    register_staff_after_phone,
+    staff_phone_register_enabled,
+    verify_otp,
+)
 from app.v1.store import (
     PAUSES_WHEN_ON,
     answer_device_hash,
@@ -175,6 +183,66 @@ def _password_problem(password: str, email: str) -> str | None:
     if password.lower() == email.lower() or (local and local in password.lower()):
         return "Use a password that is not your email."
     return None
+
+
+@router.post("/auth/staff/phone/send")
+async def auth_staff_phone_send(request: Request):
+    if not staff_phone_register_enabled():
+        return _fail(request, 503, "unavailable", "feature_off", "Phone registration is not enabled.")
+    limited = _auth_rate_limit(request, "staff_phone", 8)
+    if limited:
+        return limited
+    body = await _json(request)
+    digits = normalize_phone(str(body.get("phone") or ""))
+    if digits is None:
+        return _fail(request, 422, "error", "validation", "Enter a mobile number with at least 10 digits.")
+    store = get_store()
+    _, payload = issue_otp(store, digits)
+    return JSONResponse(payload)
+
+
+@router.post("/auth/staff/phone/register")
+async def auth_staff_phone_register(request: Request):
+    if not staff_phone_register_enabled():
+        return _fail(request, 503, "unavailable", "feature_off", "Phone registration is not enabled.")
+    if not get_store().password_hash and os.getenv("APP_ENV") == "production":
+        return _fail(request, 503, "unavailable", "service_down", "Sign-in is not available until the server password is set.")
+    limited = _auth_rate_limit(request, "staff_phone", 8)
+    if limited:
+        return limited
+    body = await _json(request)
+    digits = normalize_phone(str(body.get("phone") or ""))
+    code = str(body.get("code") or "").strip()
+    password = str(body.get("password") or "")
+    display_name = str(body.get("displayName") or "").strip() or None
+    if digits is None:
+        return _fail(request, 422, "error", "validation", "Enter a mobile number with at least 10 digits.")
+    if not code:
+        return _fail(request, 422, "error", "validation", "Enter the verification code.")
+    store = get_store()
+    otp_err = verify_otp(store, digits, code)
+    if otp_err:
+        return _fail(request, 422, "error", "validation", otp_err)
+    pseudo_email = f"{digits}@staff.rhema.local"
+    problem = _password_problem(password, pseudo_email)
+    if problem:
+        return _fail(request, 422, "error", "validation", problem)
+    try:
+        account = register_staff_after_phone(store, digits, password, display_name)
+    except ValueError as exc:
+        if str(exc) == "duplicate_phone":
+            return _fail(request, 409, "error", "validation", "This number already has a staff account. Sign in with your code.")
+        raise
+    token = open_session(store, account["role"], account["id"], None)
+    response = JSONResponse(
+        {
+            **_session_body(store, read_session(store, token)),
+            "assignedCode": account["code_name"],
+            "demoOtpVisible": otp_demo_visible(),
+        }
+    )
+    _cookie(response, token)
+    return response
 
 
 @router.post("/auth/signup")

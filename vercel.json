@@ -6,6 +6,8 @@
     "CONTRACT_STORE": "auto",
     "LLM_MODE": "off",
     "BETA_SHARED_STAFF_LOGIN": "true",
+    "STAFF_PHONE_OTP_DEMO": "true",
+    "STAFF_PHONE_REGISTER": "true",
     "AUTH_SIGNIN_RATE_PER_HOUR": "10",
     "AUTH_SIGNUP_RATE_PER_HOUR": "5"
   },

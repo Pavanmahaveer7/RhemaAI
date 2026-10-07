@@ -219,6 +219,10 @@
     ack: function (id) { return call("POST", "/review/packs/" + encodeURIComponent(id) + "/ack"); },
     decide: function (id, v, note) { return call("POST", "/review/packs/" + encodeURIComponent(id) + "/decision", { packId: id, decision: DECISION[v] || v, note: note || "" }); },
     signin: function (codeName, password) { return call("POST", "/auth/signin", { codeName: codeName, password: password }).then(function (s) { session = s; live = true; syncCasession(s); return s; }); },
+    staffPhoneSend: function (phone) { return call("POST", "/auth/staff/phone/send", { phone: phone }); },
+    staffPhoneRegister: function (body) {
+      return call("POST", "/auth/staff/phone/register", body).then(function (s) { session = s; live = true; syncCasession(s); return s; });
+    },
     guest: guest, signup: signup,
     syncCasession: syncCasession, refreshSession: refreshSession,
     signout: function () { session = null; syncCasession(null); return call("POST", "/auth/signout").catch(function () {}); },

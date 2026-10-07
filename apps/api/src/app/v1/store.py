@@ -179,6 +179,7 @@ class ContractStore:
         self.events: list[dict] = []
         self.audit: list[dict] = []
         self.rate: dict[str, list] = {}
+        self.phone_otps: dict[str, dict] = {}
         self.password_salt = "church-ai-dev-salt"
         self.password_hash = ""
         self.persistent = False

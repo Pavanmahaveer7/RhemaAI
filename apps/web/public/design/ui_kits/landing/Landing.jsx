@@ -167,7 +167,10 @@ function Landing() {
               <li>Land in <strong>Staff</strong> — tracks, check-in, review, or alerts by role.</li>
             </ol>
           </div>
-          <LpButton variant="secondary" size="lg" iconRight="arrow-right" onClick={() => { location.href = lpStaffSignIn; }}>Staff sign in</LpButton>
+          <div style={{ display: "flex", flexDirection: "column", gap: 10, alignItems: wide ? "flex-end" : "stretch" }}>
+            <LpButton variant="secondary" size="lg" iconRight="arrow-right" onClick={() => { location.href = lpStaffSignIn; }}>Staff sign in (have a code)</LpButton>
+            <LpButton variant="ghost" size="md" onClick={() => { location.href = "/staff?register=phone"; }}>Register with phone — demo</LpButton>
+          </div>
         </div>
       </section>}
       {!lk && <section aria-labelledby="lp-beta" style={{ maxWidth: 1180, margin: "0 auto", padding: "8px var(--gutter-phone) 56px" }}>

@@ -4,7 +4,11 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Rhema.ai — Staff sign in</title>
-  <script>location.replace("/app#r=signin&staff=l3");</script>
+  <script>
+    var q = new URLSearchParams(location.search);
+    var hash = "r=signin&staff=l3" + (q.get("register") === "phone" ? "&staffReg=phone" : "");
+    location.replace("/app#" + hash);
+  </script>
 </head>
 <body>
   <p><a href="/app#r=signin&staff=l3">Continue to staff sign in</a></p>
