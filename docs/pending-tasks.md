@@ -35,6 +35,7 @@ Last updated after beta readiness audit. Use before Render beta and before wide 
 | Phase | Work |
 |-------|------|
 | Render | **Apply Blueprint:** [dashboard deeplink](https://dashboard.render.com/blueprint/new?repo=https://github.com/Pavanmahaveer7/RhemaAI) + secrets from `scripts/generate_render_secrets.ps1` |
+| Vercel | **`docs/vercel-deploy.md`** — web (`apps/web`) + API (repo root `vercel.json`); local: `scripts/run_local.ps1` |
 | Observability | Basic API access logs (`rid=` in Render logs); Langfuse / OTEL optional via env |
 | Auth | Supabase in ADR-004 — not imported; demo uses contract sign-in |
 | Retention | Documented in ethics docs — not implemented in store |

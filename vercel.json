@@ -1,0 +1,12 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "installCommand": "pip install -r apps/api-vercel/requirements.txt",
+  "functions": {
+    "apps/api-vercel/index.py": {
+      "maxDuration": 60,
+      "memory": 1024,
+      "includeFiles": "apps/api/**,packages/**"
+    }
+  },
+  "rewrites": [{ "source": "/(.*)", "destination": "/apps/api-vercel/index.py" }]
+}

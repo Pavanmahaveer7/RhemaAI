@@ -4,6 +4,7 @@
   "packageManager": "pnpm@9.15.9",
   "scripts": {
     "dev:web": "pnpm --filter web dev",
+    "dev:local": "pwsh -NoProfile -File ./scripts/run_local.ps1",
     "lint": "pnpm -r lint",
     "test": "pnpm -r test",
     "test:ui": "echo Open http://localhost:3000/design/ui_kits/smoke.html flows.html layout.html a11y.html after pnpm dev:web"
