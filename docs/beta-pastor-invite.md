@@ -25,10 +25,12 @@ Sign-in uses a **code name** + **password** (not the public “create account”
 
 For a **live demo without pre-assigned codes**:
 
-1. https://rhema-ai-web.vercel.app/staff?register=phone  
+1. `/staff?register=phone` (localhost: http://127.0.0.1:3000/staff?register=phone)  
 2. **Register with phone (demo)** → enter mobile number → **Send code**.  
 3. The **6-digit code appears on screen** (beta stands in for SMS).  
 4. Enter code + password → new **P-xxxx** code → **Staff** app (`/pastor`).
+
+**Return visit:** `/staff?signin=phone` → Send code → enter code only (no password).
 
 Set `STAFF_PHONE_OTP_DEMO=false` in production when real SMS is wired; the API then omits `demoCode` from the response.
 

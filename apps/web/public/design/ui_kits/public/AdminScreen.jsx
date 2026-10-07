@@ -15,7 +15,7 @@ function ExpertEdits() {
   const drafts = lex.filter(x => !reviews[x.term] && CF.hasContent(store, x));
   const unwritten = lex.filter(x => !CF.hasContent(store, x));
   const approve = term => setStore({ ...store, _review: { ...reviews, [term]: { by: window.CAExpert.expert, at: "Today" } } });
-  const openTerm = term => { location.hash = `r=term&t=${term}&mode=faith&expert=1`; location.reload(); };
+  const openTerm = term => { location.href = "/word/" + encodeURIComponent(term); };
   const waiting = [], done = [];
   Object.entries(store).filter(([k]) => k[0] !== "_").forEach(([term, blocks]) => Object.entries(blocks).forEach(([k, r]) => {
     (r.sugg || []).forEach((s, i) => waiting.push({ term, k, i, ...s }));
@@ -82,7 +82,7 @@ function ExpertEditsLive() {
   React.useEffect(() => { load(); }, []);
   const approve = term => A.post(`/review/coverage/${encodeURIComponent(term)}`).then(load, fail);
   const decide = (w, ok) => A.post(`/review/edits/${encodeURIComponent(w.id)}`, { approve: ok, note: "" }).then(load, fail);
-  const openTerm = term => { location.hash = `r=term&t=${term}&mode=faith&expert=1`; location.reload(); };
+  const openTerm = term => { location.href = "/word/" + encodeURIComponent(term); };
   const one = (k, t) => ({ [(CF.fields(k) || [["text"]])[0][0]]: t });
   const H = ({ children, n }) => <div style={{ display: "flex", alignItems: "baseline", gap: 10, marginBottom: 6 }}><h2 style={{ font: "var(--type-section)", color: "var(--text-strong)", margin: 0 }}>{children}</h2>{n != null && <span style={{ font: "var(--type-source)", color: "var(--text-muted)" }}>{n}</span>}</div>;
   const box = { border: "1px solid var(--border-subtle)", borderRadius: "var(--radius-lg)", overflow: "hidden" };

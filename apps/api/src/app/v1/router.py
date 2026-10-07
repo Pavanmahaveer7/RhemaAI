@@ -16,7 +16,9 @@ from app.v1.crypto import encrypt, key_bytes
 from app.v1.errors import api_error
 from app.v1.moderate import CRISIS, INJECTION, classify, group_ideas, redact
 from app.v1.staff_phone import (
+    find_staff_by_phone,
     issue_otp,
+    mask_phone,
     normalize_phone,
     otp_demo_visible,
     register_staff_after_phone,
@@ -196,9 +198,50 @@ async def auth_staff_phone_send(request: Request):
     digits = normalize_phone(str(body.get("phone") or ""))
     if digits is None:
         return _fail(request, 422, "error", "validation", "Enter a mobile number with at least 10 digits.")
+    intent = str(body.get("intent") or "register").strip().lower()
+    if intent not in ("register", "signin"):
+        return _fail(request, 422, "error", "validation", "Choose register or signin.")
     store = get_store()
-    _, payload = issue_otp(store, digits)
+    if intent == "signin":
+        account = find_staff_by_phone(store, digits)
+        if account is None:
+            msg = "If this number is on file, a code was sent by SMS."
+            return JSONResponse(
+                {"maskedPhone": mask_phone(digits), "expiresInSeconds": 600, "delivery": "sms_pending", "message": msg}
+            )
+        _, payload = issue_otp(store, digits, "staff_signin")
+        return JSONResponse(payload)
+    _, payload = issue_otp(store, digits, "staff_register")
     return JSONResponse(payload)
+
+
+@router.post("/auth/staff/phone/signin")
+async def auth_staff_phone_signin(request: Request):
+    if not staff_phone_register_enabled():
+        return _fail(request, 503, "unavailable", "feature_off", "Phone sign-in is not enabled.")
+    limited = _auth_rate_limit(request, "staff_phone", 8)
+    if limited:
+        return limited
+    body = await _json(request)
+    digits = normalize_phone(str(body.get("phone") or ""))
+    code = str(body.get("code") or "").strip()
+    if digits is None:
+        return _fail(request, 422, "error", "validation", "Enter a mobile number with at least 10 digits.")
+    if not code:
+        return _fail(request, 422, "error", "validation", "Enter the verification code.")
+    store = get_store()
+    otp_err = verify_otp(store, digits, code, expected_purpose="staff_signin")
+    if otp_err:
+        return _fail(request, 422, "error", "validation", otp_err)
+    account = find_staff_by_phone(store, digits)
+    if account is None:
+        return _fail(request, 404, "empty", "not_found", "No staff account uses this number.")
+    if (account.get("status") or "active") == "suspended":
+        return _fail(request, 403, "unavailable", "forbidden", "This account is suspended.")
+    token = open_session(store, account["role"], account["id"], None)
+    response = JSONResponse(_session_body(store, read_session(store, token)))
+    _cookie(response, token)
+    return response
 
 
 @router.post("/auth/staff/phone/register")
@@ -220,7 +263,7 @@ async def auth_staff_phone_register(request: Request):
     if not code:
         return _fail(request, 422, "error", "validation", "Enter the verification code.")
     store = get_store()
-    otp_err = verify_otp(store, digits, code)
+    otp_err = verify_otp(store, digits, code, expected_purpose="staff_register")
     if otp_err:
         return _fail(request, 422, "error", "validation", otp_err)
     pseudo_email = f"{digits}@staff.rhema.local"
@@ -444,7 +487,7 @@ def read_term(term: str, request: Request, lang: str = "en"):
 @router.get("/terms/{term}/passages")
 def term_passages(term: str, request: Request, q: str = ""):
     """Quotes from the loaded sources for a word. Retrieval only: no model writes any of it."""
-    from app.v1.sources import find_passages
+    from app.v1.sources import find_passages, passages_catalog_fallback
 
     store = get_store()
     question = " ".join(q.split())[:200]
@@ -458,7 +501,7 @@ def term_passages(term: str, request: Request, q: str = ""):
     try:
         return find_passages(term, question)
     except Exception:
-        return _fail(request, 503, "error", "service_down", "The source texts are not reachable right now.", True)
+        return passages_catalog_fallback(term, question)
 
 
 @router.post("/terms/{term}/edits")
@@ -1294,6 +1337,75 @@ def embed_church(church_id: str, request: Request):
     return {"monthCounts": {"answers": store.months[published[-1]]["answers"] if published else 0}, "map": public}
 
 
+@router.post("/waitlist")
+async def waitlist_join(request: Request):
+    store = get_store()
+    if not store.allow(f"waitlist:{_client_ip(request)}", 20):
+        return _fail(request, 429, "unavailable", "rate_limited", "Try again in a moment.")
+    body = await _json(request)
+    email = str(body.get("email") or "").strip().lower()
+    role = str(body.get("role") or "reader").strip()[:32]
+    if not email or "@" not in email or len(email) > 120:
+        return _fail(request, 422, "error", "validation", "Enter an email like name@example.com.")
+    from app.v1.crypto import hmac_identifier
+
+    store.waitlist.append({"email_hash": hmac_identifier(email), "role": role, "day": _today()})
+    return Response(status_code=204)
+
+
+@router.get("/feedback/changelog")
+async def feedback_changelog(_request: Request):
+    return get_store().feedback_changelog
+
+
+@router.get("/feedback")
+async def feedback_list(request: Request):
+    status = str(request.query_params.get("status") or "open").strip()
+    rows = get_store().community_feedback
+    if status != "all":
+        rows = [row for row in rows if row.get("status") == status]
+    return [
+        {"id": row["id"], "kind": row["kind"], "text": row["text"], "status": row["status"], "meToo": int(row.get("meToo") or 0)}
+        for row in rows
+    ]
+
+
+@router.post("/feedback")
+async def feedback_create(request: Request):
+    store = get_store()
+    if not store.allow(f"feedback:{_client_ip(request)}", 30):
+        return _fail(request, 429, "unavailable", "rate_limited", "Try again in a moment.")
+    body = await _json(request)
+    kind = str(body.get("kind") or "idea").strip()[:32]
+    text = str(body.get("text") or "").strip()
+    if not 3 <= len(text) <= 280:
+        return _fail(request, 422, "error", "validation", "Write a few words." if len(text) < 3 else "Keep it under 280 characters.")
+    if INJECTION.search(text):
+        store.audit_block("feedback", "injection", "blocked", "guest")
+        return _fail(request, 403, "blocked", "blocked_injection", "Blocked. Nothing was saved or sent.")
+    item_id = "fb-" + uuid.uuid4().hex[:8]
+    store.community_feedback.insert(
+        0,
+        {"id": item_id, "kind": kind, "text": text, "status": "open", "meToo": 0},
+    )
+    return {"id": item_id, "kind": kind, "text": text, "status": "open", "meToo": 0}
+
+
+@router.post("/feedback/{item_id}/me-too")
+async def feedback_me_too(request: Request, item_id: str):
+    store = get_store()
+    ip = _client_ip(request)
+    if not store.allow(f"metoo:{ip}", 60):
+        return _fail(request, 429, "unavailable", "rate_limited", "Try again in a moment.")
+    if not store.allow(f"metoo:{ip}:{item_id}", 3):
+        return _fail(request, 429, "unavailable", "rate_limited", "Try again in a moment.")
+    row = next((r for r in store.community_feedback if r["id"] == item_id), None)
+    if row is None:
+        return _fail(request, 404, "empty", "not_found", "Nothing here yet.")
+    row["meToo"] = int(row.get("meToo") or 0) + 1
+    return {"id": row["id"], "meToo": row["meToo"]}
+
+
 @router.post("/feedback/helped")
 async def helped(request: Request):
     store = get_store()
@@ -1396,9 +1508,13 @@ def i18n_bundle(lang: str):
 
 @router.get("/status")
 def service_status():
+    staff_beta = "not_configured"
+    if os.getenv("BETA_SHARED_STAFF_LOGIN", "").strip().lower() in ("1", "true", "yes"):
+        staff_beta = "up" if os.getenv("DEMO_SIGNIN_PASSWORD", "").strip() else "degraded"
     return [
         {"name": "API", "status": "up"},
         {"name": "Database", "status": _probe_database()},
+        {"name": "Staff beta login", "status": staff_beta},
         {"name": "Cache", "status": _probe_optional("REDIS_URL", _probe_redis)},
         {"name": "Graph database", "status": _probe_optional("GRAPH_DB_URL", _probe_graph)},
         {"name": "Model gateway", "status": "up" if gateway_mode() == "live" else "degraded"},
@@ -1567,6 +1683,28 @@ def _beta_survey_csv(rows: list[dict]) -> str:
             ]
         )
     return out.getvalue()
+
+
+@router.get("/admin/analytics")
+def admin_analytics(request: Request):
+    _actor_row, denied = _require(request, {"admin"})
+    if denied:
+        return denied
+    region = str(request.query_params.get("region") or "all").strip()
+    store = get_store()
+    checkins = store.checkins
+    if region != "all":
+        checkins = [row for row in checkins if region.lower() in str(row.get("region") or "").lower()]
+    return {
+        "range": str(request.query_params.get("range") or "30d"),
+        "region": region,
+        "wordViews": len(store.events),
+        "monthlyAnswers": len(store.answers),
+        "checkins": len(checkins),
+        "betaSurveys": len(store.beta_surveys),
+        "feedbackItems": len(store.community_feedback),
+        "waitlist": len(store.waitlist),
+    }
 
 
 @router.get("/admin/beta-surveys")

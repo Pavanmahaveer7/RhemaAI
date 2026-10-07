@@ -3,8 +3,8 @@ const { TextArea: MqArea, Button: MqButton, Tag: MqTag, StateBlock: MqState, Ico
 function CAQuestionText({ month }) {
   const q = month.question || "", t = month.term, i = t ? q.toLowerCase().indexOf(t.toLowerCase()) : -1;
   if (i < 0) return q;
-  const open = e => { e.preventDefault(); if (window.CAGo) window.CAGo("term", t); else location.hash = `r=term&t=${t}`; };
-  return <>{q.slice(0, i)}<a data-qterm="" href={`#r=term&t=${t}`} onClick={open} aria-label={`${t}, open in the dictionary`} title="Open in the dictionary" style={{ color: "var(--lamp-400)", textDecoration: "underline", textDecorationThickness: "0.08em", textUnderlineOffset: "0.12em" }}>{q.slice(i, i + t.length)}</a>{q.slice(i + t.length)}</>;
+  const open = e => { e.preventDefault(); if (window.CAGo) window.CAGo("term", t); else location.href = "/word/" + encodeURIComponent(t); };
+  return <>{q.slice(0, i)}<a data-qterm="" href={"/word/" + encodeURIComponent(t)} onClick={open} aria-label={`${t}, open in the dictionary`} title="Open in the dictionary" style={{ color: "var(--lamp-400)", textDecoration: "underline", textDecorationThickness: "0.08em", textUnderlineOffset: "0.12em" }}>{q.slice(i, i + t.length)}</a>{q.slice(i + t.length)}</>;
 }
 window.CAQuestionText = CAQuestionText;
 

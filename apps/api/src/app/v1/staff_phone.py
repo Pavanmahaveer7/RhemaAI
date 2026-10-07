@@ -37,7 +37,12 @@ def otp_demo_visible() -> bool:
 
 
 def staff_phone_register_enabled() -> bool:
-    return os.getenv("STAFF_PHONE_REGISTER", "true").strip().lower() not in ("0", "false", "no")
+    flag = os.getenv("STAFF_PHONE_REGISTER", "").strip().lower()
+    if flag in ("1", "true", "yes"):
+        return True
+    if flag in ("0", "false", "no"):
+        return False
+    return os.getenv("APP_ENV", "development") != "production"
 
 
 def _otp_key(digits: str) -> str:
@@ -48,7 +53,19 @@ def _hash_code(code: str) -> str:
     return hashlib.sha256(code.encode("utf-8")).hexdigest()
 
 
-def issue_otp(store, digits: str) -> tuple[str, dict]:
+def phone_hash(digits: str) -> str:
+    return hashlib.sha256(digits.encode("utf-8")).hexdigest()
+
+
+def find_staff_by_phone(store, digits: str) -> dict | None:
+    ph = phone_hash(digits)
+    return next(
+        (a for a in store.accounts.values() if a.get("phone_hash") == ph and a.get("role") in ("pastor", "reviewer", "leader", "mentor", "admin")),
+        None,
+    )
+
+
+def issue_otp(store, digits: str, purpose: str = "staff_register") -> tuple[str, dict]:
     if not hasattr(store, "phone_otps"):
         store.phone_otps = {}
     code = f"{random.randint(0, 999999):06d}"
@@ -57,7 +74,7 @@ def issue_otp(store, digits: str) -> tuple[str, dict]:
         "code_hash": _hash_code(code),
         "expires_at": exp.isoformat(),
         "attempts": 0,
-        "purpose": "staff_register",
+        "purpose": purpose,
     }
     payload = {
         "maskedPhone": mask_phone(digits),
@@ -80,12 +97,14 @@ def issue_otp(store, digits: str) -> tuple[str, dict]:
     return code, payload
 
 
-def verify_otp(store, digits: str, code: str) -> str | None:
+def verify_otp(store, digits: str, code: str, *, expected_purpose: str | None = None) -> str | None:
     if not hasattr(store, "phone_otps"):
         return "No code was sent for this number."
     row = store.phone_otps.get(_otp_key(digits))
     if not row:
         return "No code was sent for this number."
+    if expected_purpose and row.get("purpose") != expected_purpose:
+        return "This code was for a different step. Request a new code."
     row["attempts"] = int(row.get("attempts") or 0) + 1
     if row["attempts"] > 5:
         store.phone_otps.pop(_otp_key(digits), None)
@@ -115,9 +134,9 @@ def _next_pastor_code(store) -> str:
 
 
 def register_staff_after_phone(store, digits: str, password: str, display_name: str | None) -> dict:
-    phone_hash = hashlib.sha256(digits.encode("utf-8")).hexdigest()
+    ph = phone_hash(digits)
     if any(
-        a.get("phone_hash") == phone_hash
+        a.get("phone_hash") == ph
         for a in store.accounts.values()
         if a.get("phone_hash")
     ):
@@ -129,7 +148,7 @@ def register_staff_after_phone(store, digits: str, password: str, display_name: 
         "role": "pastor",
         "code_name": code_name,
         "email_hash": None,
-        "phone_hash": phone_hash,
+        "phone_hash": ph,
         "password_hash": hash_password(password),
         "status": "active",
         "created_at": datetime.now(timezone.utc).date().isoformat(),

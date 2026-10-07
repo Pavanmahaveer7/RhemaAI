@@ -2,7 +2,7 @@
 
 **Share only:** https://rhema-ai-web.vercel.app  
 
-Do **not** give users `rhema-ai-api.vercel.app` (backend). Custom domain `rhema.ai` may be a parking page until DNS points at Vercel.
+Every feature path below is on this host (`/`, `/app`, `/staff`, `/beta-survey`, `/help`, …). Do **not** share `rhema-ai-api.vercel.app` (backend). The old `church-ai-web.vercel.app` hostname redirects here. Custom domain `rhema.ai` may be a parking page until DNS points at Vercel.
 
 ## One app, four workspaces (same software)
 

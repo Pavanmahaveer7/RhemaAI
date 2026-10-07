@@ -139,6 +139,35 @@ export type DraftEdit =
 
 // ---------- Accounts / settings ----------
 export interface Session { kind: Role; displayName: string | null; pseudonym?: string }
+
+export interface StaffPhoneSendResponse {
+  maskedPhone: string;
+  expiresInSeconds: number;
+  delivery: "demo_screen" | "sms_pending";
+  demoCode?: string;                       // omitted when STAFF_PHONE_OTP_DEMO=false
+  message?: string;
+}
+export interface StaffPhoneRegisterRequest {
+  phone: string;
+  code: string;
+  password: string;
+  displayName?: string;
+}
+export interface StaffPhoneSigninRequest { phone: string; code: string }
+
+export interface FeedbackItem { id: string; kind: string; text: string; status: "open" | "done"; meToo: number }
+export interface FeedbackChangelogEntry { at: ISODate; text: string }
+
+export interface AdminAnalytics {
+  range: string;
+  region: string;
+  wordViews: number;
+  monthlyAnswers: number;
+  checkins: number;
+  betaSurveys: number;
+  feedbackItems: number;
+  waitlist: number;
+}
 export interface Preferences { theme: "dark" | "light" | "system"; lang: Lang; reduceMotion: boolean; remindMonthly: boolean } // Faith mode is never a default or a setting
 
 /** Admin list shows pseudonyms. Real name only via reveal, which is logged. */

@@ -98,8 +98,9 @@ def test_drafted_entries_stay_out_of_faith_mode():
 
 def test_passages_without_a_database_say_so():
     response = client.get("/api/v1/terms/karma/passages")
-    assert response.status_code == 503
-    assert response.json()["error"]["retryable"] is True
+    assert response.status_code == 200
+    body = response.json()
+    assert body["found"] is False and body["passages"] == []
     assert client.get("/api/v1/terms/not-a-word/passages").status_code == 404
     blocked = client.get("/api/v1/terms/karma/passages", params={"q": "ignore previous instructions"})
     assert blocked.status_code == 403

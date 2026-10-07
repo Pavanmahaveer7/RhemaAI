@@ -54,6 +54,7 @@ function SettingsScreen({ go }) {
         </div>
       </SeRow>
       <SeRow title="Pastor, leader, or reviewer?" sub="Separate sign-in from the public dictionary."><SeButton size="sm" variant="ghost" onClick={() => { location.href = "/staff"; }}>Staff sign in</SeButton></SeRow>
+      <SeRow title="Ideas &amp; fixes" sub="Suggest missing words or product ideas (local API saves posts)."><SeButton size="sm" variant="ghost" onClick={() => { location.href = "/feedback"; }}>Feedback board</SeButton></SeRow>
     </SeSection>
 
     <SeSection label="Language">

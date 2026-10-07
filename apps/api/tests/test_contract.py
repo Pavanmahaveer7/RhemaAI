@@ -313,7 +313,7 @@ def test_leader_alert_list_shows_progress_and_the_record():
     log = first.get("/api/v1/alerts/log").json()
     assert [row["action"] for row in log] == ["cleared", "confirmed", "raised"]
     assert all(set(row) == {"action", "scope", "at"} for row in log)
-    assert sign_in("P-0233").get("/api/v1/alerts").status_code == 403
+    assert sign_in("P-0901").get("/api/v1/alerts").status_code == 403
 
 
 def test_admin_accounts_page_by_last_id():
@@ -384,8 +384,15 @@ def test_expert_edits_are_oldest_first():
 
 def test_status_lists_every_service():
     rows = client.get("/api/v1/status").json()
-    assert [row["name"] for row in rows] == ["API", "Database", "Cache", "Graph database", "Model gateway"]
-    assert all(row["status"] in ("up", "degraded", "down") for row in rows)
+    assert [row["name"] for row in rows] == [
+        "API",
+        "Database",
+        "Staff beta login",
+        "Cache",
+        "Graph database",
+        "Model gateway",
+    ]
+    assert all(row["status"] in ("up", "degraded", "down", "not_configured") for row in rows)
 
 
 def test_security_headers_and_guest_cookie():

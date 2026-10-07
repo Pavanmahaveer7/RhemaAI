@@ -252,3 +252,51 @@ def find_passages(term: str, question: str = "", per_tradition: int = 2) -> dict
         "model": None,
         "note": "Quotes found by word match in licence-checked sources. Not reviewed, and not an answer written by a model.",
     }
+
+
+def passages_catalog_fallback(term: str, question: str = "") -> dict:
+    """When full-text search fails, return dictionary citations that already have loaded quotes."""
+    from app.v1.store import get_store
+
+    term = term.lower().strip()
+    row = get_store().terms.get(term)
+    words_by_trad = SEARCH_WORDS.get(term, {})
+    searched = {t: (question.split() if question else [term, *words_by_trad.get(t, [])]) for t in TRADITIONS}
+    if not row:
+        return {
+            "term": term,
+            "question": question or None,
+            "searchedFor": searched,
+            "passages": [],
+            "found": False,
+            "model": None,
+            "note": "Not in verified sources for this search.",
+        }
+    passages = []
+    for item in attach_quotes(row.get("sources") or []):
+        if not item.get("quote"):
+            continue
+        passages.append(
+            {
+                "tradition": item["tradition"],
+                "work": item["work"],
+                "reference": item["reference"],
+                "quote": item["quote"],
+                "translation": item.get("translation"),
+                "license": item.get("license"),
+                "url": item.get("url"),
+            }
+        )
+    return {
+        "term": term,
+        "question": question or None,
+        "searchedFor": searched,
+        "passages": passages,
+        "found": bool(passages),
+        "model": None,
+        "note": (
+            "Quotes from dictionary citations loaded in the corpus."
+            if passages
+            else "Source texts are not loaded yet. Run ingest on the API, or use local rescue."
+        ),
+    }

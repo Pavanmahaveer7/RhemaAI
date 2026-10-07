@@ -13432,13 +13432,13 @@ function PublicMap() {
     two = pair.length === 2;
   const cur = pair[pair.length - 1],
     last = two ? pair[0] : null;
+  const RH = window.CARhythm;
+  const [release] = React.useState(() => RH ? RH.isRelease() : false);
   const [k, setK] = React.useState(() => release && !mpReduce() ? 0 : 1);
   const morphed = React.useRef(false);
   const [sel, setSel] = React.useState(null);
   const [tab, setTab] = React.useState("list");
   const [settled, setSettled] = React.useState(mpReduce());
-  const RH = window.CARhythm;
-  const [release] = React.useState(() => RH ? RH.isRelease() : false);
   React.useEffect(() => {
     RH && RH.seeRelease();
   }, []);

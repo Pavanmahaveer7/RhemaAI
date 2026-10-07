@@ -29,6 +29,8 @@
       <a href="#staff">Staff</a>
       <a href="#hidden">Hidden layers</a>
       <a href="#urls">All URLs</a>
+      <a href="#local">Local rescue</a>
+      <a href="/local">App map</a>
     </nav>
 
     <h2 id="reader">Reader (public dictionary)</h2>
@@ -46,7 +48,7 @@
       <p><strong>Always enter here:</strong> <a href="/staff">/staff</a> — not the public tour.</p>
       <ul>
         <li><strong>Code sign-in</strong> — organizer gives code (e.g. P-0233) + password.</li>
-        <li><strong>Phone demo</strong> — <a href="/staff?register=phone">Register with phone</a>; code shows on screen (SMS demo).</li>
+        <li><strong>Phone demo</strong> — <a href="/staff?register=phone">Register</a> or <a href="/staff?signin=phone">Sign in with phone</a>; code shows on screen (SMS demo).</li>
         <li>After sign-in you open <strong>Staff</strong> at <code>/pastor</code> — check-in, tracks, review, alerts.</li>
       </ul>
     </div>
@@ -61,6 +63,15 @@
       </ul>
     </div>
 
+    <h2 id="local">Local rescue (no Vercel)</h2>
+    <div class="box">
+      <p>Run the full app on your machine when production fails:</p>
+      <pre style="overflow:auto;font-size:13px;padding:12px;border-radius:8px;background:rgba(0,0,0,.25)">cd church-ai-stack
+.\scripts\run_local.ps1</pre>
+      <p>Then open the URL the script prints (usually <a href="http://127.0.0.1:3010/">http://127.0.0.1:3010/</a>).</p>
+      <p>Demo staff codes and passwords live only in the private repo doc <code>docs/local-rescue.md</code> — not on this public help page.</p>
+    </div>
+
     <h2 id="urls">Canonical URLs</h2>
     <div class="box">
       <table style="width:100%;border-collapse:collapse;font-size:14px">
@@ -70,6 +81,9 @@
         <tr><td style="padding:6px 0">Staff sign-in</td><td><a href="/staff">/staff</a></td></tr>
         <tr><td style="padding:6px 0">Staff workspace</td><td><a href="/pastor">/pastor</a> (after auth)</td></tr>
         <tr><td style="padding:6px 0">Beta survey</td><td><a href="/beta-survey">/beta-survey</a></td></tr>
+        <tr><td style="padding:6px 0">Feedback board</td><td><a href="/feedback">/feedback</a></td></tr>
+        <tr><td style="padding:6px 0">Waitlist</td><td><a href="/waitlist">/waitlist</a></td></tr>
+        <tr><td style="padding:6px 0">Analytics (admin)</td><td><a href="/analytics">/analytics</a></td></tr>
       </table>
     </div>
     <p style="margin-top:24px;font-size:14px">Full manual for judges and builders: <code>docs/user-manual.md</code> in the GitHub repo (RhemaAI).</p>

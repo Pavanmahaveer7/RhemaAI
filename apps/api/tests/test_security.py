@@ -71,7 +71,12 @@ def test_signup_stores_a_password_hash_and_signs_in_with_it():
 
 
 def test_production_refuses_the_shared_staff_password(monkeypatch):
+    from app.v1.store import reset_store
+
     monkeypatch.setenv("APP_ENV", "production")
+    monkeypatch.delenv("DEMO_SIGNIN_PASSWORD", raising=False)
+    monkeypatch.delenv("BETA_SHARED_STAFF_LOGIN", raising=False)
+    reset_store()
     response = client.post("/api/v1/auth/signin", json={"codeName": "P-0233", "password": "dev-only-change-me"})
     assert response.status_code == 503
     assert response.json()["error"]["code"] == "service_down"
@@ -82,7 +87,10 @@ def test_production_beta_shared_staff_login_with_scrypt(monkeypatch):
 
     monkeypatch.setenv("APP_ENV", "production")
     monkeypatch.setenv("BETA_SHARED_STAFF_LOGIN", "true")
-    get_store()._apply_beta_staff_passwords()
+    monkeypatch.setenv("DEMO_SIGNIN_PASSWORD", "dev-only-change-me")
+    store = get_store()
+    store.accounts["pastor-0233"]["password_hash"] = "scrypt$deadbeef"
+    store._apply_beta_staff_passwords()
     response = client.post("/api/v1/auth/signin", json={"codeName": "P-0233", "password": "dev-only-change-me"})
     assert response.status_code == 200
     assert response.json()["kind"] == "pastor"
@@ -128,6 +136,18 @@ def test_signup_is_rate_limited_per_ip(monkeypatch):
     jar = TestClient(app)
     jar.post("/api/v1/auth/guest")
     blocked = jar.post("/api/v1/auth/signup", json={"email": "u3@example.com", "name": "U", "password": "Openpage1"})
+    assert blocked.status_code == 429
+    assert blocked.json()["error"]["code"] == "rate_limited"
+
+
+def test_feedback_me_too_rate_limited():
+    created = client.post("/api/v1/feedback", json={"kind": "idea", "text": "More voice hints please."})
+    assert created.status_code == 200
+    item_id = created.json()["id"]
+    for _ in range(3):
+        ok = client.post(f"/api/v1/feedback/{item_id}/me-too")
+        assert ok.status_code == 200
+    blocked = client.post(f"/api/v1/feedback/{item_id}/me-too")
     assert blocked.status_code == 429
     assert blocked.json()["error"]["code"] == "rate_limited"
 

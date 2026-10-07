@@ -139,18 +139,7 @@
     return ready.then(function (ok) {
       if (!ok) return null;
       if (!session) {
-        var h = new URLSearchParams(location.hash.slice(1));
-        var r = h.get("r");
-        var dest = "/app#r=signin";
-        if (r === "alerts" || h.get("role") === "leader") {
-          dest = "/app#r=signin&staff=leader";
-          if (r && r !== "alerts") dest += "&next=" + encodeURIComponent(r);
-        } else if (r === "queue" || r === "review" || h.get("role") === "reviewer") {
-          dest = "/app#r=signin&staff=reviewer&next=" + encodeURIComponent(r || "queue");
-        }         else if (r && PASTOR_ROUTES.indexOf(r) >= 0) {
-          dest = "/app#r=signin&staff=l3";
-          if (r !== "signin") dest += "&next=" + encodeURIComponent(r);
-        }
+        var dest = "/staff?next=" + encodeURIComponent(location.pathname + location.search);
         location.replace(dest);
         return new Promise(function () {});
       }
@@ -219,9 +208,14 @@
     ack: function (id) { return call("POST", "/review/packs/" + encodeURIComponent(id) + "/ack"); },
     decide: function (id, v, note) { return call("POST", "/review/packs/" + encodeURIComponent(id) + "/decision", { packId: id, decision: DECISION[v] || v, note: note || "" }); },
     signin: function (codeName, password) { return call("POST", "/auth/signin", { codeName: codeName, password: password }).then(function (s) { session = s; live = true; syncCasession(s); return s; }); },
-    staffPhoneSend: function (phone) { return call("POST", "/auth/staff/phone/send", { phone: phone }); },
+    staffPhoneSend: function (phone, intent) {
+      return call("POST", "/auth/staff/phone/send", { phone: phone, intent: intent || "register" });
+    },
     staffPhoneRegister: function (body) {
       return call("POST", "/auth/staff/phone/register", body).then(function (s) { session = s; live = true; syncCasession(s); return s; });
+    },
+    staffPhoneSignin: function (body) {
+      return call("POST", "/auth/staff/phone/signin", body).then(function (s) { session = s; live = true; syncCasession(s); return s; });
     },
     guest: guest, signup: signup,
     syncCasession: syncCasession, refreshSession: refreshSession,
@@ -229,4 +223,26 @@
     deleteMe: function () { return call("DELETE", "/me").then(function () { session = null; syncCasession(null); }); }
   };
   window.CAHasLeaderCap = function () { return window.CAApi && window.CAApi.hasLeaderCap(); };
+
+  ready.then(function (ok) {
+    if (ok || window.CA_DEMO || /(^|[#&])api=0/.test(location.hash)) return;
+    try { if (sessionStorage.getItem("ca_rescue_dismiss")) return; } catch (e) {}
+    var bar = document.createElement("div");
+    bar.setAttribute("role", "status");
+    bar.style.cssText = "position:sticky;top:0;z-index:50;padding:10px 16px;background:var(--surface-raised,#1a221c);border-bottom:1px solid var(--border-subtle,#324034);font:600 13px/1.4 system-ui,sans-serif;color:var(--text-body,#e8ece4);display:flex;gap:12px;flex-wrap:wrap;align-items:center;justify-content:center";
+    bar.innerHTML = "<span>Could not reach the API — preview data only. For the full app on this machine run <code style=\"background:rgba(255,255,255,.08);padding:2px 6px;border-radius:4px\">.\\scripts\\run_local.ps1</code> in church-ai-stack.</span>";
+    var help = document.createElement("a");
+    help.href = "/help#local";
+    help.textContent = "Local rescue guide";
+    help.style.color = "var(--lamp-400,#cfda5c)";
+    var dismiss = document.createElement("button");
+    dismiss.type = "button";
+    dismiss.textContent = "Dismiss";
+    dismiss.style.cssText = "border:0;background:transparent;color:var(--text-muted,#b8c4b8);cursor:pointer;font:inherit;text-decoration:underline";
+    dismiss.onclick = function () { try { sessionStorage.setItem("ca_rescue_dismiss", "1"); } catch (e) {} bar.remove(); };
+    bar.appendChild(help);
+    bar.appendChild(dismiss);
+    var root = document.body;
+    if (root && root.firstChild) root.insertBefore(bar, root.firstChild);
+  });
 })();

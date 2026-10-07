@@ -33,12 +33,13 @@ function PublicMap() {
   const pub = extra ? [...base.filter(x => x.id !== extra.id), extra] : base;
   const pair = pub.slice(-2), two = pair.length === 2;
   const cur = pair[pair.length - 1], last = two ? pair[0] : null;
+  const RH = window.CARhythm;
+  const [release] = React.useState(() => RH ? RH.isRelease() : false);
   const [k, setK] = React.useState(() => (release && !mpReduce()) ? 0 : 1);
   const morphed = React.useRef(false);
   const [sel, setSel] = React.useState(null);
   const [tab, setTab] = React.useState("list");
   const [settled, setSettled] = React.useState(mpReduce());
-  const RH = window.CARhythm; const [release] = React.useState(() => RH ? RH.isRelease() : false);
   React.useEffect(() => { RH && RH.seeRelease(); }, []);
   const [calm, setCalm] = React.useState(mpReduce());
   const anim = React.useRef(0), box = React.useRef(null);
@@ -134,7 +135,7 @@ function PublicMap() {
         {r >= 22 && <span style={{ font: `800 ${fs}px/1 var(--font-display)`, letterSpacing: "-0.01em", maxWidth: "100%", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", textDecoration: term ? "underline" : "none", textUnderlineOffset: "0.14em", textDecorationThickness: "0.06em" }}>{id}</span>}
         {r > 38 && <span style={{ font: `600 ${Math.max(12, fs * 0.55)}px/1 var(--font-mono)`, opacity: 0.75 }}>{few(w)}</span>}
       </button>; })}
-    <a href="#r=search" onPointerDown={e => e.stopPropagation()} style={{ position: "absolute", left: 12, top: 12, minHeight: 44, display: "inline-flex", alignItems: "center", gap: 6, padding: "0 14px", borderRadius: 999, background: "color-mix(in srgb, var(--ink-1) 92%, transparent)", border: "1px solid var(--border-default)", color: "var(--text-strong)", font: "600 13px/1 var(--font-body)", textDecoration: "none", backdropFilter: "var(--blur-bar)" }}>← Dictionary <span style={{ color: "var(--text-muted)", fontWeight: 400 }}>/ Map of ideas</span></a>
+    <a href="/search" onPointerDown={e => e.stopPropagation()} onClick={e => { if (window.CAGo) { e.preventDefault(); window.CAGo("search"); } }} style={{ position: "absolute", left: 12, top: 12, minHeight: 44, display: "inline-flex", alignItems: "center", gap: 6, padding: "0 14px", borderRadius: 999, background: "color-mix(in srgb, var(--ink-1) 92%, transparent)", border: "1px solid var(--border-default)", color: "var(--text-strong)", font: "600 13px/1 var(--font-body)", textDecoration: "none", backdropFilter: "var(--blur-bar)" }}>← Dictionary <span style={{ color: "var(--text-muted)", fontWeight: 400 }}>/ Map of ideas</span></a>
     <div role="group" aria-label="Zoom" onPointerDown={e => e.stopPropagation()} style={{ position: "absolute", right: 12, bottom: 12, display: "flex", flexDirection: "column", borderRadius: 14, overflow: "hidden", background: "color-mix(in srgb, var(--ink-1) 92%, transparent)", border: "1px solid var(--border-default)", backdropFilter: "var(--blur-bar)" }}>
       <button aria-label="Zoom in" disabled={view.z >= ZMAX} onClick={() => zoomAt(1.3)} style={{ ...ctl, opacity: view.z >= ZMAX ? 0.4 : 1 }}><MpIcon name="plus" size={18} /></button>
       <button aria-label="Zoom out" disabled={view.z <= ZMIN} onClick={() => zoomAt(1 / 1.3)} style={{ ...ctl, borderTop: "1px solid var(--border-subtle)", opacity: view.z <= ZMIN ? 0.4 : 1 }}><MpIcon name="minus" size={18} /></button>

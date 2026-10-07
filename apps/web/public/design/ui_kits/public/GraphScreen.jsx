@@ -98,7 +98,7 @@ function GraphScreen({ admin, offset = 0 }) {
     if (d.pan) setView(v => ({ ...v, x: d.vx + e.clientX - d.sx, y: d.vy + e.clientY - d.sy }));
     else { const w = toWorld(e.clientX, e.clientY); setPos(p => ({ ...p, [d.id]: w })); } };
   const onUp = e => { if (e) ptrs.current.delete(e.pointerId); if (pinch.current) { if (ptrs.current.size < 2) pinch.current = null; drag.current = null; return; } const d = drag.current; drag.current = null; if (d && !d.moved) { if (d.pan) setSel(null); else pick(d.id); } };
-  const pick = id => { if (!admin && gsTerms.includes(id) && window.CAGo) { window.CAGo("term", id, { m: "faith" }); return; } setTotals(false); setSel(id); };
+  const pick = id => { if (!admin && gsTerms.includes(id) && window.CAGo) { window.CAGo("term", id); return; } setTotals(false); setSel(id); };
   const zoom = f => setView(v => ({ ...v, k: Math.max(0.4, Math.min(3, v.k * f)) }));
   const newCount = nodes.filter(n => n.isNew).length;
   const selNode = sel && nmap[sel];

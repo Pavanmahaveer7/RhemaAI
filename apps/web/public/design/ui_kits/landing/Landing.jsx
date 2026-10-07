@@ -2,12 +2,12 @@ const { TextField: LpField, Button: LpButton, Icon: LpIcon, Wordmark: LpWordmark
 
 const lpReduce = () => document.documentElement.hasAttribute("data-reduce-motion") || matchMedia("(prefers-reduced-motion: reduce)").matches;
 const lpTrad = { Hindu: "hindu", Buddhist: "buddhist", Christian: "christian" };
-const lpApp = "/app";
+const lpApp = "/search";
 const lpTourFull = (layout) => `/tour?from=landing#layout=${layout}`;
-const lpOnboard = `${lpApp}#r=intro&step=1`;
+const lpOnboard = `/welcome/1`;
 const lpLex = t => window.CA_DATA.lexicon.find(x => x.term === t);
 
-const lpEveryone = `${lpApp}#guest=1&r=search`;
+const lpEveryone = `/search?guest=1`;
 const lpStaffSignIn = "/staff";
 function useWideLp(bp) { const [w, setW] = React.useState(innerWidth >= bp); React.useEffect(() => { const f = () => setW(innerWidth >= bp); addEventListener("resize", f); return () => removeEventListener("resize", f); }, []); return w; }
 
@@ -28,7 +28,7 @@ function WordDemo() {
   const step = n => ({ opacity: at(n) ? 1 : 0, transform: at(n) ? "none" : "translateY(6px)", transition: "opacity 260ms var(--ease-out), transform 260ms var(--ease-out)" });
   const src = e && e.sources && e.sources[0];
   return <div style={{ display: "flex", flexDirection: "column", gap: 14, alignItems: "stretch", width: "100%", maxWidth: 380, justifySelf: "center" }}>
-    <a href={`${lpApp}#r=term&t=${word}`} aria-label={`Open ${word} in the dictionary`} className="lp-card" style={{ display: "flex", flexDirection: "column", gap: 16, padding: 20, minHeight: 380, borderRadius: "var(--radius-lg)", border: "1px solid var(--border-default)", background: "var(--surface-card)", textDecoration: "none", color: "inherit" }}>
+    <a href={`/word/${word}`} aria-label={`Open ${word} in the dictionary`} className="lp-card" style={{ display: "flex", flexDirection: "column", gap: 16, padding: 20, minHeight: 380, borderRadius: "var(--radius-lg)", border: "1px solid var(--border-default)", background: "var(--surface-card)", textDecoration: "none", color: "inherit" }}>
       <div style={{ display: "flex", alignItems: "center", gap: 10, height: 48, padding: "0 16px", borderRadius: 999, background: "var(--surface-raised)", border: "1px solid var(--border-default)" }}>
         <LpIcon name="search" size={18} color="var(--text-muted)" />
         <span style={{ font: "600 18px/1 var(--font-body)", color: "var(--text-strong)" }}>{typed}<span style={{ display: typing ? "inline-block" : "none", width: 2, height: 18, marginLeft: 2, verticalAlign: "-3px", background: "var(--lamp-400)" }}></span></span>
@@ -100,9 +100,9 @@ function MonthSequence({ wide }) {
     <div style={{ display: "grid", gridTemplateColumns: wide ? "repeat(3,minmax(0,1fr))" : "minmax(0,1fr)", gap: 16 }}>
       <div style={card}>
         <h3 style={h3}>You answer</h3>
-        <p style={{ margin: 0, font: "800 24px/1.1 var(--font-display)", color: "var(--text-strong)", textWrap: "balance" }}>{qi < 0 ? Q : <>{Q.slice(0, qi)}<a href={`${lpApp}#r=term&t=${T}`} style={{ textDecoration: "underline", textUnderlineOffset: "0.12em" }}>{T}</a>{Q.slice(qi + T.length)}</>}</p>
+        <p style={{ margin: 0, font: "800 24px/1.1 var(--font-display)", color: "var(--text-strong)", textWrap: "balance" }}>{qi < 0 ? Q : <>{Q.slice(0, qi)}<a href={`/word/${T}`} style={{ textDecoration: "underline", textUnderlineOffset: "0.12em" }}>{T}</a>{Q.slice(qi + T.length)}</>}</p>
         <p style={{ margin: 0, font: "var(--type-body)", fontSize: 16, color: "var(--text-muted)" }}>No account. Not tied to any pastor.</p>
-        <a href={`${lpApp}#r=month`} className="lp-link" style={{ marginTop: "auto", display: "inline-flex", gap: 6, alignItems: "center", font: "700 16px/1 var(--font-body)", minHeight: 44 }}>Answer this month <LpIcon name="arrow-right" size={16} /></a>
+        <a href="/month" className="lp-link" style={{ marginTop: "auto", display: "inline-flex", gap: 6, alignItems: "center", font: "700 16px/1 var(--font-body)", minHeight: 44 }}>Answer this month <LpIcon name="arrow-right" size={16} /></a>
       </div>
       <div style={card}>
         <h3 style={h3}>Ideas are counted</h3>
@@ -112,12 +112,12 @@ function MonthSequence({ wide }) {
       </div>
       <div style={card}>
         <h3 style={h3}>A person publishes the map</h3>
-        <a href={`${lpApp}#r=graph`} aria-label="Open the ideas map" className="lp-card" style={{ position: "relative", display: "block", height: 220, borderRadius: "var(--radius-md)", background: "var(--ink-1)", border: "1px solid var(--border-subtle)", overflow: "hidden" }}>
+        <a href="/map" aria-label="Open the ideas map" className="lp-card" style={{ position: "relative", display: "block", height: 220, borderRadius: "var(--radius-md)", background: "var(--ink-1)", border: "1px solid var(--border-subtle)", overflow: "hidden" }}>
           <svg viewBox="-150 -110 300 220" width="100%" height="100%" aria-hidden="true">{ids.slice(0, 18).map(id => { const v = val(id), r = v < 1 ? 0 : 4 + Math.sqrt(v) * 2.6, [x, y] = pos[id]; const nw = isNew(id) && k >= 0.5;
             return <g key={id} transform={`translate(${x} ${y})`}><circle r={r} fill={nw ? "var(--lamp-400)" : "var(--ink-4)"} stroke={nw ? "none" : "var(--bone-7)"} strokeWidth="1" />{r > 12 && <text y={r + 11} textAnchor="middle" style={{ font: "600 13px var(--font-body)", fill: "var(--text-body)" }}>{id}</text>}</g>; })}</svg>
         </a>
         <p style={{ margin: 0, font: "var(--type-body)", fontSize: 16, color: "var(--text-muted)" }}>Bigger = said more. <span style={{ color: "var(--lamp-400)", fontWeight: 700 }}>Lime</span> = new this month.</p>
-        <a href={`${lpApp}#r=graph`} className="lp-link" style={{ marginTop: "auto", display: "inline-flex", gap: 6, alignItems: "center", font: "700 16px/1 var(--font-body)", minHeight: 44 }}>Open the map <LpIcon name="arrow-right" size={16} /></a>
+        <a href="/map" className="lp-link" style={{ marginTop: "auto", display: "inline-flex", gap: 6, alignItems: "center", font: "700 16px/1 var(--font-body)", minHeight: 44 }}>Open the map <LpIcon name="arrow-right" size={16} /></a>
       </div>
     </div>
   </section>;
@@ -130,7 +130,7 @@ function Landing() {
   const [q, setQ] = React.useState("");
   const [guideOpen, setGuideOpen] = React.useState(false);
   React.useEffect(() => { const f = () => setSolid(scrollY > 8); addEventListener("scroll", f, { passive: true }); return () => removeEventListener("scroll", f); }, []);
-  const submit = ev => { ev.preventDefault(); const t = q.trim().toLowerCase(); if (!t) return; location.href = lpLex(t) ? `${lpApp}#r=term&t=${encodeURIComponent(t)}` : `${lpApp}#r=search`; };
+  const submit = ev => { ev.preventDefault(); const t = q.trim().toLowerCase(); if (!t) return; location.href = lpLex(t) ? `/word/${encodeURIComponent(t)}` : `/search`; };
   const nav = [["Dictionary", "#top"], ...(lk ? [] : [["This month", "#month"]]), ["Tour", lpTourFull(wide ? "16:9" : "9:16")]];
   const hdrLink = { height: 44, padding: "0 10px", display: "inline-flex", alignItems: "center", font: "600 15px/1 var(--font-body)", textDecoration: "none", whiteSpace: "nowrap" };
   return <>
@@ -139,11 +139,11 @@ function Landing() {
       <div style={{ flex: 1 }}></div>
       {wide && <nav aria-label="Primary" style={{ display: "flex", gap: 4 }}>{nav.map(([l, h]) => <a key={l} href={h} className="lp-nav" style={{ ...hdrLink, borderRadius: 999 }}>{l}</a>)}</nav>}
       <button type="button" className="lp-nav" style={{ ...hdrLink, borderRadius: 999, border: 0, background: "none", cursor: "pointer", color: "var(--lamp-400)" }} onClick={() => setGuideOpen(true)}>Guide</button>
-      <a href={`${lpApp}#r=signin`} className="lp-nav" style={{ ...hdrLink, color: "var(--text-muted)" }}>Sign in</a>
+      <a href="/signin" className="lp-nav" style={{ ...hdrLink, color: "var(--text-muted)" }}>Sign in</a>
       <LpButton size="sm" variant={solid ? "accent" : "secondary"} onClick={() => { location.href = lpTourFull(wide ? "16:9" : "9:16"); }}>Get started</LpButton>
     </header>
     {!lk && window.GuideBanner && <window.GuideBanner variant="landing" onOpenGuide={() => setGuideOpen(true)} />}
-    {window.GuideModal && <window.GuideModal open={guideOpen} onClose={() => setGuideOpen(false)} variant="reader" go={id => { location.href = id === "search" ? lpEveryone : id === "month" ? `${lpApp}#r=month` : `${lpApp}#r=graph`; }} />}
+    {window.GuideModal && <window.GuideModal open={guideOpen} onClose={() => setGuideOpen(false)} variant="reader" go={id => { location.href = id === "search" ? lpEveryone : id === "month" ? "/month" : "/map"; }} />}
     <main id="top">
       <section style={{ maxWidth: 1180, margin: "0 auto", padding: wide ? "40px var(--gutter-phone) 24px" : "20px var(--gutter-phone) 24px", display: "flex", flexDirection: "column", alignItems: "center", gap: wide ? 40 : 32 }}>
         <div style={{ display: "flex", flexDirection: "column", gap: 20, maxWidth: 720, width: "100%", alignItems: wide ? "center" : "stretch", textAlign: wide ? "center" : "left" }}>
@@ -191,7 +191,7 @@ function Landing() {
     <footer style={{ borderTop: "1px solid var(--border-subtle)", padding: "24px var(--gutter-phone) 32px" }}>
       <div style={{ maxWidth: 1180, margin: "0 auto", display: "flex", gap: 16, flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", font: "var(--type-source)", color: "var(--text-muted)" }}>
         <span>We map ideas, never people.</span>
-        <nav aria-label="Footer" style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>{[["Tour", lpTourFull("16:9")], ["Dictionary", "/dictionary"], ["Help", "/help"], ["Beta feedback", "/beta-survey?from=landing-footer"], ["Staff sign in", lpStaffSignIn], ["All screens", "/screens"]].map(([l, h]) => <a key={l} href={h} className="lp-nav" style={{ minHeight: 44, display: "inline-flex", alignItems: "center", textDecoration: "none" }}>{l}</a>)}<a href={`${lpApp}#r=settings&as=guest`} className="lp-nav" style={{ minHeight: 44, display: "inline-flex", alignItems: "center", textDecoration: "none" }}>What we store</a></nav>
+        <nav aria-label="Footer" style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>{[["App map", "/local"], ["Tour", lpTourFull("16:9")], ["Dictionary", "/dictionary"], ["Help", "/help"], ["Beta feedback", "/beta-survey?from=landing-footer"], ["Staff sign in", lpStaffSignIn], ["All screens", "/screens"]].map(([l, h]) => <a key={l} href={h} className="lp-nav" style={{ minHeight: 44, display: "inline-flex", alignItems: "center", textDecoration: "none" }}>{l}</a>)}<a href="/settings" className="lp-nav" style={{ minHeight: 44, display: "inline-flex", alignItems: "center", textDecoration: "none" }}>What we store</a></nav>
       </div>
     </footer>
   </>;

@@ -29,6 +29,10 @@ Every error returns `ApiError` with a `requestId`. The UI shows `message` as sen
 | GET | `/me/memory` | guest | → `MemoryItem[]` |
 | DELETE | `/me/memory` | guest | `{keys?}` → `204` |
 | DELETE | `/me` | user | → `204` (answers stay only as counts) |
+| POST | `/auth/staff/phone/send` | anyone (when enabled) | `{ phone, intent?: "register" \| "signin" }` → `StaffPhoneSendResponse` |
+| POST | `/auth/staff/phone/register` | anyone (when enabled) | `StaffPhoneRegisterRequest` → `Session` + `assignedCode` |
+| POST | `/auth/staff/phone/signin` | anyone (when enabled) | `{ phone, code }` → `Session` |
+| POST | `/waitlist` | anyone | `{ email, role? }` → `204` |
 
 Guests can look up words, save words on the device, answer the monthly question, view the map, tap "Did this help?". Guests never see Layer 3. There are no comments, votes, likes or follows anywhere.
 
@@ -37,7 +41,7 @@ Guests can look up words, save words on the device, answer the monthly question,
 |---|---|---|---|
 | GET | `/terms?q=&lang=` | guest | `TermSummary[]` (empty → "not in the dictionary", never an AI draft) |
 | GET | `/terms/:term?lang=` | guest | `Term`. `faith: null` when coverage is not reviewed **or** an alert is on |
-| GET | `/terms/:term/passages?q=` | guest | `Passages`: up to 2 quotes per tradition from the loaded sources (ADR-007), found by word match. `model: null`; nothing is written by a model. `found: false` means "not in verified sources". 503 `service_down` when the source texts are unreachable |
+| GET | `/terms/:term/passages?q=` | guest | `Passages`: up to 2 quotes per tradition from loaded sources (ADR-007), found by word match. `model: null`. `found: false` with `passages: []` when nothing matches. When Postgres chunks are unavailable, the server may return **200** with a **catalog fallback** (still `model: null`) instead of 503 |
 | POST | `/terms/:term/edits` | expert | `ExpertEdit` status `pending_review` |
 | GET | `/review/edits?status=` | reviewer | `ExpertEdit[]`. Default pending, oldest first. `decided` returns approved and rejected, newest first |
 | POST | `/review/edits/:id` | reviewer | `{approve, note}` → `ExpertEdit`. Approving keeps `previous`. Deciding again returns the first decision |
@@ -108,6 +112,10 @@ An integration can never move a stage or put names on the map.
 | POST | `/feedback/helped` | guest | `HelpedRequest` → `204` (count only) |
 | POST | `/feedback/report` | guest | `{term, block, text}` → `204` (one report per word block per person; duplicate is silent) |
 | POST | `/feedback/beta-survey` | anyone | Beta survey JSON payload → `204` (rate limited; stored server-side) |
+| GET | `/feedback?status=` | anyone | `FeedbackItem[]` (`open` default) |
+| GET | `/feedback/changelog` | anyone | `FeedbackChangelogEntry[]` |
+| POST | `/feedback` | anyone | `{ kind, text }` → `FeedbackItem` |
+| POST | `/feedback/:id/me-too` | anyone | → `{ id, meToo }` (rate limited per IP and per item) |
 | GET | `/crisis-lines?country=` | anyone | `CrisisLine` |
 | POST | `/events` | guest | `EventRequest` → `204` |
 | GET | `/i18n/:lang` | anyone | `TranslationBundle` (reviewed strings only in production) |
@@ -125,5 +133,6 @@ Every assistant-written text (check-in encouragement, review draft, map draft la
 | PATCH | `/admin/accounts/:id` | admin | `{role?, status?}` → `AccountRow` |
 | POST | `/admin/accounts/:id/resend-invite` | admin | → `204` |
 | POST | `/admin/accounts/:id/password-reset` | admin | → `204` (logged; email delivery not wired) |
+| GET | `/admin/analytics` | admin | `AdminAnalytics` (`?range=&region=`) |
 | GET | `/admin/beta-surveys` | admin | `{ total, summary, items[] }` — beta survey responses for slides |
 | GET | `/admin/beta-surveys?format=csv` | admin | CSV download (`rhema-beta-feedback.csv`) |

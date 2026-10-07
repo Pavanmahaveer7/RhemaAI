@@ -41,5 +41,21 @@ try {
 } catch {
   Write-Host "FAIL staff phone send $($_.Exception.Message)"; $fail++
 }
+$staffPw = if ($env:STAFF_SMOKE_PASSWORD) { $env:STAFF_SMOKE_PASSWORD } elseif ($env:DEMO_SIGNIN_PASSWORD) { $env:DEMO_SIGNIN_PASSWORD } else { "dev-only-change-me" }
+try {
+  $staff = Invoke-WebRequest -Uri "$api/auth/signin" -Method POST -Body (@{ codeName = "P-0233"; password = $staffPw } | ConvertTo-Json) -ContentType "application/json" -SessionVariable staffJar -UseBasicParsing
+  if ($staff.StatusCode -eq 200) { Write-Host "OK  staff sign-in P-0233" }
+  else { Write-Host "FAIL staff sign-in ($($staff.StatusCode))"; $fail++ }
+} catch {
+  $code = $_.Exception.Response.StatusCode.value__
+  Write-Host "FAIL staff sign-in P-0233 ($code) - set DEMO_SIGNIN_PASSWORD on the API host to match STAFF_SMOKE_PASSWORD"
+  $fail++
+}
+try {
+  $pass = Invoke-RestMethod -Uri "$api/terms/karma/passages?q=love" -TimeoutSec 25
+  if ($null -ne $pass.found) { Write-Host "OK  passages endpoint (found=$($pass.found))" }
+} catch {
+  Write-Host "FAIL passages $($_.Exception.Message)"; $fail++
+}
 if ($fail -gt 0) { exit 1 }
 Write-Host "All smoke checks passed."

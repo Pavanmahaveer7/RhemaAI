@@ -1,4 +1,5 @@
-# Local full stack on dedicated ports (avoids 3000/8000 if something else is running).
+# Local full stack on dedicated ports (use when 3000/8000 are taken).
+# Demo: http://127.0.0.1:3010/local
 param(
   [int]$ApiPort = 8010,
   [int]$WebPort = 3010,
@@ -14,4 +15,7 @@ if (-not $NoKillPorts) {
   } catch { } finally { Pop-Location }
 }
 
-& (Join-Path $PSScriptRoot "run_local.ps1") -ApiPort $ApiPort -WebPort $WebPort @PSBoundParameters
+$splat = @{ ApiPort = $ApiPort; WebPort = $WebPort; NoKillPorts = $true }
+if ($Postgres) { $splat.Postgres = $true }
+if ($Docker) { $splat.Docker = $true }
+& (Join-Path $PSScriptRoot "run_local.ps1") @splat

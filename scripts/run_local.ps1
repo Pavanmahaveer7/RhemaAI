@@ -3,11 +3,19 @@ param(
   [int]$ApiPort = 8000,
   [int]$WebPort = 3000,
   [switch]$Postgres,
-  [switch]$Docker
+  [switch]$Docker,
+  [switch]$NoKillPorts
 )
 
 $root = Split-Path -Parent $PSScriptRoot
 Set-Location $root
+
+if (-not $NoKillPorts) {
+  try {
+    Push-Location (Join-Path $root "apps\web")
+    npx --yes kill-port $ApiPort $WebPort 2>&1 | Out-Null
+  } catch { } finally { Pop-Location }
+}
 
 $env:LLM_MODE = "off"
 $env:APP_ENV = "development"
@@ -26,13 +34,18 @@ if ($Docker -or $Postgres) {
   if (-not $env:DATABASE_URL) { $env:DATABASE_URL = "postgresql://app:app@localhost:5432/church_ai" }
 } else {
   $env:CONTRACT_STORE = "memory"
+  Remove-Item Env:DATABASE_URL -ErrorAction SilentlyContinue
 }
 
 $env:API_BASE_URL = "http://127.0.0.1:$ApiPort"
 
 Write-Host "Starting API on http://127.0.0.1:$ApiPort (CONTRACT_STORE=$env:CONTRACT_STORE)"
-$apiEnv = "set DEMO_SIGNIN_PASSWORD=dev-only-change-me&& set APP_ENV=development&& set CONTRACT_STORE=$env:CONTRACT_STORE&& set STAFF_PHONE_OTP_DEMO=true&& set STAFF_PHONE_REGISTER=true&& set BETA_SHARED_STAFF_LOGIN=true&& "
-if ($env:DATABASE_URL) { $apiEnv += "set DATABASE_URL=$($env:DATABASE_URL)&& " }
+$apiEnv = "set DEMO_SIGNIN_PASSWORD=dev-only-change-me&& set APP_ENV=development&& set CONTRACT_STORE=$env:CONTRACT_STORE&& set STAFF_PHONE_OTP_DEMO=true&& set STAFF_PHONE_REGISTER=true&& set BETA_SHARED_STAFF_LOGIN=true&& set LLM_MODE=off&& "
+if ($env:CONTRACT_STORE -eq "postgres" -and $env:DATABASE_URL) {
+  $apiEnv += "set DATABASE_URL=$($env:DATABASE_URL)&& "
+} elseif ($env:CONTRACT_STORE -eq "memory") {
+  $apiEnv += "set DATABASE_URL=&& "
+}
 $apiArgs = @(
   "/c", "${apiEnv}uv run --package church-ai-api uvicorn app.main:app --app-dir apps/api/src --host 127.0.0.1 --port $ApiPort"
 )
@@ -48,14 +61,11 @@ $web = Start-Process -PassThru -WindowStyle Hidden -WorkingDirectory $root -File
 
 Write-Host ""
 Write-Host "Open:"
-Write-Host "  http://127.0.0.1:$WebPort/          (landing)"
-Write-Host "  http://127.0.0.1:$WebPort/app       (dictionary)"
-Write-Host "  http://127.0.0.1:$WebPort/beta-survey  (feedback -> API :$ApiPort)"
-Write-Host "  http://127.0.0.1:$WebPort/staff     (Layer 3)"
-Write-Host "  http://127.0.0.1:$WebPort/pastor"
+Write-Host "  http://127.0.0.1:$WebPort/local     (app map - one page for every screen)"
 Write-Host "  http://127.0.0.1:$ApiPort/api/v1/status  (API direct)"
 Write-Host "Sign-in: A-0100 / dev-only-change-me (default); staff P-0233 same password"
-Write-Host "Alt ports (3010/8010): .\scripts\run_local_demo.ps1"
+Write-Host "Different ports: .\scripts\run_local_demo.ps1  (web :3010, API :8010)"
+Write-Host "  or: .\scripts\run_local.ps1 -WebPort 3010 -ApiPort 8010"
 Write-Host "Feedback map: docs/feedback-where.md"
 Write-Host ""
 Write-Host "API PID $($api.Id)  Web PID $($web.Id)  - stop: Stop-Process -Id $($api.Id),$($web.Id)"

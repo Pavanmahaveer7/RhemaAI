@@ -40,6 +40,15 @@ def encrypt(plain: str) -> str:
     return base64.b64encode(nonce + tag + cipher).decode("ascii")
 
 
+def hmac_identifier(value: str) -> str:
+    """One-way fingerprint for emails or other low-entropy identifiers (not reversible without the key)."""
+    key = key_bytes()
+    if key is None:
+        pepper = os.getenv("INTEGRATION_WEBHOOK_SECRET", "").strip() or os.getenv("DEMO_SIGNIN_PASSWORD", "dev-pepper")
+        key = hashlib.sha256(pepper.encode("utf-8")).digest()
+    return hmac.new(key, value.encode("utf-8"), hashlib.sha256).hexdigest()
+
+
 def decrypt(token: str) -> str:
     key = key_bytes()
     if key is None:

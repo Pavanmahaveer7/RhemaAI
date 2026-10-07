@@ -1,7 +1,7 @@
 # Judge demo script (~5 minutes)
 
 **Share one URL:** https://rhema-ai-web.vercel.app/  
-(Also works: https://church-ai-web.vercel.app/)
+(All paths — tour, app, staff, beta survey, help — live on this host only.)
 
 ## Layer 1 — Public (60s)
 
@@ -39,9 +39,13 @@
 
 ## Health check (before you walk on stage)
 
+**Production:**
+
 ```powershell
 cd church-ai-stack
 $env:BASE='https://rhema-ai-web.vercel.app'; .\scripts\beta_smoke.ps1
 ```
+
+**Local rescue (no Vercel):** see **`docs/local-rescue.md`** — `.\scripts\run_local.ps1` then `$env:BASE='http://127.0.0.1:3000'; .\scripts\beta_smoke.ps1`.
 
 All lines should be **OK** (dictionary, month, DB, survey, karma term, staff phone OTP).

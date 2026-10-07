@@ -10,6 +10,7 @@ import hashlib
 import hmac
 import json
 import os
+import re
 import secrets
 import threading
 import uuid
@@ -38,7 +39,8 @@ PERSISTED = (
     "accounts", "identities", "reveal_log", "devices", "sessions", "preferences", "memory", "onboarding",
     "terms", "expert_edits", "months", "answers", "concepts", "links", "maps", "churches", "pastors",
     "checkins", "mentor_notes", "packs", "review_packs", "decisions", "acks", "alert_log", "alerts",
-    "integrations", "imported_rows", "helped", "term_reports", "beta_surveys", "events", "audit",
+    "integrations", "imported_rows", "helped", "term_reports", "beta_surveys", "community_feedback",
+    "feedback_changelog", "waitlist", "events", "audit",
 )
 
 
@@ -176,6 +178,9 @@ class ContractStore:
         self.helped: list[dict] = []
         self.term_reports: list[dict] = []
         self.beta_surveys: list[dict] = []
+        self.community_feedback: list[dict] = []
+        self.feedback_changelog: list[dict] = []
+        self.waitlist: list[dict] = []
         self.events: list[dict] = []
         self.audit: list[dict] = []
         self.rate: dict[str, list] = {}
@@ -197,10 +202,35 @@ class ContractStore:
         self._lexicon()
         self._months()
         self._pastor_pipeline()
+        self._demo_community()
         self._apply_beta_staff_passwords()
+
+    def _demo_community(self) -> None:
+        self.feedback_changelog = [
+            {"at": "2026-09-15", "text": "Ideas map publish gate and regional alert pauses wired."},
+            {"at": "2026-09-01", "text": "Beta feedback board on the local API."},
+        ]
+        self.community_feedback = [
+            {
+                "id": "fb-1",
+                "kind": "idea",
+                "text": "Show citation count per tradition on the word page.",
+                "status": "open",
+                "meToo": 3,
+            },
+            {
+                "id": "fb-2",
+                "kind": "missing_word",
+                "text": "Add dukkha with verified sources.",
+                "status": "open",
+                "meToo": 1,
+            },
+        ]
 
     def _beta_shared_staff_login(self) -> bool:
         return os.getenv("BETA_SHARED_STAFF_LOGIN", "").strip().lower() in ("1", "true", "yes")
+
+    _DEMO_STAFF_CODE = re.compile(r"^[PLRAE]-\d", re.I)
 
     def _apply_beta_staff_passwords(self) -> None:
         """Beta/demo: set scrypt hashes from DEMO_SIGNIN_PASSWORD (production + local dev)."""
@@ -211,9 +241,13 @@ class ContractStore:
             password = "dev-only-change-me"
         if not password:
             return
+        refresh_demo = self._beta_shared_staff_login()
         for account in self.accounts.values():
+            code = str(account.get("code_name") or "")
             stored = str(account.get("password_hash") or "")
-            if not stored.startswith("scrypt$"):
+            if refresh_demo and self._DEMO_STAFF_CODE.match(code):
+                account["password_hash"] = hash_password(password)
+            elif not stored.startswith("scrypt$"):
                 account["password_hash"] = hash_password(password)
 
     def _add_account(

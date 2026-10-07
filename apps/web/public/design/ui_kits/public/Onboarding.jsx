@@ -68,14 +68,18 @@ const obDone = () => {
 };
 
 function OnboardingScreen({ go }) {
-  const [i, setI] = React.useState(() => { const s = +new URLSearchParams(location.hash.slice(1)).get("step"); return s >= 1 && s <= 4 ? s - 1 : 0; });
+  const [i, setI] = React.useState(() => {
+    const fromPath = (location.pathname.match(/\/welcome\/(\d)/) || [])[1];
+    const s = +(fromPath || new URLSearchParams(location.hash.slice(1)).get("step"));
+    return s >= 1 && s <= 4 ? s - 1 : 0;
+  });
   const [on, setOn] = React.useState(obReduce());
   const [cur, setCur] = React.useState(() => window.CACurious.get());
   const toggle = k => { window.CAHaptic && window.CAHaptic("light"); const n = cur.includes(k) ? cur.filter(x => x !== k) : [...cur, k]; setCur(n); window.CACurious.set(n); };
-  React.useEffect(() => { if (new URLSearchParams(location.hash.slice(1)).get("step")) return; try { localStorage.setItem("ca_onboarded", "1"); } catch (x) {} }, []);
+  React.useEffect(() => { if ((location.pathname.match(/\/welcome\/(\d)/) || [])[1] || new URLSearchParams(location.hash.slice(1)).get("step")) return; try { localStorage.setItem("ca_onboarded", "1"); } catch (x) {} }, []);
   React.useEffect(() => { if (obReduce()) { setOn(true); return; } setOn(false); const a = requestAnimationFrame(() => requestAnimationFrame(() => setOn(true))); return () => cancelAnimationFrame(a); }, [i]);
-  const next = () => setI(n => Math.min(3, n + 1));
-  const back = () => setI(n => Math.max(0, n - 1));
+  const next = () => setI(n => { const v = Math.min(3, n + 1); if (window.CAGo) window.CAGo("intro", undefined, { step: v + 1 }); return v; });
+  const back = () => setI(n => { const v = Math.max(0, n - 1); if (window.CAGo) window.CAGo("intro", undefined, { step: v + 1 }); return v; });
   React.useEffect(() => { const k = e => { if (/INPUT|TEXTAREA/.test(document.activeElement.tagName)) return; if (e.key === "ArrowRight" && i < 3) next(); if (e.key === "ArrowLeft" && i > 0) back(); }; addEventListener("keydown", k); return () => removeEventListener("keydown", k); }, [i]);
   const S = OB_STEPS[i];
   const Art = [ObMeet, ObVoices, ObConstellation, ObPaths][i];
