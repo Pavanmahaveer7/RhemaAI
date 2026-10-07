@@ -32,7 +32,11 @@ const nextConfig: NextConfig = {
       { source: "/app", destination: "/design/ui_kits/public/index.html", permanent: false },
       { source: "/pastor", destination: "/design/ui_kits/pipeline/index.html", permanent: false },
       { source: "/staff", destination: "/staff.html", permanent: false },
+      { source: "/dictionary", destination: "/dictionary.html", permanent: false },
+      { source: "/help", destination: "/help.html", permanent: false },
+      { source: "/manual", destination: "/help.html", permanent: false },
       { source: "/beta-survey", destination: "/design/ui_kits/beta-survey.html", permanent: false },
+      { source: "/survey", destination: "/design/ui_kits/beta-survey.html", permanent: false },
       { source: "/screens", destination: "/design/All%20Screens.html", permanent: false },
       { source: "/all", destination: "/design/All%20Screens.html", permanent: false },
     ];

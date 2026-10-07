@@ -1,9 +1,13 @@
 # Rhema.ai screen flow (live beta)
 
-Use **one web host**: **https://rhema-ai-web.vercel.app**  
+**One software, one host:** https://rhema-ai-web.vercel.app  
+
+Paths (`/app`, `/pastor`, …) are **workspaces** in the same product—not separate apps.  
+**Full manual (every layer + hidden):** [user-manual.md](./user-manual.md) · **URLs:** [canonical-urls.md](./canonical-urls.md) · **In browser:** [/help](https://rhema-ai-web.vercel.app/help)
+
 Do **not** send testers to `rhema-ai-api.vercel.app` (API only).
 
-There are **two apps** on the same site. Do not mix the links.
+There are **two audiences** (Reader vs Staff). Do not mix their entry links.
 
 ---
 

@@ -20,6 +20,8 @@ guardrail rules, agent/tool scaffolding skills, eval datasets, CI, and a gstack-
 | `.cursor/plans/` | Save `master-plan.md` here after plan prompt 01 (`pre-build-plan.md` already included) |
 | `docs/architecture-diagram.png/.svg` | The architecture diagram (blue = SWE, rest = AI) |
 | `docs/HACKATHON.md` | **One doc for judges/beta:** product, backend, security, vibe security, data, testing, Vercel live URLs |
+| `docs/user-manual.md` | **End-to-end manual:** every layer + hidden (admin, expert, demo, guardrails); one-product URL map |
+| `docs/canonical-urls.md` | Short URL cheat sheet for **rhema-ai-web** only |
 | `docs/` | Source-of-truth docs: architecture, API contract, guardrails, prompts, evals, data model, threat model, observability, deployment, data ethics, gstack workflow, demo script |
 | `docs/adr/` | Architecture Decision Records — every non-obvious choice gets one |
 | `schemas/` | JSON Schemas for every agent's output (the contract between LLM and code) |

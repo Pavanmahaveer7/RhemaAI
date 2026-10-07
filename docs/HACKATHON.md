@@ -1,7 +1,8 @@
 # Rhema.ai — Hackathon & beta documentation
 
 Single reference for judges, teammates, and future you: **what we built**, **how it is secured**, **how data is handled**, and **how we test it**.  
-Live app: **https://rhema-ai-web.vercel.app** (always share the **web** URL, not the API host).
+Live app: **https://rhema-ai-web.vercel.app** (always share the **web** URL, not the API host).  
+**User manual (all layers):** [user-manual.md](./user-manual.md) · [canonical-urls.md](./canonical-urls.md) · [/help](https://rhema-ai-web.vercel.app/help)
 
 ---
 

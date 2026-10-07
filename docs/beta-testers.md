@@ -1,6 +1,6 @@
 # Share Rhema.ai for beta testing (Vercel)
 
-**Hackathon / full project write-up:** [HACKATHON.md](./HACKATHON.md) (backend, security, data, testing, deployment).
+**Hackathon / full project write-up:** [HACKATHON.md](./HACKATHON.md) · **How to use the app (every layer):** [user-manual.md](./user-manual.md) · [/help](https://rhema-ai-web.vercel.app/help)
 
 Send testers these links only. **Do not** share staff codes or `DEMO_SIGNIN_PASSWORD` in a public post.
 

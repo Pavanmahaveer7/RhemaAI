@@ -187,7 +187,7 @@ function Landing() {
     <footer style={{ borderTop: "1px solid var(--border-subtle)", padding: "24px var(--gutter-phone) 32px" }}>
       <div style={{ maxWidth: 1180, margin: "0 auto", display: "flex", gap: 16, flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", font: "var(--type-source)", color: "var(--text-muted)" }}>
         <span>We map ideas, never people.</span>
-        <nav aria-label="Footer" style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>{[["Tour", lpTourFull("16:9")], ["Dictionary (guest)", lpEveryone], ["Beta feedback", "/beta-survey?from=landing-footer"], ["Staff sign in", lpStaffSignIn], ["All screens", "/screens"]].map(([l, h]) => <a key={l} href={h} className="lp-nav" style={{ minHeight: 44, display: "inline-flex", alignItems: "center", textDecoration: "none" }}>{l}</a>)}<a href={`${lpApp}#r=settings&as=guest`} className="lp-nav" style={{ minHeight: 44, display: "inline-flex", alignItems: "center", textDecoration: "none" }}>What we store</a></nav>
+        <nav aria-label="Footer" style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>{[["Tour", lpTourFull("16:9")], ["Dictionary", "/dictionary"], ["Help", "/help"], ["Beta feedback", "/beta-survey?from=landing-footer"], ["Staff sign in", lpStaffSignIn], ["All screens", "/screens"]].map(([l, h]) => <a key={l} href={h} className="lp-nav" style={{ minHeight: 44, display: "inline-flex", alignItems: "center", textDecoration: "none" }}>{l}</a>)}<a href={`${lpApp}#r=settings&as=guest`} className="lp-nav" style={{ minHeight: 44, display: "inline-flex", alignItems: "center", textDecoration: "none" }}>What we store</a></nav>
       </div>
     </footer>
   </>;
