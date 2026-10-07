@@ -33,10 +33,20 @@ The API **does not use SQLite on Vercel** (disk is ephemeral). Persistence uses 
 
 ### Option A — Neon from Vercel (recommended)
 
-1. Open [Vercel → rhema-ai-api → Storage](https://vercel.com/dashboard).
-2. **Connect** → **Neon** → create/link a database for **`rhema-ai-api`**.
-3. Confirm **`DATABASE_URL`** appears under **Settings → Environment Variables**.
-4. Redeploy API (or run deploy script once).
+**Automated (PowerShell):**
+
+```powershell
+.\scripts\vercel_neon_provision.ps1
+```
+
+Accept Neon terms when the browser opens, press Enter, then the script provisions the DB and redeploys.
+
+**Manual:**
+
+1. Accept terms: [Neon integration terms](https://vercel.com/pavansingara-9546s-projects/~/integrations/accept-terms/neon?source=cli) (one time).
+2. Or: Vercel → **rhema-ai-api** → **Storage** → **Neon**.
+3. Confirm **`DATABASE_URL`** on **Settings → Environment Variables**.
+4. Redeploy: `.\scripts\vercel_deploy.ps1`
 
 ### Option B — Paste a connection string
 
