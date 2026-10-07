@@ -8,6 +8,8 @@
     "lint": "pnpm -r lint",
     "test": "pnpm -r test",
     "test:ui": "node scripts/ui_smoke.mjs",
+    "test:ui:guardrails": "node scripts/ui_guardrails.mjs",
+    "test:ui:all": "node scripts/ui_smoke.mjs && node scripts/ui_guardrails.mjs",
     "test:ui:install": "playwright install chromium"
   },
   "devDependencies": {

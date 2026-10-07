@@ -15,7 +15,7 @@ Leave these alone:
 
 If the word page says “Passages need the live server,” the API has stopped. Both http://localhost:3000/app and http://127.0.0.1:8000/api/v1/status should answer before anyone arrives.
 
-**Pre-demo checks (optional, ~5 min):** On http://localhost:3000, open `/design/ui_kits/smoke.html` and wait for **40 / 40 passed**. Landing beta band → `/beta-survey` should send when the API is up.
+**Pre-demo checks (optional, ~5 min):** With Next on `:3000`, run `pnpm test:ui:all` (screen smoke + `tests.html` + `flows.html` guardrails). Or open `/design/ui_kits/smoke.html` and `/design/ui_kits/flows.html` in the browser. Landing beta band → `/beta-survey` should send when the API is up.
 
 **Collect beta feedback:** http://localhost:3000/beta-survey or the “Share beta feedback” band on the landing page.
 

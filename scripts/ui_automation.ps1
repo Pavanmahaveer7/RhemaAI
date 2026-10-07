@@ -30,9 +30,9 @@ pnpm exec node scripts/ui_smoke.mjs
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
 if (-not $SkipFlows) {
-  Write-Host "`nFlow tests run in-browser (iframe interactions). Open:"
-  Write-Host "  $Base/design/ui_kits/flows.html"
-  Write-Host "For CI-style flow checks, use smoke + layer_smoke.ps1 until flows are headless."
+  Write-Host "`nUI guardrails (input + flows.html, headless) -> $Base"
+  pnpm exec node scripts/ui_guardrails.mjs
+  if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 }
 
-Write-Host "`nAll automated screen checks passed."
+Write-Host "`nAll automated UI checks passed."
