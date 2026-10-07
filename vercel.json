@@ -3,7 +3,7 @@
   "installCommand": "pip install -r apps/api-vercel/requirements.txt",
   "env": {
     "APP_ENV": "production",
-    "CONTRACT_STORE": "memory",
+    "CONTRACT_STORE": "auto",
     "LLM_MODE": "off",
     "BETA_SHARED_STAFF_LOGIN": "true",
     "AUTH_SIGNIN_RATE_PER_HOUR": "10",

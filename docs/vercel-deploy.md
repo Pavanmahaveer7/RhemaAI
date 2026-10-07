@@ -1,5 +1,7 @@
 # Deploy on Vercel (Rhema.ai)
 
+For the full live checklist (Postgres, beta sharing, GitHub): **[vercel-live.md](./vercel-live.md)** · **[beta-testers.md](./beta-testers.md)**
+
 **Production URLs (share these):**
 
 | Service | Vercel project | URL |

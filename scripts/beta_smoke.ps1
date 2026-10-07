@@ -21,6 +21,13 @@ Test-Json "terms search" GET "/terms?q=faith" $null
 Test-Json "months current" GET "/months/current" $null
 Test-Json "service status" GET "/status" $null
 try {
+  $st = (Invoke-WebRequest -Uri "$api/status" -UseBasicParsing).Content | ConvertFrom-Json
+  $db = ($st | Where-Object { $_.name -eq "Database" } | Select-Object -First 1).status
+  if ($db -eq "up") { Write-Host "OK  database persistence ($db)" }
+  elseif ($db -eq "degraded") { Write-Host "WARN database in-memory ($db) - add Postgres: docs/vercel-live.md" }
+  else { Write-Host "WARN database ($db)" }
+} catch { Write-Host "WARN could not read database status" }
+try {
   $r = Invoke-WebRequest -Uri "$api/feedback/beta-survey" -Method POST -Body '{"version":"smoke","answers":{"interest":"curious"},"from":"beta_smoke.ps1"}' -ContentType "application/json" -UseBasicParsing
   if ($r.StatusCode -eq 204) { Write-Host "OK  beta survey (204)" } else { Write-Host "FAIL beta survey ($($r.StatusCode))"; $fail++ }
 } catch {
