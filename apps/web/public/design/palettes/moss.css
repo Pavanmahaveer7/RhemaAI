@@ -1,0 +1,4 @@
+/* Moss — palette candidate (override on top of styles.css) */
+:root{--ink-0:#0B0F0C;--ink-1:#121813;--ink-2:#1A211B;--ink-3:#243025;--ink-4:#324034;
+--stone-5:#66705E;--stone-6:#95A08B;--bone-7:#C2CCB8;--bone-8:#E3EADB;--bone-9:#F3F7EE;
+--lamp-300:#E1E899;--lamp-400:#CFDA5C;--lamp-500:#B5C143;--lamp-600:#8C962C;--lamp-tint:rgba(207,218,92,.12);}

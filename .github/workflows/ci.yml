@@ -1,5 +1,4 @@
-# Stack per ADR-004: pnpm (apps/web) + uv (apps/api, packages/*). The '|| echo' fallbacks let CI pass
-# before application code exists — remove them once Phase 0 lands.
+# Stack per ADR-004: pnpm (apps/web) + uv (apps/api, packages/*).
 name: ci
 on:
   pull_request:
@@ -15,10 +14,11 @@ jobs:
         with: { node-version: 20 }
       - uses: actions/setup-python@v5
         with: { python-version: "3.12" }
-      - run: corepack enable && pnpm install --frozen-lockfile || echo "no node workspace yet"
-      - run: pip install uv && uv sync || echo "no python workspace yet"
-      - run: pnpm -r lint && pnpm -r test || echo "no web app yet (remove after Phase 0)"
-      - run: uv run pytest -q || echo "no python tests yet (remove after Phase 0)"
+      - run: corepack enable && pnpm install --frozen-lockfile
+      - run: pip install uv && uv sync
+      - run: pnpm -r lint && pnpm -r test
+      - run: uv run pytest -q
+        env: { CONTRACT_STORE: memory }
 
   schemas:
     runs-on: ubuntu-latest
@@ -31,8 +31,61 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Model SDK containment
-        run: bash scripts/guardrail_audit.sh
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - name: Guardrail audit
+        run: python scripts/guardrail_audit.py
+
+  # The screen tests force CONTRACT_STORE=memory. This job gives them a real
+  # Postgres so the persistence and source-passage tests run instead of skipping.
+  api-postgres:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: pgvector/pgvector:pg16
+        env:
+          POSTGRES_USER: app
+          POSTGRES_PASSWORD: app
+          POSTGRES_DB: church_ai
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U app -d church_ai"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: pip install uv && uv sync
+      - name: Create the test database
+        run: uv run python -c "import psycopg; c=psycopg.connect('postgresql://app:app@localhost:5432/church_ai', autocommit=True); c.execute('CREATE DATABASE church_ai_test')"
+      - name: API tests against Postgres
+        run: uv run pytest -q -p no:cacheprovider -W ignore
+        env:
+          TEST_DATABASE_URL: postgresql://app:app@localhost:5432/church_ai_test
+          DATABASE_URL: postgresql://app:app@localhost:5432/church_ai_test
+          DEMO_SIGNIN_PASSWORD: dev-only-change-me
+          CHECKIN_ENCRYPTION_KEY: test-only-checkin-key
+          AGENT_SERVICE_TOKEN: test-agent-token
+          LLM_MODE: off
+
+  # postcss and source-map-js are pinned in package.json. The remaining high advisory
+  # is Next's bundled sharp (GHSA-wq5f-xc86-pv6w), ignored until Next ships sharp 0.35.
+  dependencies:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: corepack enable && pnpm install --frozen-lockfile
+      - name: JavaScript dependencies
+        run: pnpm audit --audit-level high
+      - run: pip install uv && uv sync
+      - name: Python dependencies
+        run: uv run --with pip-audit pip-audit
 
   secret-scan:
     runs-on: ubuntu-latest
@@ -43,13 +96,11 @@ jobs:
         env: { GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}" }
 
   evals:
-    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     needs: [lint-test]
-    env:
-      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-      LANGFUSE_PUBLIC_KEY: ${{ secrets.LANGFUSE_PUBLIC_KEY }}
-      LANGFUSE_SECRET_KEY: ${{ secrets.LANGFUSE_SECRET_KEY }}
     steps:
       - uses: actions/checkout@v4
-      - run: bash scripts/run_evals.sh --changed-only --enforce-thresholds
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: pip install uv && uv sync
+      - run: bash scripts/run_evals.sh

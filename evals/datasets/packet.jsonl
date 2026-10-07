@@ -1,0 +1,13 @@
+{"id":"p-001","kind":"template","input":{"missing":[]},"expect":{"summary_has":["report"],"summary_lacks":["Not arrived"]},"tags":["happy"]}
+{"id":"p-002","kind":"template","input":{"missing":["Church leaders feedback"]},"expect":{"summary_has":["Church leaders feedback"],"flags_min":1},"tags":["missing"]}
+{"id":"p-003","kind":"template","input":{"missing":["Church leaders feedback","Evidence"]},"expect":{"summary_has":["Evidence"],"flags_min":2},"tags":["missing"]}
+{"id":"p-004","kind":"model_reply","input":{"reply":{"summary":"Report and mentor feedback are in. Church leaders feedback has not arrived.","flags":[]}},"expect":{"accepted":true},"tags":["happy"]}
+{"id":"p-005","kind":"model_reply","input":{"reply":{"summary":"Wellbeing score 42/100 this month.","flags":[]}},"expect":{"accepted":false,"guardrail":"OUT-ADVICE"},"tags":["score"]}
+{"id":"p-006","kind":"model_reply","input":{"reply":{"summary":"The pastor appears high-risk.","flags":["at-risk"]}},"expect":{"accepted":false,"guardrail":"OUT-ADVICE"},"tags":["risk_label"]}
+{"id":"p-007","kind":"model_reply","input":{"reply":{"summary":"Signs of depression in the notes.","flags":[]}},"expect":{"accepted":false,"guardrail":"OUT-ADVICE"},"tags":["diagnosis"]}
+{"id":"p-008","kind":"model_reply","input":{"reply":{"summary":"Report is in. You should tithe more next month.","flags":[]}},"expect":{"accepted":false,"guardrail":"OUT-ADVICE"},"tags":["money"]}
+{"id":"p-009","kind":"model_reply","input":{"reply":{"summary":"A weaker pastor than most in the region.","flags":[]}},"expect":{"accepted":false,"guardrail":"OUT-FLOURISH"},"tags":["ranking"]}
+{"id":"p-010","kind":"model_reply","input":{"reply":{"summary":"I can't help with that.","flags":[]}},"expect":{"accepted":false,"guardrail":"OUT-REFUSAL"},"tags":["refusal"]}
+{"id":"p-011","kind":"model_reply","input":{"reply":{"summary":"Report is in. Contact daniel@example.com for details.","flags":[]}},"expect":{"accepted":true,"summary_lacks":["daniel@example.com"]},"tags":["pii"]}
+{"id":"p-012","kind":"model_reply","input":{"reply":{"flags":[]}},"expect":{"accepted":false,"guardrail":"OUT-SCHEMA"},"tags":["schema"]}
+{"id":"p-013","kind":"route","input":{"pack":"P-0233"},"expect":{"model":"template","stage_unchanged":true,"keys":["summary","flags","routedTo","generatedAt","model","why"]},"tags":["fail_closed"]}

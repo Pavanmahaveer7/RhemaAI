@@ -1,0 +1,16 @@
+[project]
+name = "llm-gateway"
+version = "0.1.0"
+description = "Single entry for model calls. Phase 0 stub does not call a provider SDK."
+requires-python = ">=3.12"
+dependencies = ["guardrails"]
+
+[tool.uv.sources]
+guardrails = { workspace = true }
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]

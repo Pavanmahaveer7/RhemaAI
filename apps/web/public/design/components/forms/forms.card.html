@@ -1,0 +1,23 @@
+<!-- @dsCard group="Components" viewport="700x360" name="Forms" -->
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="../../styles.css">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="../../_ds_bundle.js"></script>
+<style>body{padding:20px}.r{display:flex;gap:12px;flex-wrap:wrap;align-items:center}.c{display:flex;flex-direction:column;gap:14px}.k{font:var(--type-source);color:var(--text-faint);width:72px;flex:none}</style></head><body><div id="root"></div>
+<script type="text/babel">
+const NS = window.ChurchAIDesignSystem_06db43;
+const { TextField, TextArea, Select, SegmentedControl, Checkbox, Radio, Switch } = NS;
+function App(){const [m,setM]=React.useState("faith");const [v,setV]=React.useState("Being useful to the people near me.");const [c,setC]=React.useState(true);const [o,setO]=React.useState("continue");const [s,setS]=React.useState(true);
+return <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:20}}>
+<div className="c"><SegmentedControl label="View" value={m} onChange={setM} accentValue="faith" options={[{value:"normal",label:"Normal"},{value:"faith",label:"Faith mode"}]}/>
+<TextField label="Search the lexicon" placeholder="karma" icon="search" size="lg"/>
+<TextField label="Visits today" defaultValue="three" error="Enter a number, like 3."/>
+<Select label="Month" options={["September 2026","August 2026"]}/></div>
+<div className="c"><TextArea label="Your answer" rows={3} maxLength={1000} value={v} onChange={e=>setV(e.target.value)}/>
+<div><Checkbox label="I prayed today" checked={c} onChange={e=>setC(e.target.checked)}/>
+<Radio name="o" label="Continue" checked={o==="continue"} onChange={()=>setO("continue")}/>
+<Radio name="o" label="Development plan" checked={o==="dev"} onChange={()=>setO("dev")}/></div>
+<Switch label="Highlight new since last month" checked={s} onChange={setS}/></div></div>}
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script></body></html>

@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "packet.output.json",
+  "description": "Review packet draft (contract AgentPrep, model part). No score, no risk label, no stage, no decision, no names.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["summary", "flags"],
+  "properties": {
+    "summary": { "type": "string", "maxLength": 400 },
+    "flags": { "type": "array", "maxItems": 4, "items": { "type": "string", "maxLength": 120 } }
+  }
+}

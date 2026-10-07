@@ -1,0 +1,18 @@
+[project]
+name = "church-ai"
+version = "0.1.0"
+description = "Church AI platform (Phase 0 workspace root)"
+requires-python = ">=3.12"
+dependencies = []
+
+[tool.uv]
+package = false
+
+[dependency-groups]
+dev = ["pytest>=8.3", "httpx>=0.27"]
+
+[tool.pytest.ini_options]
+testpaths = ["apps/api/tests"]
+
+[tool.uv.workspace]
+members = ["apps/api", "packages/llm-gateway", "packages/guardrails", "packages/agents", "packages/mcp/vocab"]

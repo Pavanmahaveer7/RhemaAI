@@ -1,0 +1,34 @@
+[project]
+name = "church-ai-api"
+version = "0.1.0"
+description = "FastAPI HTTP API"
+requires-python = ">=3.12"
+dependencies = [
+  "fastapi>=0.115",
+  "uvicorn[standard]>=0.32",
+  "psycopg[binary]>=3.2",
+  "redis>=5.2",
+  "llm-gateway",
+  "guardrails",
+  "agents",
+  "vocab-mcp",
+]
+
+[tool.uv.sources]
+llm-gateway = { workspace = true }
+guardrails = { workspace = true }
+agents = { workspace = true }
+vocab-mcp = { workspace = true }
+
+[dependency-groups]
+dev = ["pytest>=8.3", "httpx>=0.27"]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

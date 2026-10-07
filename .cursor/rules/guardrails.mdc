@@ -9,7 +9,7 @@ Pipeline for every model call (enforced inside `llm-gateway`, not by callers):
 `quota check → input guardrails → model → output guardrails → trace + cost`
 
 Input guardrails (in order): mask sensitive data → detect prompt injection → scope validation → content safety.
-Output guardrails: JSON schema validation → source citation check (L1) → mask sensitive data → tone/neutrality → content safety.
+Output guardrails: JSON schema validation → source citation check (L1) → mask sensitive data → tone/neutrality → content safety → refusal → advice → flourishing (seven principles, relevant or not, no score).
 Tool guardrails: parameter schema validation → permission enforcement (role + ownership) → tool response sanitisation.
 
 - Guardrails fail **closed**: if a check errors, block and return a safe message; never skip.

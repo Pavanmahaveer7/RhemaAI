@@ -9,8 +9,9 @@ This file is the entry point. Scoped rules live in `.cursor/rules/`; the source 
   bridges for a term or verse, grounded in a curated source corpus (RAG) with citations.
 - **L2 Belief Knowledge Graph** (public submits, admin observes): monthly aggregation of free-text
   belief responses into a concept graph, stored as dated snapshots.
-- **L3 Pastor Training + Accountability** (lay pastors, admin): training modules, daily check-ins,
-  AI risk analysis of check-ins, admin dashboard. **Most sensitive data in the system.**
+- **L3 Pastor Training + Accountability** (lay pastors, admin): the pastor pipeline in
+  `docs/l3-pastor-pipeline.md` (profile, stages, training, ministry, character, monthly
+  report, leadership review). Daily check-ins feed that pipeline. **Most sensitive data in the system.**
 
 ## Agents (4)
 
@@ -66,6 +67,7 @@ docs/                    # build-plan (product), architecture (+diagram), api, g
 
 ## Workflow
 
+- Pre-build product principles: `docs/pre-build-plan.md` (read before master plan).
 - Plan Mode prompts: `.cursor/plan-prompts/`. Prompting rules for agent prompts: `docs/prompting-playbook.md`.
 
 - Plan with gstack (`/office-hours`, `/autoplan`, `/spec`) — see `docs/gstack-workflow.md`.

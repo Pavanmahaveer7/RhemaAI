@@ -1,0 +1,19 @@
+{
+  "name": "church-ai",
+  "private": true,
+  "scripts": {
+    "dev:web": "pnpm --filter web dev",
+    "lint": "pnpm -r lint",
+    "test": "pnpm -r test",
+    "test:ui": "echo Open http://localhost:3000/design/ui_kits/smoke.html flows.html layout.html a11y.html after pnpm dev:web"
+  },
+  "pnpm": {
+    "overrides": {
+      "postcss": "8.5.23",
+      "source-map-js": "1.2.2"
+    },
+    "auditConfig": {
+      "ignoreGhsas": ["GHSA-wq5f-xc86-pv6w"]
+    }
+  }
+}

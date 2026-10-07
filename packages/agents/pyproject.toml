@@ -1,0 +1,13 @@
+[project]
+name = "agents"
+version = "0.1.0"
+description = "Agent routing. Intake is deterministic when the endpoint already names the layer."
+requires-python = ">=3.12"
+dependencies = []
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]

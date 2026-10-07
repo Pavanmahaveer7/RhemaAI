@@ -1,0 +1,40 @@
+window.CA_DATA = {
+lexicon: [
+{term:"karma",pos:"noun",def:"Action, and the moral weight that action carries forward.",used:["Hindu","Buddhist","Christian"],
+ sources:[{tradition:"Hindu",work:"Bhagavad Gita",reference:"3.9"},{tradition:"Buddhist",work:"Dhammapada",reference:"1.1–1.2"},{tradition:"Christian",work:"Galatians",reference:"6:7 (KJV)"}],
+ faith:{parallel:"Both Hindu and Buddhist teaching treat action as morally weighted: what you do shapes what follows. Christians also say a person reaps what they sow. That resemblance is an analogy, not one doctrine.",
+ difference:"They do not share the same account of what liberates a person. Hindu traditions speak of moksha, Buddhist teaching of nirvana, and Christian teaching of grace received through Christ. None of these is ranked here.",
+ bridge:"A Christian can read karma as a word for consequence and moral seriousness, while holding that grace is a gift rather than a balance of deeds. The terms can sit side by side without being treated as the same idea.",
+ sources:[{tradition:"Hindu",work:"Bhagavad Gita",reference:"4.17"},{tradition:"Buddhist",work:"Anguttara Nikaya",reference:"6.63"},{tradition:"Christian",work:"Ephesians",reference:"2:8–9 (KJV)"}]}},
+{term:"dharma",pos:"noun",def:"Duty, order, or teaching, depending on the tradition using the word.",used:["Hindu","Buddhist"],
+ sources:[{tradition:"Hindu",work:"Bhagavad Gita",reference:"18.47"},{tradition:"Buddhist",work:"Dhammapada",reference:"20.1"}],
+ faith:{parallel:"Each use points to a right order for living. Christians speak of a calling and of God’s law. The resemblance is an analogy.",
+ difference:"In Hindu use dharma is often one’s duty; in Buddhist use it is the Buddha’s teaching. Christian calling rests on a relationship with God, not a cosmic order.",
+ bridge:"A Christian can hear dharma as a serious word about how to live, without equating it with the law of Moses or the gospel.",
+ sources:[{tradition:"Hindu",work:"Manusmriti",reference:"1.108"},{tradition:"Christian",work:"Micah",reference:"6:8 (KJV)"}]}},
+{term:"moksha",pos:"noun",def:"Release from saṃsāra, the cycle of rebirth, as the Upaniṣads teach it.",used:["Hindu"],sources:[{tradition:"Hindu",work:"Mundaka Upanishad",reference:"3.2.8"}]},
+{term:"nirvana",pos:"noun",def:"In Theravāda teaching, the ending of craving, suffering and rebirth.",used:["Buddhist"],sources:[{tradition:"Buddhist",work:"Dhammapada",reference:"15.203"}]},
+{term:"grace",pos:"noun",def:"Favor that is given, not earned.",used:["Christian","Hindu"],sources:[{tradition:"Christian",work:"Ephesians",reference:"2:8 (KJV)"}],
+ faith:{parallel:"Some Hindu devotional traditions speak of the grace (prasada) of God. Christians speak of grace in Christ. The resemblance is an analogy.",
+ difference:"The accounts of who gives grace, and why, are not the same. No tradition is ranked above another here.",
+ bridge:"For a Christian, grace is central. It can be explained to a neighbour by pointing to their own word for an unearned gift, while saying clearly that the two are not identical.",
+ sources:[{tradition:"Hindu",work:"Bhagavad Gita",reference:"18.56"},{tradition:"Christian",work:"Titus",reference:"2:11 (KJV)"}]}},
+{term:"faith",pos:"noun",def:"Trust placed in someone or something beyond proof.",used:["Christian","Hindu","Buddhist"],sources:[{tradition:"Christian",work:"Hebrews",reference:"11:1 (KJV)"}]},
+{term:"meditation",pos:"noun",def:"A practice of sustained attention.",used:["Hindu","Buddhist","Christian"],sources:[{tradition:"Buddhist",work:"Satipatthana Sutta",reference:"MN 10"},{tradition:"Christian",work:"Psalms",reference:"1:2 (KJV)"}]},
+{term:"suffering",pos:"noun",def:"Pain, loss, or dissatisfaction a person undergoes.",used:["Buddhist","Christian","Hindu"],sources:[{tradition:"Buddhist",work:"Dhammacakkappavattana Sutta",reference:"SN 56.11"}]},
+{term:"compassion",pos:"noun",def:"Feeling with another’s suffering and wanting to relieve it.",used:["Buddhist","Christian","Hindu"],sources:[]},
+{term:"love",pos:"noun",def:"Care that wills the good of another.",used:["Christian","Hindu","Buddhist"],sources:[{tradition:"Christian",work:"1 Corinthians",reference:"13:4 (KJV)"}]},
+{term:"marriage",pos:"noun",def:"A lasting, publicly recognised union of two people.",used:["Christian","Hindu","Buddhist"],sources:[]},
+{term:"salvation",pos:"noun",def:"Being rescued or made whole.",used:["Christian"],sources:[{tradition:"Christian",work:"Romans",reference:"10:9 (KJV)"}]}
+],
+months:[
+{id:"2026-08",label:"Aug 2026",question:"What does love mean to you?",term:"love",published:true,answers:184,
+ nodes:[["family",42],["duty",31],["work",24],["prayer",20],["community",18],["health",12],["children",15],["honesty",10],["marriage",11]],
+ links:[["marriage","family",9,"s"],["marriage","duty",5,"s"],["family","duty",14,"s"],["family","children",12,"s"],["duty","work",9,"s"],["prayer","community",8,"s"],["family","community",7,"s"],["work","health",5,"t"],["duty","honesty",6,"s"],["work","family",6,"t"],["prayer","honesty",4,"s"]]},
+{id:"2026-09",label:"Sep 2026",question:"What does salvation mean to you?",term:"salvation",published:true,answers:212,
+ nodes:[["family",46],["duty",28],["suffering",26,1],["hope",30,1],["work",20],["prayer",22],["community",19],["children",13],["forgiveness",11,1],["health",9],["faith",17,1],["salvation",12,1],["exile",2,1]],
+ links:[["faith","hope",10,"s"],["salvation","faith",8,"s"],["salvation","forgiveness",6,"s"],["family","duty",13,"s"],["suffering","hope",15,"s"],["hope","prayer",11,"s"],["family","children",10,"s"],["suffering","work",7,"t"],["duty","work",8,"s"],["prayer","community",9,"s"],["forgiveness","family",6,"s"],["suffering","family",8,"s"],["hope","duty",5,"t"],["work","health",4,"t"],["forgiveness","hope",5,"s"]]},
+{id:"2026-10",label:"Oct 2026",question:"What does faith mean to you?",term:"faith",published:false,ends:"2026-10-31",answers:97,nodes:[],links:[]}
+],
+status:[["API","up"],["Database","up"],["Cache","up"],["Graph database","up"],["Model gateway","down"]]
+};

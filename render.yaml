@@ -1,0 +1,61 @@
+# Render Blueprint — church-ai-stack (repo root = this folder).
+# Docs: docs/render-deploy.md
+services:
+  - type: web
+    name: church-ai-api
+    runtime: python
+    plan: free
+    buildCommand: pip install uv && uv sync --all-packages
+    startCommand: uv run uvicorn app.main:app --app-dir apps/api/src --host 0.0.0.0 --port $PORT
+    healthCheckPath: /api/v1/status
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.12"
+      - key: APP_ENV
+        value: production
+      - key: CONTRACT_STORE
+        value: postgres
+      - key: DATABASE_URL
+        fromDatabase:
+          name: church-ai-db
+          property: connectionString
+      - key: LLM_MODE
+        value: off
+      - key: LOG_LEVEL
+        value: info
+      - key: DEMO_SIGNIN_PASSWORD
+        sync: false
+      - key: CHECKIN_ENCRYPTION_KEY
+        sync: false
+      - key: AGENT_SERVICE_TOKEN
+        sync: false
+      - key: INTEGRATION_WEBHOOK_SECRET
+        sync: false
+      - key: APP_BASE_URL
+        fromService:
+          type: web
+          name: church-ai-web
+          envVarKey: RENDER_EXTERNAL_URL
+
+  - type: web
+    name: church-ai-web
+    runtime: node
+    plan: free
+    buildCommand: corepack enable && pnpm install --frozen-lockfile && pnpm --filter web build
+    startCommand: pnpm --filter web exec next start -H 0.0.0.0 -p $PORT
+    envVars:
+      - key: NODE_VERSION
+        value: "20"
+      - key: APP_ENV
+        value: production
+      - key: API_BASE_URL
+        fromService:
+          type: web
+          name: church-ai-api
+          envVarKey: RENDER_EXTERNAL_URL
+
+databases:
+  - name: church-ai-db
+    plan: free
+    databaseName: church_ai
+    user: church_ai

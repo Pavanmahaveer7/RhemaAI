@@ -10,6 +10,15 @@ Every file in this repo and what it's for.
 - `README.md` — What this repo is and setup order
 - `SOURCES.md` — Where each part came from
 - `docker-compose.yml` — Local Postgres+pgvector, Redis, Memgraph
+- `pyproject.toml` — Python workspace root (uv)
+- `pnpm-workspace.yaml` — JavaScript workspace
+- `package.json` — Root scripts (`dev:web`)
+- `apps/api/` — FastAPI `/health` and `/ready` (Phase 0)
+- `apps/web/` — Next.js dictionary search plus `/status`
+- `packages/agents/` — Deterministic intake routing
+- `packages/llm-gateway/` — Stub gateway; only place a model SDK may be imported later
+- `packages/guardrails/` — Fail-closed guardrail stubs and tool allowlist
+- `packages/mcp/vocab/` — L1 dictionary store, seed, lookup and search
 - `.cursor/plan-prompts/00-load-context.md`
 - `.cursor/plan-prompts/01-master-plan.md`
 - `.cursor/plan-prompts/02-architecture-lock.md`
@@ -43,6 +52,11 @@ Every file in this repo and what it's for.
 - `docs/architecture-diagram.svg` — Architecture diagram (vector)
 - `docs/architecture.md`
 - `docs/build-plan.md` — Your original product + build plan
+- `docs/pre-build-plan.md` — L1/L2 product principles, verification, MCP security, silent-failure rules (before Phase 0)
+- `docs/l3-pastor-pipeline.md` — L3 pastor pipeline, plus the Planning Center church-app connection
+- `docs/ui-system-design.md` — Whole-product UI guide for Claude Design (L1, L2 graph, L3 pipeline)
+- `.cursor/plans/pre-build-plan.md` — Workspace copy of pre-build plan
+- `.cursor/plans/README.md` — Where to save master-plan and slice plans
 - `docs/data-ethics.md`
 - `docs/data-model.md`
 - `docs/demo-script.md`
@@ -50,14 +64,17 @@ Every file in this repo and what it's for.
 - `docs/evals.md`
 - `docs/gstack-workflow.md`
 - `docs/guardrails.md`
+- `docs/lexicon-standards.md` — Dictionary and Faith mode rules for the screens and the API
 - `docs/observability.md`
 - `docs/prompting-playbook.md`
 - `docs/prompts.md`
 - `docs/threat-model.md`
+- `docs/vibe-security.md` — Security checks to apply when we build (vibe-security skill + the simple checklist)
 - `docs/adr/ADR-001-single-llm-gateway.md`
 - `docs/adr/ADR-002-intake-agent-routing.md`
 - `docs/adr/ADR-003-l3-privacy.md`
 - `docs/adr/ADR-004-tech-stack.md` — Chosen tech stack + pinned models
+- `docs/adr/ADR-005-human-in-the-loop-and-data-minimization.md` — HITL review + pastor data minimization
 - `docs/adr/ADR-template.md`
 - `evals/datasets/checkin-analyst.jsonl`
 - `evals/datasets/compare.jsonl`

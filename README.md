@@ -14,6 +14,10 @@ guardrail rules, agent/tool scaffolding skills, eval datasets, CI, and a gstack-
 | `.cursor/rules/*.mdc` | Scoped rules that auto-apply to specific folders (agents, guardrails, MCP, API, web, data) |
 | `.cursor/skills/*/SKILL.md` | Project-specific skills: `new-agent`, `new-mcp-tool`, `guardrail-audit`, `eval-run`, `redteam`, `prompt-change`, `demo-ready` |
 | `docs/build-plan.md` | Your original product + build plan (verbatim, with a status note) |
+| `docs/pre-build-plan.md` | Product principles before coding (L1 modes, Pol.is L2, verification, MCP security, no silent failures) |
+| `docs/l3-pastor-pipeline.md` | Pastor pipeline, plus the Planning Center church-app connection |
+| `docs/ui-system-design.md` | UI guide for Claude Design: dictionary, faith mode, concept graph, pastor pipeline |
+| `.cursor/plans/` | Save `master-plan.md` here after plan prompt 01 (`pre-build-plan.md` already included) |
 | `docs/architecture-diagram.png/.svg` | The architecture diagram (blue = SWE, rest = AI) |
 | `docs/` | Source-of-truth docs: architecture, API contract, guardrails, prompts, evals, data model, threat model, observability, deployment, data ethics, gstack workflow, demo script |
 | `docs/adr/` | Architecture Decision Records — every non-obvious choice gets one |

@@ -1,0 +1,4 @@
+/* Nocturne — palette candidate (override on top of styles.css) */
+:root{--ink-0:#0A0C12;--ink-1:#11141C;--ink-2:#191D28;--ink-3:#232838;--ink-4:#30374B;
+--stone-5:#636B80;--stone-6:#8F97AB;--bone-7:#BFC6D6;--bone-8:#E2E6F0;--bone-9:#F4F6FB;
+--lamp-300:#FF9EC2;--lamp-400:#FF6FA3;--lamp-500:#F0487F;--lamp-600:#C12A5E;--lamp-tint:rgba(255,111,163,.13);}

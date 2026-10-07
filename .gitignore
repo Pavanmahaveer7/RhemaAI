@@ -3,6 +3,8 @@
 !.env.example
 node_modules/
 __pycache__/
+*.egg-info/
+.pytest_cache/
 .venv/
 dist/
 build/
@@ -12,3 +14,4 @@ evals/results/
 *.log
 .DS_Store
 .gstack/
+.cache/
