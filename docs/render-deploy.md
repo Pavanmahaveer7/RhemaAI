@@ -50,6 +50,14 @@ See **`docs/security-runbook.md`** for rotation and backups.
 5. **Blueprint deeplink:** [Create Blueprint from GitHub](https://dashboard.render.com/blueprint/new?repo=https://github.com/Pavanmahaveer7/RhemaAI)
 6. Open the **web** service URL → `/app`, `/pastor`, `/beta-survey`.
 
+## Troubleshooting
+
+- **Pages load but sign-in / data fails:** Redeploy **church-ai-web** after the runtime `/api/v1` proxy fix (`apps/web/app/api/v1/[...path]/route.ts`). In Dashboard → web → Environment, confirm `API_BASE_URL` points at the API service URL.
+- **404 on `church-ai-web.onrender.com`:** Blueprint not applied or service name differs — use the URL from Render Dashboard.
+- **Build failed:** Open the failed service → **Logs** → copy the last error line.
+
+See also **`docs/demo-hosting.md`**.
+
 ## 5. After deploy
 
 - First API boot seeds Postgres from the contract store (demo lexicon + accounts). Sign in as `A-0100` with `DEMO_SIGNIN_PASSWORD`.

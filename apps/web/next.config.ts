@@ -1,6 +1,6 @@
 import type { NextConfig } from "next";
 
-const apiBase = process.env.API_BASE_URL ?? "http://localhost:8000";
+// /api/v1 is proxied at runtime in app/api/v1/[...path]/route.ts (Render sets API_BASE_URL).
 const security = [
   { key: "X-Content-Type-Options", value: "nosniff" },
   { key: "Referrer-Policy", value: "no-referrer" },
@@ -13,9 +13,6 @@ const nextConfig: NextConfig = {
       // The design boards and the demo preview the screens in same-origin frames.
       { source: "/design/:path*", headers: [...security, { key: "X-Frame-Options", value: "SAMEORIGIN" }] },
     ];
-  },
-  async rewrites() {
-    return [{ source: "/api/v1/:path*", destination: `${apiBase}/api/v1/:path*` }];
   },
   async redirects() {
     return [
