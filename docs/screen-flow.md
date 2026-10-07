@@ -1,56 +1,81 @@
 # Rhema.ai screen flow (live beta)
 
-Use **one web host** for sharing: **https://rhema-ai-web.vercel.app**  
+Use **one web host**: **https://rhema-ai-web.vercel.app**  
 Do **not** send testers to `rhema-ai-api.vercel.app` (API only).
 
-## First-time journey (public beta)
+There are **two apps** on the same site. Do not mix the links.
+
+---
+
+## Path A — Public (Layer 1 & 2)
+
+**Who:** Anyone trying the beta — readers, monthly question, map.
 
 | Step | What | URL |
 |------|------|-----|
-| 1 | **Landing** — search a word, see the month preview | https://rhema-ai-web.vercel.app/ |
-| 2 | **Product tour** — tap **Get started** or **Tour** | https://rhema-ai-web.vercel.app/tour?from=landing |
-| 3 | **Onboarding** — tap **Continue into the app** on the tour | https://rhema-ai-web.vercel.app/app#r=intro&step=1 |
-| 4 | **Dictionary & monthly question** — guest or create account | https://rhema-ai-web.vercel.app/app |
-| 5 | **Beta survey** (optional, ~1 min) | https://rhema-ai-web.vercel.app/beta-survey |
+| 1 | **Landing** | https://rhema-ai-web.vercel.app/ |
+| 2 | **Tour** — **Get started** (do not skip unless you know the app) | https://rhema-ai-web.vercel.app/tour?from=landing |
+| 3 | **Onboarding** — **Continue into the app** on the tour | https://rhema-ai-web.vercel.app/app#r=intro&step=1 |
+| 4 | **Dictionary & monthly question** — guest or **Sign in** (email member) | https://rhema-ai-web.vercel.app/app |
+| 5 | **Beta survey** (optional) | https://rhema-ai-web.vercel.app/beta-survey |
 
-Power users can skip the tour: **Skip — try the dictionary** on the tour bar, or open  
+Skip tour: **Skip — try the dictionary** on the tour bar, or  
 https://rhema-ai-web.vercel.app/app#guest=1&r=search
 
-## Share links (copy/paste)
+**Sign in** in the header = **email** accounts only (create account / welcome back). Not staff codes.
 
-| Audience | Link |
-|----------|------|
-| Everyone (start here) | https://rhema-ai-web.vercel.app/ |
-| Tour only | https://rhema-ai-web.vercel.app/tour?from=landing |
-| App (after tour) | https://rhema-ai-web.vercel.app/app |
-| Beta feedback form | https://rhema-ai-web.vercel.app/beta-survey |
-| Pastor / staff app | https://rhema-ai-web.vercel.app/pastor |
+---
 
-Public **Sign in** on the landing header is for **email members** only.  
-**Pastor & staff** (footer only, or the link on the sign-in screen) →  
-https://rhema-ai-web.vercel.app/app#r=signin&staff=l3  
-(codes + password — **private DM only**; see [beta-pastor-invite.md](./beta-pastor-invite.md)).
+## Path B — Staff (Layer 3)
+
+**Who:** Invited pastors, leaders, reviewers (private beta). **Not** the public tour or create-account flow.
+
+| Step | What | URL |
+|------|------|-----|
+| 1 | **Staff sign in** (only entry you should share for L3) | https://rhema-ai-web.vercel.app/staff |
+| 2 | Code + password from your organizer (DM) | same screen |
+| 3 | **Staff app** opens automatically | `/pastor` (route depends on role) |
+
+| After sign-in (role) | Lands on |
+|----------------------|----------|
+| Pastor **P-0233** / **P-0901** | `/pastor#r=tracks` (or home flow) |
+| Leader **L-0100** | `/pastor#r=alerts` |
+| Reviewer **R-0100** | `/pastor#role=reviewer&r=queue` |
+
+**Do not** send L3 testers to `/pastor` first on live — they will be sent to **Staff sign in** if not signed in.  
+**Do not** share `/app` tour links with staff cohorts.
+
+Invite pack: [beta-pastor-invite.md](./beta-pastor-invite.md).
+
+**Screenshots only (no login):**  
+https://rhema-ai-web.vercel.app/pastor#r=tracks&api=0
+
+---
+
+## Quick reference
+
+| Audience | Start here |
+|----------|------------|
+| Public beta | https://rhema-ai-web.vercel.app/ |
+| Staff beta | https://rhema-ai-web.vercel.app/staff |
+| Beta survey | https://rhema-ai-web.vercel.app/beta-survey |
 
 ## Two HTML shells
 
-| Shell | Path on site | Hash routes |
-|-------|----------------|-------------|
-| **Public** (L1 dictionary, month, map, settings) | `/app` → `ui_kits/public/index.html` | `#r=search`, `#r=term&t=…`, `#r=month`, `#r=graph`, … |
-| **Pastor pipeline** (L3 pastor, reviewer, leader) | `/pastor` → `ui_kits/pipeline/index.html` | `#r=home`, `#r=checkin`, `#role=reviewer&r=queue`, … |
-
-Full screen → file → API map: [../contract/screens.md](../contract/screens.md).
+| Shell | URL path | Purpose |
+|-------|----------|---------|
+| **Public** | `/app` | Dictionary, month, map, member sign-in |
+| **Staff** | `/pastor` (after sign-in) | Check-in, tracks, review, alerts |
 
 ## Beta survey API
 
-The form posts to **`POST /api/v1/feedback/beta-survey`** (not `/api/beta-feedback`).
+`POST /api/v1/feedback/beta-survey` · Admin CSV: `GET /api/v1/admin/beta-surveys?format=csv` as **A-0100**.
 
-Admin CSV: **`GET /api/v1/admin/beta-surveys?format=csv`** while signed in as admin (**A-0100**).
-
-## Internal / QA
+## QA
 
 | Purpose | URL |
 |---------|-----|
-| All screens smoke board | https://rhema-ai-web.vercel.app/screens |
-| Admin beta export (signed-in admin) | `/app#r=admin&tab=feedback` after **A-0100** sign-in |
+| All screens | https://rhema-ai-web.vercel.app/screens |
+| Admin beta export | Sign in **A-0100** → `/app#r=admin&tab=feedback` |
 
-Hash-only `as=admin` without a session shows **Admins only** — that is expected.
+Screen map: [../contract/screens.md](../contract/screens.md).

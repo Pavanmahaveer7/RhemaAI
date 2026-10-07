@@ -8,7 +8,7 @@ const lpOnboard = `${lpApp}#r=intro&step=1`;
 const lpLex = t => window.CA_DATA.lexicon.find(x => x.term === t);
 
 const lpEveryone = `${lpApp}#guest=1&r=search`;
-const lpStaffSignIn = `${lpApp}#r=signin&staff=l3`;
+const lpStaffSignIn = "/staff";
 function useWideLp(bp) { const [w, setW] = React.useState(innerWidth >= bp); React.useEffect(() => { const f = () => setW(innerWidth >= bp); addEventListener("resize", f); return () => removeEventListener("resize", f); }, []); return w; }
 
 // Hero: the word page building itself. Runs once per word, ~3s. Chips replay it.
@@ -155,6 +155,21 @@ function Landing() {
       </section>
       {!lk && <TourCard wide={wide} />}
       {!lk && <MonthSequence wide={wide} />}
+      {!lk && <section aria-labelledby="lp-l3" style={{ maxWidth: 1180, margin: "0 auto", padding: "32px var(--gutter-phone) 8px" }}>
+        <div className="lp-card" style={{ display: "flex", flexDirection: wide ? "row" : "column", gap: 20, alignItems: wide ? "center" : "stretch", justifyContent: "space-between", padding: "24px 22px", borderRadius: "var(--radius-lg)", border: "1px solid var(--border-subtle)", background: "var(--surface-card)" }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 10, maxWidth: 620 }}>
+            <span style={{ font: "700 11px/1 var(--font-body)", letterSpacing: ".06em", textTransform: "uppercase", color: "var(--text-muted)" }}>Layer 3 · Staff beta</span>
+            <h2 id="lp-l3" style={{ margin: 0, font: "800 clamp(24px,5vw,32px)/1.12 var(--font-display)", letterSpacing: "var(--tracking-display)", color: "var(--text-strong)", textWrap: "balance" }}>Pastor, leader, or reviewer?</h2>
+            <p style={{ margin: 0, font: "var(--type-body)", fontSize: 17, color: "var(--text-muted)", textWrap: "pretty" }}>This is a <strong style={{ color: "var(--text-body)", fontWeight: 700 }}>separate app</strong> from the public dictionary. Use the invite your organizer sent: <strong style={{ color: "var(--text-body)", fontWeight: 700 }}>code + password</strong>. You will not go through the public tour or create-account flow.</p>
+            <ol style={{ margin: "4px 0 0", paddingLeft: 22, font: "var(--type-body)", fontSize: 16, color: "var(--text-body)", display: "flex", flexDirection: "column", gap: 6 }}>
+              <li>Open <strong>Staff sign in</strong> (one link).</li>
+              <li>Sign in with your assigned code (e.g. P-0233).</li>
+              <li>Land in <strong>Staff</strong> — tracks, check-in, review, or alerts by role.</li>
+            </ol>
+          </div>
+          <LpButton variant="secondary" size="lg" iconRight="arrow-right" onClick={() => { location.href = lpStaffSignIn; }}>Staff sign in</LpButton>
+        </div>
+      </section>}
       {!lk && <section aria-labelledby="lp-beta" style={{ maxWidth: 1180, margin: "0 auto", padding: "8px var(--gutter-phone) 56px" }}>
         <div className="lp-card" style={{ display: "flex", flexDirection: wide ? "row" : "column", gap: 20, alignItems: wide ? "center" : "stretch", justifyContent: "space-between", padding: "24px 22px", borderRadius: "var(--radius-lg)", border: "1px solid var(--border-default)", background: "linear-gradient(135deg, var(--surface-card) 0%, color-mix(in srgb, var(--clay-400) 8%, var(--surface-card)) 100%)" }}>
           <div style={{ display: "flex", flexDirection: "column", gap: 8, maxWidth: 560 }}>
@@ -169,7 +184,7 @@ function Landing() {
     <footer style={{ borderTop: "1px solid var(--border-subtle)", padding: "24px var(--gutter-phone) 32px" }}>
       <div style={{ maxWidth: 1180, margin: "0 auto", display: "flex", gap: 16, flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", font: "var(--type-source)", color: "var(--text-muted)" }}>
         <span>We map ideas, never people.</span>
-        <nav aria-label="Footer" style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>{[["Tour", lpTourFull("16:9")], ["Continue to app", lpOnboard], ["Dictionary", lpEveryone], ["Beta feedback", "/beta-survey?from=landing-footer"], ["Pastor & staff", lpStaffSignIn], ["All screens", "/screens"]].map(([l, h]) => <a key={l} href={h} className="lp-nav" style={{ minHeight: 44, display: "inline-flex", alignItems: "center", textDecoration: "none" }}>{l}</a>)}<a href={`${lpApp}#r=settings&as=guest`} className="lp-nav" style={{ minHeight: 44, display: "inline-flex", alignItems: "center", textDecoration: "none" }}>What we store</a></nav>
+        <nav aria-label="Footer" style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>{[["Tour", lpTourFull("16:9")], ["Dictionary (guest)", lpEveryone], ["Beta feedback", "/beta-survey?from=landing-footer"], ["Staff sign in", lpStaffSignIn], ["All screens", "/screens"]].map(([l, h]) => <a key={l} href={h} className="lp-nav" style={{ minHeight: 44, display: "inline-flex", alignItems: "center", textDecoration: "none" }}>{l}</a>)}<a href={`${lpApp}#r=settings&as=guest`} className="lp-nav" style={{ minHeight: 44, display: "inline-flex", alignItems: "center", textDecoration: "none" }}>What we store</a></nav>
       </div>
     </footer>
   </>;

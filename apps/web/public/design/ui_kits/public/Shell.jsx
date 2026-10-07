@@ -27,7 +27,6 @@ function PublicShell({ route, go, children, bleed, bare }) {
           {nav.map(([id, label]) => <button key={id} onClick={() => goTab(id)} aria-current={top === id ? "page" : undefined} style={{ height: 40, padding: "0 14px", borderRadius: 999, border: 0, cursor: "pointer", font: "600 13px/1 var(--font-body)", background: top === id ? "var(--surface-raised)" : "transparent", color: top === id ? "var(--text-strong)" : "var(--text-muted)" }}>{label}</button>)}
         </nav>}
         {!bare && (signedIn || wide) && <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-          {wide && !lk && <ShButton size="sm" variant="ghost" onClick={() => { location.href = "/app#r=signin&staff=l3"; }}>Staff sign in</ShButton>}
           {!signedIn && <ShButton size="sm" variant="secondary" onClick={() => go("signin")}>Sign in</ShButton>}
           {session && session.kind === "admin" && wide && <ShButton size="sm" variant="ghost" onClick={() => go("admin")}>Admin</ShButton>}
         </div>}

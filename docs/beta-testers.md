@@ -13,7 +13,9 @@ Send testers these links only. **Do not** share staff codes or `DEMO_SIGNIN_PASS
 | https://rhema-ai-web.vercel.app/app | Public app — dictionary, monthly question, map |
 | https://rhema-ai-web.vercel.app/beta-survey | **Beta feedback** (~1 min, no account) |
 
-Recommended path: **Home → Tour → App → Survey**. Details: [screen-flow.md](./screen-flow.md).
+Recommended **public** path: **Home → Tour → App → Survey**.  
+**Staff (L3)** is separate: **https://rhema-ai-web.vercel.app/staff** — see [beta-pastor-invite.md](./beta-pastor-invite.md).  
+Full map: [screen-flow.md](./screen-flow.md).
 
 ## What testers can do
 

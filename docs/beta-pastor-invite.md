@@ -2,11 +2,13 @@
 
 Use this for **trusted testers** who should try tracks, check-ins, alerts, or review — not for a public post.
 
-## Link
+## Link (share this only for L3 — not the public landing tour)
 
-**Staff sign-in:** https://rhema-ai-web.vercel.app/app#r=signin&staff=l3
+**Staff sign-in:** https://rhema-ai-web.vercel.app/staff  
 
-Sign-in uses a **code name** + **password** (not the public “create account” email flow).
+(Same screen as `/app#r=signin&staff=l3` — one hop so testers are not dropped on the dictionary.)
+
+Sign-in uses a **code name** + **password** (not the public “create account” email flow). After sign-in the browser opens **`/pastor`** (Staff app).
 
 ## Demo codes (shared sandbox data)
 
