@@ -12,6 +12,15 @@ def test_health_is_ok():
     assert response.headers.get("x-request-id")
 
 
+def test_status_marks_optional_infra_not_configured_in_production(monkeypatch):
+    monkeypatch.setenv("APP_ENV", "production")
+    monkeypatch.delenv("REDIS_URL", raising=False)
+    monkeypatch.delenv("GRAPH_DB_URL", raising=False)
+    rows = {r["name"]: r["status"] for r in client.get("/api/v1/status").json()}
+    assert rows["Cache"] == "not_configured"
+    assert rows["Graph database"] == "not_configured"
+
+
 def test_ready_is_explicit_when_deps_are_down(monkeypatch):
     def boom():
         raise ConnectionError("down")

@@ -1,6 +1,6 @@
 # Pending tasks (platform)
 
-Last updated after Phase 5 wiring + beta survey. Use this before the demo and before Render.
+Last updated after beta readiness audit. Use before Render beta and before wide user invite.
 
 ## Done (no action)
 
@@ -10,20 +10,22 @@ Last updated after Phase 5 wiring + beta survey. Use this before the demo and be
 - Beta survey: landing CTA, `/beta-survey`, `POST /feedback/beta-survey`
 - `render.yaml` blueprint (deploy when ready)
 
-## Before tomorrow’s demo (you)
+## Before beta (you)
 
 | Task | How |
 |------|-----|
-| UI smoke / flows / layout / a11y | With `pnpm dev:web` on **:3000**, open `/design/ui_kits/smoke.html`, `flows.html`, `layout.html`, `a11y.html` and wait for full pass counts (~4 min for smoke) |
-| Live rehearsal | Follow `docs/demo-rehearsal.md` on `/app` with API `:8000` + Postgres |
-| Beta feedback | Landing band or `/beta-survey`; confirm API receives rows in `beta_surveys` |
+| Full checklist | **`docs/beta-readiness-audit.md`** — backend, DB, network, UX, security, scale |
+| Automated smoke | `$env:BASE='https://your-web.onrender.com'; .\scripts\beta_smoke.ps1` |
+| UI smoke / flows / layout / a11y | `pnpm dev:web` on **:3000** → `/design/ui_kits/smoke.html`, `flows.html`, `layout.html`, `a11y.html` |
+| Live rehearsal | `docs/demo-rehearsal.md` on `/app` with API + Postgres |
+| Rotate Render secrets | `docs/security-runbook.md` — never reuse `dev-only-change-me` |
 
 ## Short-term product gaps
 
 | Item | UI | Backend |
 |------|-----|---------|
 | Admin invite / resend / suspend / role / reset | `AccountsScreen.jsx` wired when live | `POST invite`, `PATCH`, `POST resend-invite`, `POST password-reset` (reset logs only; no email provider) |
-| Expert **Make/Change** on Faith blocks | Local `CAExpert` store | Only **Suggest** → `POST /terms/:term/edits` |
+| Expert **Make/Change** on Faith blocks | Live: pending review via API | **Suggest / Make / Change** → `POST /terms/:term/edits` when live |
 | `_ds_bundle.js` | Stale generated bundle | Rebuild design bundle before production launch |
 | `docs/api.md` (legacy paths) | — | Differs from `contract/api.md`; prefer contract for new work |
 

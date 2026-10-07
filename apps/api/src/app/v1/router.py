@@ -1317,10 +1317,17 @@ def service_status():
     return [
         {"name": "API", "status": "up"},
         {"name": "Database", "status": _probe_database()},
-        {"name": "Cache", "status": _probe(_probe_redis)},
-        {"name": "Graph database", "status": _probe(_probe_graph)},
+        {"name": "Cache", "status": _probe_optional("REDIS_URL", _probe_redis)},
+        {"name": "Graph database", "status": _probe_optional("GRAPH_DB_URL", _probe_graph)},
         {"name": "Model gateway", "status": "up" if gateway_mode() == "live" else "degraded"},
     ]
+
+
+def _probe_optional(env_key: str, check) -> str:
+    """Beta/prod without Redis or Memgraph: report not_configured instead of down."""
+    if os.getenv("APP_ENV") == "production" and not os.getenv(env_key, "").strip():
+        return "not_configured"
+    return _probe(check)
 
 
 def _probe(check) -> str:
