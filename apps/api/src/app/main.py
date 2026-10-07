@@ -11,7 +11,7 @@ from fastapi import FastAPI, Request
 from fastapi.concurrency import run_in_threadpool
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, RedirectResponse
 from starlette.exceptions import HTTPException as StarletteHTTPException
 from llm_gateway import ping as gateway_ping
 from vocab_mcp import init_db
@@ -187,6 +187,25 @@ async def guard_writes(request: Request, call_next):
             if os.getenv("APP_ENV") == "production" and not origin and not referer:
                 return _guard_error(request, 403, "forbidden", "That request did not come from this site.")
     return await call_next(request)
+
+
+@app.get("/")
+def api_root():
+    """API hostname is not the web app — send browsers to APP_BASE_URL."""
+    base = os.getenv("APP_BASE_URL", "").strip().rstrip("/")
+    if base:
+        return RedirectResponse(f"{base}/", status_code=307)
+    return {
+        "name": "Rhema.ai API",
+        "app": "Set APP_BASE_URL to your web origin (e.g. https://rhema-ai-web.vercel.app).",
+        "health": "/health",
+        "status": "/api/v1/status",
+    }
+
+
+@app.get("/api/v1")
+def api_v1_index():
+    return RedirectResponse("/api/v1/status", status_code=307)
 
 
 @app.get("/health")

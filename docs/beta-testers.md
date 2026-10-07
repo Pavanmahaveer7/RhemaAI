@@ -2,6 +2,8 @@
 
 Send testers these links only. **Do not** share staff codes or `DEMO_SIGNIN_PASSWORD` in a public post.
 
+**Use the web URL, not the API URL.** Opening `rhema-ai-api.vercel.app` in a browser is backend-only (you may see a JSON error). Always share **`rhema-ai-web.vercel.app`**.
+
 | Link | Purpose |
 |------|---------|
 | https://rhema-ai-web.vercel.app/ | Landing + dictionary |
