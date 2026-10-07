@@ -6,7 +6,17 @@ const security = [
   { key: "Referrer-Policy", value: "no-referrer" },
 ];
 
+const apiOrigin = (process.env.API_BASE_URL ?? "http://localhost:8000").replace(/\/$/, "");
+
 const nextConfig: NextConfig = {
+  async rewrites() {
+    return [
+      {
+        source: "/api/v1/:path*",
+        destination: `${apiOrigin}/api/v1/:path*`,
+      },
+    ];
+  },
   async headers() {
     return [
       { source: "/((?!design/).*)", headers: [...security, { key: "X-Frame-Options", value: "DENY" }] },

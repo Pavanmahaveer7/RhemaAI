@@ -58,16 +58,17 @@ if (-not $ApiBaseUrl) { throw "Could not detect API URL. Pass -ApiBaseUrl or set
 Write-Host "API URL: $ApiBaseUrl"
 
 Write-Host "`n=== Deploy Web ($WebProject) ==="
-$webDir = Join-Path $root "apps/web"
-& npx --yes vercel@latest link --yes --project $WebProject --cwd $webDir 2>&1 | Out-Null
-Set-VercelEnv -Name "API_BASE_URL" -Value $ApiBaseUrl -Cwd $webDir
-$webOut = (& npx --yes vercel@latest deploy --prod --yes --cwd $webDir 2>&1 | Out-String)
+# Project Root Directory is apps/web — deploy from monorepo root so that path exists on Vercel.
+& npx --yes vercel@latest link --yes --project $WebProject --cwd $root 2>&1 | Out-Host
+Set-VercelEnv -Name "API_BASE_URL" -Value $ApiBaseUrl -Cwd $root
+$webOut = (& npx --yes vercel@latest deploy --prod --yes --cwd $root 2>&1 | Out-String)
 Write-Host $webOut
 $webUrl = $null
 if ($webOut -match "(https://[\w\-]+\.vercel\.app)") { $webUrl = $Matches[1] }
 
 if ($webUrl) {
   Write-Host "`n=== Set APP_BASE_URL on API ==="
+  & npx --yes vercel@latest link --yes --project $ApiProject --cwd $root 2>&1 | Out-Null
   Set-VercelEnv -Name "APP_BASE_URL" -Value $webUrl -Cwd $root
   Invoke-Vercel deploy --prod --yes --cwd $root
   Write-Host "`nShare: $webUrl/app"
