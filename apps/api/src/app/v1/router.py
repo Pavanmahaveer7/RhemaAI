@@ -105,6 +105,9 @@ def _auth_rate_limit(request: Request, bucket: str, default: int) -> JSONRespons
 
 @router.post("/auth/guest")
 def auth_guest(request: Request):
+    limited = _auth_rate_limit(request, "guest", 30)
+    if limited:
+        return limited
     store = get_store()
     device_id = str(uuid.uuid4())
     store.devices[device_id] = {"id": device_id, "guest_token": device_id, "lang": "en", "created_at": _today()}
@@ -1211,6 +1214,9 @@ def embed_church(church_id: str, request: Request):
 
 @router.post("/feedback/helped")
 async def helped(request: Request):
+    store = get_store()
+    if not store.allow(f"helped:{_client_ip(request)}", 60):
+        return _fail(request, 429, "unavailable", "rate_limited", "Try again in a moment.")
     body = await _json(request)
     surface = body.get("surface")
     if surface == "checkin":
@@ -1287,6 +1293,9 @@ def crisis_lines(country: str = ""):
 
 @router.post("/events")
 async def track_event(request: Request):
+    store = get_store()
+    if not store.allow(f"events:{_client_ip(request)}", 120):
+        return _fail(request, 429, "unavailable", "rate_limited", "Try again in a moment.")
     body = await _json(request)
     name = body.get("name")
     allowed = {"task_done", "helped_yes", "helped_no", "return_next_month", "guest_upgrade", "alert_on"}
@@ -1455,7 +1464,7 @@ async def admin_invite(request: Request):
     body = await _json(request)
     email = str(body.get("email") or "").strip().lower()
     ui_role = str(body.get("role") or body.get("uiRole") or "Religion expert")
-    api_role = _ADMIN_UI_TO_API.get(ui_role) or str(body.get("apiRole") or "")
+    api_role = _ADMIN_UI_TO_API.get(ui_role, "")
     if api_role not in ("expert", "pastor", "reviewer", "leader", "admin"):
         return _fail(request, 422, "error", "validation", "Choose a role the app knows.")
     if "@" not in email or len(email) > 120:

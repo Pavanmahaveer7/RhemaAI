@@ -43,12 +43,14 @@ After any leak or first public push: **rotate all of the above** even if git his
 
 ## Database
 
-- **Today:** Render Postgres (single app user). Row-level security is **not** enabled; access control is in FastAPI.
-- **Supabase (planned):** enable RLS on tenant tables; API uses service role + verified JWT; see `docs/vibe-security.md` and ADR-004.
+- **Today:** Render Postgres (single app user). Row-level security is **not** enabled; access control is in FastAPI (`apps/api/tests/test_route_auth.py` guards sensitive routes).
+- **Supabase (planned):** see `docs/supabase-rls.md` and `infra/supabase/rls-starter.sql`.
 
 ## Backups
 
-- Enable Render Postgres backups on a paid plan, or schedule `pg_dump` to durable object storage.
+- Enable Render Postgres backups on a paid plan, or schedule `pg_dump` to durable object storage:
+  - Bash: `DATABASE_URL=... ./scripts/backup_postgres.sh backup.dump`
+  - PowerShell: `$env:DATABASE_URL='...'; .\scripts\backup_postgres.ps1 -OutFile backup.dump`
 - Ephemeral disk on web/API services — do not store state on disk.
 
 ## Dependencies
