@@ -303,6 +303,7 @@ function TermScreen({ term, back, initialExpert }) {
       </section>
       <NormalEntry e={e} />
       <window.CAHelped id={"word_" + e.term} q="Did this help you understand it?" />
+      {window.CASaveCard && !lk && <window.CASaveCard entry={e} />}
     </>}
   </div>;
 }

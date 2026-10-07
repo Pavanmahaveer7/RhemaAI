@@ -33,5 +33,13 @@ try {
 } catch {
   Write-Host "FAIL beta survey $($_.Exception.Message)"; $fail++
 }
+Test-Json "term karma" GET "/terms/karma" $null
+try {
+  $send = Invoke-RestMethod -Uri "$api/auth/staff/phone/send" -Method POST -Body '{"phone":"+15550109988"}' -ContentType "application/json"
+  if ($send.demoCode -or $send.maskedPhone) { Write-Host "OK  staff phone send (demo OTP)" }
+  else { Write-Host "WARN staff phone send (no demoCode; check STAFF_PHONE_OTP_DEMO)" }
+} catch {
+  Write-Host "FAIL staff phone send $($_.Exception.Message)"; $fail++
+}
 if ($fail -gt 0) { exit 1 }
 Write-Host "All smoke checks passed."
