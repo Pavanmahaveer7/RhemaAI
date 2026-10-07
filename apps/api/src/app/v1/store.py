@@ -194,6 +194,22 @@ class ContractStore:
         self._lexicon()
         self._months()
         self._pastor_pipeline()
+        self._apply_beta_staff_passwords()
+
+    def _beta_shared_staff_login(self) -> bool:
+        return os.getenv("BETA_SHARED_STAFF_LOGIN", "").strip().lower() in ("1", "true", "yes")
+
+    def _apply_beta_staff_passwords(self) -> None:
+        """Render beta: individual scrypt hashes so production sign-in works with DEMO_SIGNIN_PASSWORD."""
+        if os.getenv("APP_ENV") != "production" or not self._beta_shared_staff_login():
+            return
+        password = os.getenv("DEMO_SIGNIN_PASSWORD", "").strip()
+        if not password:
+            return
+        for account in self.accounts.values():
+            stored = str(account.get("password_hash") or "")
+            if not stored.startswith("scrypt$"):
+                account["password_hash"] = hash_password(password)
 
     def _add_account(self, account_id: str, role: str, code_name: str, real_name: str | None) -> None:
         self.accounts[account_id] = {
@@ -708,6 +724,7 @@ class ContractStore:
                 value = {**self.terms, **value}
             setattr(self, name, value)
             self._saved[name] = _digest(value)
+        self._apply_beta_staff_passwords()
 
     def save_postgres(self) -> None:
         """Write every collection that changed since the last save. Raises if the database refuses."""

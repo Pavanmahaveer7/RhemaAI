@@ -15,3 +15,4 @@ evals/results/
 .DS_Store
 .gstack/
 .cache/
+*.tsbuildinfo

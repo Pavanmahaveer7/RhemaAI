@@ -29,6 +29,13 @@ Set on **church-ai-api**:
 | `CORS_ORIGINS` | Extra HTTPS origins, comma-separated |
 | `LLM_DAILY_MAX_CALLS` | Optional daily cap on live model calls (e.g. `200`) |
 | `AUTH_SIGNIN_RATE_PER_HOUR` / `AUTH_SIGNUP_RATE_PER_HOUR` | Abuse limits (defaults 10 / 5) |
+| `BETA_SHARED_STAFF_LOGIN` | Blueprint sets `true` so demo staff (`A-0100`, `P-0233`, …) can sign in with `DEMO_SIGNIN_PASSWORD` in production. Set `false` before real users. |
+
+Generate secret values locally:
+
+```powershell
+.\scripts\generate_render_secrets.ps1
+```
 
 See **`docs/security-runbook.md`** for rotation and backups.
 
@@ -39,8 +46,9 @@ See **`docs/security-runbook.md`** for rotation and backups.
 1. Install [Render CLI](https://render.com/docs/cli) (optional): `render blueprints validate` in `church-ai-stack`.
 2. Push `church-ai-stack` to your Git remote.
 3. Render Dashboard → **New** → **Blueprint** → select repo → confirm `render.yaml`.
-4. Fill secrets → **Apply**.
-5. Open the **web** service URL → `/app`, `/pastor`, `/beta-survey`.
+4. Fill secrets → **Apply** (use `generate_render_secrets.ps1` — do not reuse `dev-only-change-me`).
+5. **Blueprint deeplink:** [Create Blueprint from GitHub](https://dashboard.render.com/blueprint/new?repo=https://github.com/Pavanmahaveer7/RhemaAI)
+6. Open the **web** service URL → `/app`, `/pastor`, `/beta-survey`.
 
 ## 5. After deploy
 

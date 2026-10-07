@@ -77,6 +77,17 @@ def test_production_refuses_the_shared_staff_password(monkeypatch):
     assert response.json()["error"]["code"] == "service_down"
 
 
+def test_production_beta_shared_staff_login_with_scrypt(monkeypatch):
+    from app.v1.store import get_store
+
+    monkeypatch.setenv("APP_ENV", "production")
+    monkeypatch.setenv("BETA_SHARED_STAFF_LOGIN", "true")
+    get_store()._apply_beta_staff_passwords()
+    response = client.post("/api/v1/auth/signin", json={"codeName": "P-0233", "password": "dev-only-change-me"})
+    assert response.status_code == 200
+    assert response.json()["kind"] == "pastor"
+
+
 def test_faith_mode_needs_two_different_reviewers():
     reviewer = TestClient(app)
     reviewer.post("/api/v1/auth/signin", json={"codeName": "R-0100", "password": "dev-only-change-me"})

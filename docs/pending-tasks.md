@@ -6,7 +6,8 @@ Last updated after beta readiness audit. Use before Render beta and before wide 
 
 - Contract API routes for L1–L3 core flows (dictionary, monthly, map draft, pastor, reviewer, alerts, integrations list, admin list/reveal)
 - Frontend wiring: `api.js`, `hydrate.js`, public screens, pipeline check-in/review/alerts/church join
-- Guardrails, persistence tests, CI (`lint-test`, `api-postgres`, guardrail audit)
+- Guardrails, persistence tests, **CI green on `main`** (run 7+)
+- Render beta staff login (`BETA_SHARED_STAFF_LOGIN` + scrypt demo passwords)
 - Beta survey: landing CTA, `/beta-survey`, `POST /feedback/beta-survey`
 - `render.yaml` blueprint (deploy when ready)
 
@@ -33,7 +34,7 @@ Last updated after beta readiness audit. Use before Render beta and before wide 
 
 | Phase | Work |
 |-------|------|
-| Render | **Ready:** `render.yaml` + `docs/render-deploy.md` — you push Git and Apply Blueprint |
+| Render | **Apply Blueprint:** [dashboard deeplink](https://dashboard.render.com/blueprint/new?repo=https://github.com/Pavanmahaveer7/RhemaAI) + secrets from `scripts/generate_render_secrets.ps1` |
 | Observability | Basic API access logs (`rid=` in Render logs); Langfuse / OTEL optional via env |
 | Auth | Supabase in ADR-004 — not imported; demo uses contract sign-in |
 | Retention | Documented in ethics docs — not implemented in store |
