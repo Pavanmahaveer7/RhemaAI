@@ -25,6 +25,12 @@ Set on **church-ai-api**:
 | `CHECKIN_ENCRYPTION_KEY` | 32+ char random string (check-in encryption + identity reveal) |
 | `AGENT_SERVICE_TOKEN` | Random string for `/review/packs/*/prepare` |
 | `INTEGRATION_WEBHOOK_SECRET` | Random string for Planning Center webhooks |
+| `APP_BASE_URL` | HTTPS URL of the Next.js site (CORS) |
+| `CORS_ORIGINS` | Extra HTTPS origins, comma-separated |
+| `LLM_DAILY_MAX_CALLS` | Optional daily cap on live model calls (e.g. `200`) |
+| `AUTH_SIGNIN_RATE_PER_HOUR` / `AUTH_SIGNUP_RATE_PER_HOUR` | Abuse limits (defaults 10 / 5) |
+
+See **`docs/security-runbook.md`** for rotation and backups.
 
 `DATABASE_URL` is injected from the database. `APP_BASE_URL` is wired from the web service URL for CORS/cookies.
 

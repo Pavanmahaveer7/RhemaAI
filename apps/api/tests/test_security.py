@@ -107,6 +107,50 @@ def test_an_answer_hash_changes_with_the_month():
     assert stored != answer_device_hash("2026-09", device)
 
 
+def test_signup_is_rate_limited_per_ip(monkeypatch):
+    monkeypatch.setenv("AUTH_SIGNUP_RATE_PER_HOUR", "2")
+    for i in range(2):
+        jar = TestClient(app)
+        jar.post("/api/v1/auth/guest")
+        ok = jar.post("/api/v1/auth/signup", json={"email": f"u{i}@example.com", "name": "U", "password": "Openpage1"})
+        assert ok.status_code == 200
+    jar = TestClient(app)
+    jar.post("/api/v1/auth/guest")
+    blocked = jar.post("/api/v1/auth/signup", json={"email": "u3@example.com", "name": "U", "password": "Openpage1"})
+    assert blocked.status_code == 429
+    assert blocked.json()["error"]["code"] == "rate_limited"
+
+
+def test_production_cors_excludes_localhost(monkeypatch):
+    monkeypatch.setenv("APP_ENV", "production")
+    monkeypatch.setenv("APP_BASE_URL", "https://app.example.com")
+    monkeypatch.setenv("CORS_ORIGINS", "https://www.example.com")
+    from app.main import _cors_origins
+
+    origins = set(_cors_origins())
+    assert "http://localhost:3000" not in origins
+    assert "https://app.example.com" in origins
+    assert "https://www.example.com" in origins
+
+
+def test_unhandled_errors_return_api_error_without_trace(monkeypatch):
+    monkeypatch.setenv("APP_ENV", "production")
+
+    @app.get("/api/v1/__test_unhandled")
+    def _boom():
+        raise RuntimeError("secret-stack-detail")
+
+    try:
+        response = TestClient(app, raise_server_exceptions=False).get("/api/v1/__test_unhandled")
+        assert response.status_code == 500
+        body = response.json()
+        assert body["error"]["code"] == "internal"
+        assert "secret-stack-detail" not in response.text
+        assert "traceback" not in response.text.lower()
+    finally:
+        app.router.routes = [r for r in app.router.routes if getattr(r, "path", None) != "/api/v1/__test_unhandled"]
+
+
 def test_a_self_harm_checkin_is_stored_and_routed_to_a_person():
     pastor = TestClient(app)
     pastor.post("/api/v1/auth/signin", json={"codeName": "P-0233", "password": "dev-only-change-me"})

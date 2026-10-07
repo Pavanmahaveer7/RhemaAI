@@ -26,25 +26,25 @@ After your work is committed on `main`:
 ```powershell
 cd C:\Users\pavan.singara\Downloads\church-ai-platform-repo\church-ai-stack
 
-# New public repo under your user (change name if taken):
-gh repo create church-ai-platform --public --source=. --remote=origin --description "Church AI platform — contract API, Next UI, Render blueprint"
+# Or create a new repo (change name if taken):
+gh repo create RhemaAI --public --source=. --remote=origin --description "Rhema AI — contract API, Next UI, Render blueprint"
 
 git push -u origin main
 ```
 
 Private repo: add `--private` instead of `--public`.
 
-If the repo **already exists** on GitHub:
+If the repo **already exists** on GitHub (current):
 
 ```powershell
-git remote add origin https://github.com/Pavanmahaveer7/church-ai-platform.git
+git remote add origin https://github.com/Pavanmahaveer7/RhemaAI.git
 git push -u origin main
 ```
 
 ## 3. Link Render to GitHub
 
 1. [Render Dashboard](https://dashboard.render.com) → **Account Settings** → connect **GitHub**.
-2. **New** → **Blueprint** → select **`church-ai-platform`** (or your repo name).
+2. **New** → **Blueprint** → select **[RhemaAI](https://github.com/Pavanmahaveer7/RhemaAI)**.
 3. Blueprint path: `render.yaml` (repo root = `church-ai-stack`).
 4. Follow **`docs/render-deploy.md`** for secrets.
 

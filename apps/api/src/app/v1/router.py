@@ -94,6 +94,15 @@ def _client_ip(request: Request) -> str:
     return request.client.host or "local"
 
 
+def _auth_rate_limit(request: Request, bucket: str, default: int) -> JSONResponse | None:
+    limit = int(os.getenv(f"AUTH_{bucket.upper()}_RATE_PER_HOUR", str(default)))
+    if limit <= 0:
+        return None
+    if not get_store().allow(f"{bucket}:{_client_ip(request)}", limit):
+        return _fail(request, 429, "unavailable", "rate_limited", "Try again in a moment.")
+    return None
+
+
 @router.post("/auth/guest")
 def auth_guest(request: Request):
     store = get_store()
@@ -110,8 +119,9 @@ async def auth_signin(request: Request):
     store = get_store()
     if not store.password_hash:
         return _fail(request, 503, "unavailable", "service_down", "Sign-in is not available until the server password is set.")
-    if not store.allow(f"signin:{_client_ip(request)}", 10):
-        return _fail(request, 429, "unavailable", "rate_limited", "Try again in a moment.")
+    limited = _auth_rate_limit(request, "signin", 10)
+    if limited:
+        return limited
     body = await _json(request)
     code = str(body.get("codeName") or "").strip()
     password = str(body.get("password") or "")
@@ -153,6 +163,9 @@ def _password_problem(password: str, email: str) -> str | None:
 @router.post("/auth/signup")
 async def auth_signup(request: Request):
     store = get_store()
+    limited = _auth_rate_limit(request, "signup", 5)
+    if limited:
+        return limited
     actor, denied = _require(request, {"guest", "user"})
     if denied:
         return denied

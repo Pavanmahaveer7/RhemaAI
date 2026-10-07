@@ -12,6 +12,7 @@ import threading
 import time
 import urllib.error
 import urllib.request
+from datetime import datetime, timezone
 
 from guardrails.pipeline import GuardrailError, apply_input, apply_output, input_flags
 
@@ -63,6 +64,32 @@ class _Breaker:
 
 breaker = _Breaker()
 
+_quota_lock = threading.Lock()
+_quota_day = ""
+_quota_count = 0
+
+
+def reset_daily_quota_for_tests() -> None:
+    global _quota_day, _quota_count
+    with _quota_lock:
+        _quota_day = ""
+        _quota_count = 0
+
+
+def _consume_daily_quota() -> None:
+    cap = int(os.getenv("LLM_DAILY_MAX_CALLS", "0") or "0")
+    if cap <= 0:
+        return
+    global _quota_day, _quota_count
+    day = datetime.now(timezone.utc).date().isoformat()
+    with _quota_lock:
+        if _quota_day != day:
+            _quota_day = day
+            _quota_count = 0
+        if _quota_count >= cap:
+            raise GatewayError("UNAVAILABLE", "daily model call limit reached")
+        _quota_count += 1
+
 
 def mode() -> str:
     explicit = os.getenv("LLM_MODE", "").strip().lower()
@@ -111,6 +138,7 @@ def complete(
         config = _config(agent)
         if config is None:
             raise GatewayError("UNAVAILABLE", f"no model is configured for {agent}")
+        _consume_daily_quota()
         raw = _call_with_schema_retry(config, agent, system, safe_text, required, max_tokens)
         model_id = config["model"]
     try:

@@ -9,8 +9,10 @@ import psycopg
 import redis
 from fastapi import FastAPI, Request
 from fastapi.concurrency import run_in_threadpool
+from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from starlette.exceptions import HTTPException as StarletteHTTPException
 from llm_gateway import ping as gateway_ping
 from vocab_mcp import init_db
 
@@ -39,9 +41,55 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(title="Church AI API", version="0.1.0", lifespan=lifespan)
 
+
+def _request_id(request: Request) -> str:
+    return getattr(request.state, "request_id", str(uuid.uuid4()))
+
+
+def _client_error_message(request: Request, fallback: str) -> str:
+    if os.getenv("APP_ENV") == "production":
+        return fallback
+    detail = getattr(request.state, "debug_detail", None)
+    return str(detail) if detail else fallback
+
+
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request: Request, exc: RequestValidationError):
+    rid = _request_id(request)
+    log.info("validation error rid=%s path=%s", rid, request.url.path)
+    message = "Check the fields and try again."
+    if os.getenv("APP_ENV") != "production" and exc.errors():
+        message = exc.errors()[0].get("msg", message)
+    return api_error(422, "error", "validation", message, rid, False)
+
+
+@app.exception_handler(StarletteHTTPException)
+async def http_exception_handler(request: Request, exc: StarletteHTTPException):
+    rid = _request_id(request)
+    if exc.status_code == 404:
+        return api_error(404, "error", "not_found", "Not found.", rid, False)
+    return api_error(exc.status_code, "error", "http_error", _client_error_message(request, "Request failed."), rid, False)
+
+
+@app.exception_handler(Exception)
+async def unhandled_exception_handler(request: Request, exc: Exception):
+    rid = _request_id(request)
+    log.exception("unhandled error rid=%s path=%s", rid, request.url.path)
+    return api_error(
+        500,
+        "unavailable",
+        "internal",
+        "Something went wrong. Try again or contact support with the request id.",
+        rid,
+        True,
+    )
+
+
 def _cors_origins() -> list[str]:
     base = os.getenv("APP_BASE_URL", "http://localhost:3000").rstrip("/")
     extra = [x.strip().rstrip("/") for x in os.getenv("CORS_ORIGINS", "").split(",") if x.strip()]
+    if os.getenv("APP_ENV") == "production":
+        return list({o for o in (base, *extra) if o})
     return list({base, "http://localhost:3000", "http://127.0.0.1:3000", *extra})
 
 
@@ -52,10 +100,6 @@ app.add_middleware(
     allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allow_headers=["*"],
 )
-
-
-def _request_id(request: Request) -> str:
-    return getattr(request.state, "request_id", str(uuid.uuid4()))
 
 
 @app.middleware("http")

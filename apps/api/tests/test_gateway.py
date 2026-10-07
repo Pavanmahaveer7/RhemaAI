@@ -11,8 +11,12 @@ from llm_gateway import gateway as gw
 @pytest.fixture(autouse=True)
 def clean_breaker():
     breaker.reset()
+    from llm_gateway.gateway import reset_daily_quota_for_tests
+
+    reset_daily_quota_for_tests()
     yield
     breaker.reset()
+    reset_daily_quota_for_tests()
 
 
 def test_stub_mode_runs_guardrail_pipeline(monkeypatch):
@@ -138,6 +142,16 @@ def test_refused_key_is_not_retried(monkeypatch):
     with pytest.raises(GatewayError):
         complete(agent="checkin-analyst", user_text="hello")
     assert len(calls) == 1
+
+
+def test_daily_model_call_cap(monkeypatch):
+    monkeypatch.setenv("LLM_DAILY_MAX_CALLS", "1")
+    _fake_provider(monkeypatch, [json.dumps({"summary": "ok", "flags": []}), json.dumps({"summary": "ok", "flags": []})])
+    complete(agent="checkin-analyst", user_text="one", required=("summary", "flags"), pastor_facing=True)
+    with pytest.raises(GatewayError) as exc:
+        complete(agent="checkin-analyst", user_text="two", required=("summary", "flags"), pastor_facing=True)
+    assert exc.value.code == "UNAVAILABLE"
+    assert "daily" in exc.value.message.lower()
 
 
 def test_packet_falls_back_to_template_when_model_writes_a_score(monkeypatch):
