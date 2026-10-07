@@ -46,6 +46,16 @@ function SettingsScreen({ go }) {
       </>}
     </SeSection>
 
+    <SeSection label="Help">
+      <SeRow title="How to use Rhema" sub="Dictionary, monthly question, and map — guided steps in the app.">
+        <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+          <SeButton size="sm" variant="secondary" onClick={() => { try { localStorage.removeItem("ca_guide_reader"); localStorage.removeItem("ca_guide_landing"); sessionStorage.setItem("ca_guide_open", "1"); } catch (e) {} go("search"); }}>Show guide again</SeButton>
+          <SeButton size="sm" variant="ghost" onClick={() => { location.href = "/"; }}>Back to home</SeButton>
+        </div>
+      </SeRow>
+      <SeRow title="Pastor, leader, or reviewer?" sub="Separate sign-in from the public dictionary."><SeButton size="sm" variant="ghost" onClick={() => { location.href = "/staff"; }}>Staff sign in</SeButton></SeRow>
+    </SeSection>
+
     <SeSection label="Language">
       <SeRow title="App language" sub="Buttons, labels and messages. Word definitions show in English until a reviewer approves a translation."><window.CALangPick /></SeRow>
     </SeSection>

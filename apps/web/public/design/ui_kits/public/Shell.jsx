@@ -11,6 +11,15 @@ const shellNav = [["search", "Dictionary", "book-open"], ["month", "This month",
 function PublicShell({ route, go, children, bleed, bare }) {
   const wide = useWide();
   const [session] = window.useSession();
+  const [guideOpen, setGuideOpen] = React.useState(false);
+  React.useEffect(() => {
+    try {
+      if (sessionStorage.getItem("ca_guide_open") === "1") {
+        sessionStorage.removeItem("ca_guide_open");
+        setGuideOpen(true);
+      }
+    } catch (e) {}
+  }, []);
   const signedIn = session && (session.kind === "member" || session.kind === "admin");
   const top = route === "term" ? "search" : route;
   const lk = window.CAGuard.lockdown && window.CAGuard.lockdown();
@@ -18,6 +27,12 @@ function PublicShell({ route, go, children, bleed, bare }) {
   const order = ["search", "month", "graph"], prevTop = React.useRef(top), dir = React.useRef(null);
   if (prevTop.current !== top) { const a = order.indexOf(prevTop.current), b = order.indexOf(top); dir.current = a >= 0 && b >= 0 ? (b > a ? "r" : "l") : null; prevTop.current = top; }
   const goTab = id => { if (id !== top) window.CAHaptic && window.CAHaptic("light"); go(id); };
+  const hpStaff = React.useMemo(() => new URLSearchParams(location.hash.slice(1)).get("staff"), []);
+  const staffAuth = bare && route === "signin" && (hpStaff === "l3" || hpStaff === "pastor" || hpStaff === "leader" || hpStaff === "reviewer");
+  const showReaderBanner = !bare && !lk && ["search", "term", "month", "graph"].includes(route);
+  const GuideBtn = window.GuideHeaderButton;
+  const GuideModalComp = window.GuideModal;
+  const GuideBannerComp = window.GuideBanner;
   return (
     <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", background: "var(--surface-page)" }}>
       <header style={{ position: "sticky", top: 0, zIndex: 20, height: 60, display: "flex", alignItems: "center", gap: 16, padding: "0 var(--gutter-phone)", background: "color-mix(in srgb, var(--ink-0) 82%, transparent)", backdropFilter: "var(--blur-bar)", WebkitBackdropFilter: "var(--blur-bar)", borderBottom: "1px solid var(--border-subtle)" }}>
@@ -30,9 +45,15 @@ function PublicShell({ route, go, children, bleed, bare }) {
           {!signedIn && <ShButton size="sm" variant="secondary" onClick={() => go("signin")}>Sign in</ShButton>}
           {session && session.kind === "admin" && wide && <ShButton size="sm" variant="ghost" onClick={() => go("admin")}>Admin</ShButton>}
         </div>}
+        {!bare && GuideBtn && <GuideBtn onClick={() => setGuideOpen(true)} label={wide ? "Guide" : undefined} />}
         {!bare && <ShIconBtn icon="settings" label="Settings" size={44} variant={route === "settings" ? "filled" : "ghost"} onClick={() => go("settings")} />}
-        {bare && <ShButton size="sm" variant="ghost" onClick={() => { try { localStorage.setItem("ca_onboarded", "1"); } catch (x) {} go("search"); }}>Skip</ShButton>}
+        {bare && staffAuth && GuideBtn && <GuideBtn onClick={() => setGuideOpen(true)} label="Staff guide" />}
+        {bare && !staffAuth && <ShButton size="sm" variant="ghost" onClick={() => { location.href = "/"; }}>Home</ShButton>}
+        {bare && !staffAuth && <ShButton size="sm" variant="ghost" onClick={() => { try { localStorage.setItem("ca_onboarded", "1"); } catch (x) {} go("search"); }}>Skip</ShButton>}
       </header>
+      {showReaderBanner && GuideBannerComp && <GuideBannerComp variant="reader" go={go} onOpenGuide={() => setGuideOpen(true)} />}
+      {staffAuth && GuideBannerComp && <GuideBannerComp variant="staff" onOpenGuide={() => setGuideOpen(true)} />}
+      {GuideModalComp && <GuideModalComp open={guideOpen} onClose={() => setGuideOpen(false)} variant={staffAuth ? "staff" : "reader"} go={go} />}
       <main style={{ flex: 1, display: "flex", flexDirection: "column", paddingBottom: wide || bleed || lk ? 0 : 72 }}><div key={top} style={{ flex: 1, display: "flex", flexDirection: "column", minHeight: 0, animation: dir.current ? `ca-tab-${dir.current} 220ms var(--ease-out)` : "none" }}>{children}</div></main>
       {!bleed && !bare && <footer style={{ padding: "28px var(--gutter-phone) 36px", display: "flex", gap: 20, flexWrap: "wrap", font: "var(--type-source)", color: "var(--text-faint)", justifyContent: "center" }}>
         {!lk && window.CASession && (window.CASession.get() || {}).kind === "admin" && <a href="#" onClick={e => { e.preventDefault(); go("admin", undefined, { tab: "map" }); }} style={{ color: "var(--text-muted)", minHeight: 44, display: "inline-flex", alignItems: "center" }}>Map draft</a>}

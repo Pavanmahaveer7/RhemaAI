@@ -128,6 +128,7 @@ function Landing() {
   const lk = window.CAGuard.lockdown();
   const [solid, setSolid] = React.useState(scrollY > 8);
   const [q, setQ] = React.useState("");
+  const [guideOpen, setGuideOpen] = React.useState(false);
   React.useEffect(() => { const f = () => setSolid(scrollY > 8); addEventListener("scroll", f, { passive: true }); return () => removeEventListener("scroll", f); }, []);
   const submit = ev => { ev.preventDefault(); const t = q.trim().toLowerCase(); if (!t) return; location.href = lpLex(t) ? `${lpApp}#r=term&t=${encodeURIComponent(t)}` : `${lpApp}#r=search`; };
   const nav = [["Dictionary", "#top"], ...(lk ? [] : [["This month", "#month"]]), ["Tour", lpTourFull(wide ? "16:9" : "9:16")]];
@@ -137,9 +138,12 @@ function Landing() {
       <a href="#top" aria-label="Rhema.ai home" style={{ display: "flex", alignItems: "center", minHeight: 44, textDecoration: "none" }}><LpWordmark size={20} /></a>
       <div style={{ flex: 1 }}></div>
       {wide && <nav aria-label="Primary" style={{ display: "flex", gap: 4 }}>{nav.map(([l, h]) => <a key={l} href={h} className="lp-nav" style={{ ...hdrLink, borderRadius: 999 }}>{l}</a>)}</nav>}
+      <button type="button" className="lp-nav" style={{ ...hdrLink, borderRadius: 999, border: 0, background: "none", cursor: "pointer", color: "var(--lamp-400)" }} onClick={() => setGuideOpen(true)}>Guide</button>
       <a href={`${lpApp}#r=signin`} className="lp-nav" style={{ ...hdrLink, color: "var(--text-muted)" }}>Sign in</a>
       <LpButton size="sm" variant={solid ? "accent" : "secondary"} onClick={() => { location.href = lpTourFull(wide ? "16:9" : "9:16"); }}>Get started</LpButton>
     </header>
+    {!lk && window.GuideBanner && <window.GuideBanner variant="landing" onOpenGuide={() => setGuideOpen(true)} />}
+    {window.GuideModal && <window.GuideModal open={guideOpen} onClose={() => setGuideOpen(false)} variant="reader" go={id => { location.href = id === "search" ? lpEveryone : id === "month" ? `${lpApp}#r=month` : `${lpApp}#r=graph`; }} />}
     <main id="top">
       <section style={{ maxWidth: 1180, margin: "0 auto", padding: wide ? "40px var(--gutter-phone) 24px" : "20px var(--gutter-phone) 24px", display: "flex", flexDirection: "column", alignItems: "center", gap: wide ? 40 : 32 }}>
         <div style={{ display: "flex", flexDirection: "column", gap: 20, maxWidth: 720, width: "100%", alignItems: wide ? "center" : "stretch", textAlign: wide ? "center" : "left" }}>
