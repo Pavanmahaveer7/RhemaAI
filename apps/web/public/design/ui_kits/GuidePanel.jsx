@@ -43,7 +43,7 @@ function GuideModal({ open, onClose, variant, go }) {
           </> : <>
             <GuideStep n={1} title="Open Staff sign in" body="Use the link your organizer sent. Bookmark it once — we always bring you back here." action="Go to Staff sign in" onAction={() => { location.href = "/staff"; }} />
             <GuideStep n={2} title="Code + password" body="Enter your assigned code (e.g. P-0233) and the password they sent separately." />
-            <GuideStep n={3} title="After sign-in" body="You land in Staff — check-in, tracks, review, or alerts depending on your role." action="Public dictionary instead" onAction={() => { location.href = "/app#guest=1&r=search"; }} />
+            <GuideStep n={3} title="After sign-in" body="You land in Staff — check-in, tracks, review, or alerts depending on your role." action="Public dictionary instead" onAction={() => { location.href = "/search?guest=1"; }} />
           </>}
         </ol>
         <div style={{ display: "flex", flexWrap: "wrap", gap: 8, paddingTop: 4 }}>

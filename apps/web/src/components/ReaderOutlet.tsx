@@ -39,7 +39,7 @@ export default function ReaderOutlet({
       } catch {
         /* ignore */
       }
-      if (!window.CASession?.get()) window.CASession?.set({ kind: "guest", name: "Guest" });
+      window.CASession?.set({ kind: "guest", name: "Guest" });
     }
   }, [sp]);
 
