@@ -59,7 +59,9 @@ function GuideModal({ open, onClose, variant, go }) {
 function GuideBanner({ variant, go, onOpenGuide }) {
   const [hidden, setHidden] = React.useState(() => gdDismissed(variant));
   const [modal, setModal] = React.useState(false);
-  if (hidden) return null;
+  const [phone, setPhone] = React.useState(() => typeof innerWidth === "number" && innerWidth < 900);
+  React.useEffect(() => { const f = () => setPhone(innerWidth < 900); addEventListener("resize", f); return () => removeEventListener("resize", f); }, []);
+  if (hidden || phone) return null;
   const reader = variant !== "staff";
   const open = () => { if (onOpenGuide) onOpenGuide(); else setModal(true); };
   return <>

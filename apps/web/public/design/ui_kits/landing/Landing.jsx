@@ -12,7 +12,7 @@ const lpStaffSignIn = "/staff";
 function useWideLp(bp) { const [w, setW] = React.useState(innerWidth >= bp); React.useEffect(() => { const f = () => setW(innerWidth >= bp); addEventListener("resize", f); return () => removeEventListener("resize", f); }, []); return w; }
 
 // Hero: the word page building itself. Runs once per word, ~3s. Chips replay it.
-function WordDemo() {
+function WordDemo({ wide }) {
   const words = ["karma", "grace", "salvation", "dharma"];
   const [word, setWord] = React.useState("karma");
   const [t, setT] = React.useState(lpReduce() ? 99 : 0);
@@ -40,7 +40,7 @@ function WordDemo() {
       </div>
       <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>{(e ? e.used : []).map((u, i) => <span key={u} style={{ opacity: at(16 + i * 3) ? 1 : 0, transform: at(16 + i * 3) ? "none" : "scale(1.15)", transition: "opacity 180ms var(--ease-out), transform 220ms var(--ease-out)", height: 28, padding: "0 12px", display: "inline-flex", alignItems: "center", borderRadius: 999, background: `var(--trad-${lpTrad[u]}-tint)`, color: `var(--trad-${lpTrad[u]})`, font: "600 13px/1 var(--font-body)" }}>{u}</span>)}</div>
       <div style={{ ...step(23), marginTop: "auto", display: "flex", flexDirection: "column", gap: 6 }}>
-        {e && e.used.length > 1 && <span style={{ font: "700 18px/1.25 var(--font-body)", color: "var(--lamp-400)" }}>Same word. Not the same concept.</span>}
+        {wide && e && e.used.length > 1 && <span style={{ font: "700 18px/1.25 var(--font-body)", color: "var(--lamp-400)" }}>Same word. Not the same concept.</span>}
         {src && <span style={{ font: "var(--type-source)", color: "var(--info-400)", display: "inline-flex", gap: 6, alignItems: "center" }}><LpIcon name="link-2" size={16} />{src.work} {src.reference}</span>}
       </div>
     </a>
@@ -58,7 +58,7 @@ function TourCard({ wide }) {
   return <section ref={ref} aria-labelledby="lp-tour" style={{ maxWidth: 1180, margin: "0 auto", padding: "24px var(--gutter-phone)", display: "flex", flexDirection: "column", gap: 14 }}>
     <div style={{ display: "flex", alignItems: "baseline", gap: 12, flexWrap: "wrap" }}>
       <h2 id="lp-tour" style={{ margin: 0, font: "800 clamp(28px,6vw,40px)/1 var(--font-display)", letterSpacing: "var(--tracking-display)", color: "var(--text-strong)", flex: "1 1 auto" }}>See it in one minute.</h2>
-      <span style={{ font: "var(--type-source)", color: "var(--text-muted)" }}>No sound.</span>
+      {wide && <span style={{ font: "var(--type-source)", color: "var(--text-muted)" }}>No sound.</span>}
     </div>
     <div style={{ width: wide ? "100%" : "min(100%, 420px)", alignSelf: "center", aspectRatio: wide ? "16 / 9" : "9 / 16", maxHeight: wide ? "none" : "78svh", borderRadius: "var(--radius-lg)", overflow: "hidden", border: "1px solid var(--border-subtle)", background: "var(--ink-0)" }}>
       {load ? <iframe title="Rhema.ai one-minute tour" src={`/tour?from=landing-embed#layout=${wide ? "16:9" : "9:16"}&bare=1`} loading="lazy" style={{ width: "100%", height: "100%", border: 0, display: "block" }}></iframe>
@@ -93,7 +93,7 @@ function MonthSequence({ wide }) {
     <div style={{ display: "flex", gap: 16, alignItems: "flex-end", justifyContent: "space-between", flexWrap: "wrap" }}>
       <div style={{ maxWidth: 560 }}>
         <h2 id="lp-month" style={{ margin: 0, font: "800 clamp(34px,7vw,48px)/1 var(--font-display)", letterSpacing: "var(--tracking-display)", color: "var(--text-strong)" }}>One question a month.</h2>
-        <p style={{ margin: "10px 0 0", font: "var(--type-body)", fontSize: 18, color: "var(--text-muted)", textWrap: "pretty" }}>See what people believe this month. We count ideas, never people.</p>
+        {wide && <p style={{ margin: "10px 0 0", font: "var(--type-body)", fontSize: 18, color: "var(--text-muted)", textWrap: "pretty" }}>See what people believe this month. We count ideas, never people.</p>}
       </div>
       {A && <div role="group" aria-label="Month" style={{ display: "flex", gap: 4, padding: 4, borderRadius: 999, border: "1px solid var(--border-subtle)", background: "var(--surface-raised)" }}>{[[A, 0], [B, 1]].map(([m, v]) => <button key={m.id} onClick={() => go(v)} aria-pressed={cur === m} style={{ height: 36, flex: "none", whiteSpace: "nowrap", padding: "0 14px", borderRadius: 999, border: 0, cursor: "pointer", font: "600 13px/1 var(--font-body)", background: cur === m ? "var(--bone-8)" : "transparent", color: cur === m ? "var(--ink-0)" : "var(--text-muted)" }}>{m.label}</button>)}</div>}
     </div>
@@ -101,14 +101,14 @@ function MonthSequence({ wide }) {
       <div style={card}>
         <h3 style={h3}>You answer</h3>
         <p style={{ margin: 0, font: "800 24px/1.1 var(--font-display)", color: "var(--text-strong)", textWrap: "balance" }}>{qi < 0 ? Q : <>{Q.slice(0, qi)}<a href={`/word/${T}`} style={{ textDecoration: "underline", textUnderlineOffset: "0.12em" }}>{T}</a>{Q.slice(qi + T.length)}</>}</p>
-        <p style={{ margin: 0, font: "var(--type-body)", fontSize: 16, color: "var(--text-muted)" }}>No account. Not tied to any pastor.</p>
+        {wide && <p style={{ margin: 0, font: "var(--type-body)", fontSize: 16, color: "var(--text-muted)" }}>No account. Not tied to any pastor.</p>}
         <a href="/month" className="lp-link" style={{ marginTop: "auto", display: "inline-flex", gap: 6, alignItems: "center", font: "700 16px/1 var(--font-body)", minHeight: 44 }}>Answer this month <LpIcon name="arrow-right" size={16} /></a>
       </div>
       <div style={card}>
         <h3 style={h3}>Ideas are counted</h3>
         <div style={{ font: "800 48px/1 var(--font-display)", color: "var(--text-strong)", fontVariantNumeric: "tabular-nums" }}>{answers}<span style={{ font: "var(--type-body)", fontSize: 16, color: "var(--text-muted)", marginLeft: 8 }}>answers</span></div>
         <p style={{ margin: 0, font: "var(--type-body)", fontSize: 16, color: "var(--text-body)", textWrap: "pretty" }}>{top.length ? <>Leading ideas this month include {top.slice(0, 3).map((id, i) => <React.Fragment key={id}>{i ? ", " : ""}<span style={{ fontWeight: 700 }}>{id}</span></React.Fragment>)}.</> : "Counts update as people answer."}</p>
-        <p style={{ margin: "auto 0 0", font: "var(--type-source)", color: "var(--text-muted)" }}>We never show answer text. Ideas under three mentions stay hidden.</p>
+        {wide && <p style={{ margin: "auto 0 0", font: "var(--type-source)", color: "var(--text-muted)" }}>We never show answer text. Ideas under three mentions stay hidden.</p>}
       </div>
       <div style={card}>
         <h3 style={h3}>A person publishes the map</h3>
@@ -116,7 +116,7 @@ function MonthSequence({ wide }) {
           <svg viewBox="-150 -110 300 220" width="100%" height="100%" aria-hidden="true">{ids.slice(0, 18).map(id => { const v = val(id), r = v < 1 ? 0 : 4 + Math.sqrt(v) * 2.6, [x, y] = pos[id]; const nw = isNew(id) && k >= 0.5;
             return <g key={id} transform={`translate(${x} ${y})`}><circle r={r} fill={nw ? "var(--lamp-400)" : "var(--ink-4)"} stroke={nw ? "none" : "var(--bone-7)"} strokeWidth="1" />{r > 12 && <text y={r + 11} textAnchor="middle" style={{ font: "600 13px var(--font-body)", fill: "var(--text-body)" }}>{id}</text>}</g>; })}</svg>
         </a>
-        <p style={{ margin: 0, font: "var(--type-body)", fontSize: 16, color: "var(--text-muted)" }}>Bigger = said more. <span style={{ color: "var(--lamp-400)", fontWeight: 700 }}>Lime</span> = new this month.</p>
+        {wide && <p style={{ margin: 0, font: "var(--type-body)", fontSize: 16, color: "var(--text-muted)" }}>Bigger = said more. <span style={{ color: "var(--lamp-400)", fontWeight: 700 }}>Lime</span> = new this month.</p>}
         <a href="/map" className="lp-link" style={{ marginTop: "auto", display: "inline-flex", gap: 6, alignItems: "center", font: "700 16px/1 var(--font-body)", minHeight: 44 }}>Open the map <LpIcon name="arrow-right" size={16} /></a>
       </div>
     </div>
@@ -142,34 +142,34 @@ function Landing() {
       <a href="/signin" className="lp-nav" style={{ ...hdrLink, color: "var(--text-muted)" }}>Sign in</a>
       <LpButton size="sm" variant={solid ? "accent" : "secondary"} onClick={() => { location.href = lpTourFull(wide ? "16:9" : "9:16"); }}>Get started</LpButton>
     </header>
-    {!lk && window.GuideBanner && <window.GuideBanner variant="landing" onOpenGuide={() => setGuideOpen(true)} />}
+    {wide && !lk && window.GuideBanner && <window.GuideBanner variant="landing" onOpenGuide={() => setGuideOpen(true)} />}
     {window.GuideModal && <window.GuideModal open={guideOpen} onClose={() => setGuideOpen(false)} variant="reader" go={id => { location.href = id === "search" ? lpEveryone : id === "month" ? "/month" : "/map"; }} />}
     <main id="top">
       <section style={{ maxWidth: 1180, margin: "0 auto", padding: wide ? "40px var(--gutter-phone) 24px" : "20px var(--gutter-phone) 24px", display: "flex", flexDirection: "column", alignItems: "center", gap: wide ? 40 : 32 }}>
         <div style={{ display: "flex", flexDirection: "column", gap: 20, maxWidth: 720, width: "100%", alignItems: wide ? "center" : "stretch", textAlign: wide ? "center" : "left" }}>
-          <h1 style={{ margin: 0, font: "800 clamp(52px,13vw,96px)/.92 var(--font-display)", letterSpacing: "var(--tracking-display)", color: "var(--text-strong)", textWrap: "balance" }}>One word. Three faiths.</h1>
-          <p style={{ margin: 0, font: "var(--type-body)", fontSize: 18, lineHeight: 1.5, color: "var(--text-body)", textWrap: "pretty" }}>Look up a word to see what it means in Hindu, Buddhist and Christian traditions. Free. Side by side, with sources, so the same word is not mistaken for the same idea. No account.</p>
-          <p style={{ margin: 0, font: "var(--type-source)", color: "var(--text-muted)" }}>New here? <a href={lpTourFull(wide ? "16:9" : "9:16")} className="lp-link" style={{ fontWeight: 700, color: "var(--lamp-400)" }}>Watch the one-minute tour</a>, then continue into the app.</p>
+          <h1 style={{ margin: 0, font: wide ? "800 clamp(52px,13vw,96px)/.92 var(--font-display)" : "800 clamp(36px,11vw,48px)/.96 var(--font-display)", letterSpacing: "var(--tracking-display)", color: "var(--text-strong)", textWrap: "balance" }}>One word. Three faiths.</h1>
+          {wide && <p style={{ margin: 0, font: "var(--type-body)", fontSize: 18, lineHeight: 1.5, color: "var(--text-body)", textWrap: "pretty" }}>Look up a word to see what it means in Hindu, Buddhist and Christian traditions. Free. Side by side, with sources, so the same word is not mistaken for the same idea. No account.</p>}
+          {wide && <p style={{ margin: 0, font: "var(--type-source)", color: "var(--text-muted)" }}>New here? <a href={lpTourFull(wide ? "16:9" : "9:16")} className="lp-link" style={{ fontWeight: 700, color: "var(--lamp-400)" }}>Watch the one-minute tour</a>, then continue into the app.</p>}
           <form onSubmit={submit} style={{ display: "flex", flexDirection: wide ? "row" : "column", gap: 10, alignItems: wide ? "flex-end" : "stretch", width: "100%", maxWidth: 560, textAlign: "left" }}>
             <div style={{ flex: 1 }}><LpField label="Word" size="lg" icon="search" type="search" placeholder="karma" value={q} onChange={e => setQ(e.target.value)} autoComplete="off" /></div>
             <LpButton type="submit" variant="accent" size="lg">Search a word</LpButton>
           </form>
         </div>
-        <WordDemo />
+        <WordDemo wide={wide} />
       </section>
       {!lk && <TourCard wide={wide} />}
       {!lk && <MonthSequence wide={wide} />}
       {!lk && <section aria-labelledby="lp-l3" style={{ maxWidth: 1180, margin: "0 auto", padding: "32px var(--gutter-phone) 8px" }}>
         <div className="lp-card" style={{ display: "flex", flexDirection: wide ? "row" : "column", gap: 20, alignItems: wide ? "center" : "stretch", justifyContent: "space-between", padding: "24px 22px", borderRadius: "var(--radius-lg)", border: "1px solid var(--border-subtle)", background: "var(--surface-card)" }}>
           <div style={{ display: "flex", flexDirection: "column", gap: 10, maxWidth: 620 }}>
-            <span style={{ font: "700 11px/1 var(--font-body)", letterSpacing: ".06em", textTransform: "uppercase", color: "var(--text-muted)" }}>Layer 3 · Staff beta</span>
+            {wide && <span style={{ font: "700 11px/1 var(--font-body)", letterSpacing: ".06em", textTransform: "uppercase", color: "var(--text-muted)" }}>Layer 3 · Staff beta</span>}
             <h2 id="lp-l3" style={{ margin: 0, font: "800 clamp(24px,5vw,32px)/1.12 var(--font-display)", letterSpacing: "var(--tracking-display)", color: "var(--text-strong)", textWrap: "balance" }}>Pastor, leader, or reviewer?</h2>
-            <p style={{ margin: 0, font: "var(--type-body)", fontSize: 17, color: "var(--text-muted)", textWrap: "pretty" }}>This is a <strong style={{ color: "var(--text-body)", fontWeight: 700 }}>separate app</strong> from the public dictionary. Use the invite your organizer sent: <strong style={{ color: "var(--text-body)", fontWeight: 700 }}>code + password</strong>. You will not go through the public tour or create-account flow.</p>
-            <ol style={{ margin: "4px 0 0", paddingLeft: 22, font: "var(--type-body)", fontSize: 16, color: "var(--text-body)", display: "flex", flexDirection: "column", gap: 6 }}>
+            {wide && <p style={{ margin: 0, font: "var(--type-body)", fontSize: 17, color: "var(--text-muted)", textWrap: "pretty" }}>This is a <strong style={{ color: "var(--text-body)", fontWeight: 700 }}>separate app</strong> from the public dictionary. Use the invite your organizer sent: <strong style={{ color: "var(--text-body)", fontWeight: 700 }}>code + password</strong>. You will not go through the public tour or create-account flow.</p>}
+            {wide && <ol style={{ margin: "4px 0 0", paddingLeft: 22, font: "var(--type-body)", fontSize: 16, color: "var(--text-body)", display: "flex", flexDirection: "column", gap: 6 }}>
               <li>Open <strong>Staff sign in</strong> (one link).</li>
               <li>Sign in with your assigned code (e.g. P-0233).</li>
               <li>Land in <strong>Staff</strong> — tracks, check-in, review, or alerts by role.</li>
-            </ol>
+            </ol>}
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 10, alignItems: wide ? "flex-end" : "stretch" }}>
             <LpButton variant="secondary" size="lg" iconRight="arrow-right" onClick={() => { location.href = lpStaffSignIn; }}>Staff sign in (have a code)</LpButton>
@@ -182,7 +182,7 @@ function Landing() {
           <div style={{ display: "flex", flexDirection: "column", gap: 8, maxWidth: 560 }}>
             <span style={{ font: "700 11px/1 var(--font-body)", letterSpacing: ".06em", textTransform: "uppercase", color: "var(--clay-400)" }}>Beta</span>
             <h2 id="lp-beta" style={{ margin: 0, font: "800 clamp(26px,5vw,34px)/1.12 var(--font-display)", letterSpacing: "var(--tracking-display)", color: "var(--text-strong)", textWrap: "balance" }}>Help us get this right.</h2>
-            <p style={{ margin: 0, font: "var(--type-body)", fontSize: 17, color: "var(--text-muted)", textWrap: "pretty" }}>About one minute. No account. Tell us what felt clear, fair, or confusing — we read every answer.</p>
+            {wide && <p style={{ margin: 0, font: "var(--type-body)", fontSize: 17, color: "var(--text-muted)", textWrap: "pretty" }}>About one minute. No account. Tell us what felt clear, fair, or confusing — we read every answer.</p>}
           </div>
           <LpButton variant="accent" size="lg" iconRight="arrow-right" onClick={() => { location.href = "/beta-survey?from=landing"; }}>Share beta feedback</LpButton>
         </div>
@@ -190,7 +190,7 @@ function Landing() {
     </main>
     <footer style={{ borderTop: "1px solid var(--border-subtle)", padding: "24px var(--gutter-phone) 32px" }}>
       <div style={{ maxWidth: 1180, margin: "0 auto", display: "flex", gap: 16, flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", font: "var(--type-source)", color: "var(--text-muted)" }}>
-        <span>We map ideas, never people.</span>
+        {wide && <span>We map ideas, never people.</span>}
         <nav aria-label="Footer" style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>{[["App map", "/local"], ["Tour", lpTourFull("16:9")], ["Dictionary", "/dictionary"], ["Help", "/help"], ["Beta feedback", "/beta-survey?from=landing-footer"], ["Staff sign in", lpStaffSignIn], ["All screens", "/screens"]].map(([l, h]) => <a key={l} href={h} className="lp-nav" style={{ minHeight: 44, display: "inline-flex", alignItems: "center", textDecoration: "none" }}>{l}</a>)}<a href="/settings" className="lp-nav" style={{ minHeight: 44, display: "inline-flex", alignItems: "center", textDecoration: "none" }}>What we store</a></nav>
       </div>
     </footer>
