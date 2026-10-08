@@ -47,7 +47,7 @@ export default function ReaderOutlet({
     const s = window.CAApi?.session?.() || window.CASession?.get();
     if (!s?.kind) return;
     if (["pastor", "reviewer", "leader", "mentor", "expert", "admin"].includes(s.kind)) {
-      if (["/welcome", "/welcome/1", "/welcome/2", "/welcome/3", "/welcome/4", "/staff", "/signin"].includes(path || "")) router.replace(roleHome(s.kind));
+      if (path === "/staff") router.replace(roleHome(s.kind));
     }
   }, [path, router]);
 
