@@ -1,5 +1,5 @@
 import ReaderPage from "@/src/components/ReaderPage";
 
 export default function WelcomePage() {
-  return <ReaderPage screen="intro" step="1" />;
+  return <ReaderPage screen="welcome" />;
 }

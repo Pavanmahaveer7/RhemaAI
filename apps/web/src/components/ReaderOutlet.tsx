@@ -59,9 +59,11 @@ export default function ReaderOutlet({
   else if (screen === "month" && window.MonthlyScreen) body = <window.MonthlyScreen go={go} />;
   else if (screen === "map" && window.PublicMap) body = <window.PublicMap />;
   else if (screen === "settings" && window.SettingsScreen) body = <window.SettingsScreen go={go} />;
-  else if ((screen === "signin" || screen === "staff") && window.AuthScreen) {
+  else if (screen === "welcome" && window.AuthScreen) {
+    body = <window.AuthScreen go={go} initialTab="create" />;
+  } else if ((screen === "signin" || screen === "staff") && window.AuthScreen) {
     body = <window.AuthScreen go={go} initialTab="signin" />;
-  } else if ((screen === "welcome" || screen === "intro") && window.OnboardingScreen) {
+  } else if (screen === "intro" && window.OnboardingScreen) {
     body = <window.OnboardingScreen go={go} />;
   }
 

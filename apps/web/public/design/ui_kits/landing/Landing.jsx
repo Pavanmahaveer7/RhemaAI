@@ -140,7 +140,7 @@ function Landing() {
       {wide && <nav aria-label="Primary" style={{ display: "flex", gap: 4 }}>{nav.map(([l, h]) => <a key={l} href={h} className="lp-nav" style={{ ...hdrLink, borderRadius: 999 }}>{l}</a>)}</nav>}
       <button type="button" className="lp-nav" style={{ ...hdrLink, borderRadius: 999, border: 0, background: "none", cursor: "pointer", color: "var(--lamp-400)" }} onClick={() => setGuideOpen(true)}>Guide</button>
       <a href="/signin" className="lp-nav" style={{ ...hdrLink, color: "var(--text-muted)" }}>Sign in</a>
-      <LpButton size="sm" variant={solid ? "accent" : "secondary"} onClick={() => { location.href = lpTourFull(wide ? "16:9" : "9:16"); }}>Get started</LpButton>
+      <LpButton size="sm" variant={solid ? "accent" : "secondary"} onClick={() => { location.href = lpOnboard; }}>Get started</LpButton>
     </header>
     {wide && !lk && window.GuideBanner && <window.GuideBanner variant="landing" onOpenGuide={() => setGuideOpen(true)} />}
     {window.GuideModal && <window.GuideModal open={guideOpen} onClose={() => setGuideOpen(false)} variant="reader" go={id => { location.href = id === "search" ? lpEveryone : id === "month" ? "/month" : "/map"; }} />}
