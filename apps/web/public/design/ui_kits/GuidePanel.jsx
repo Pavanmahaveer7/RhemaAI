@@ -36,7 +36,7 @@ function GuideModal({ open, onClose, variant, go }) {
         </div>
         <ol style={{ listStyle: "none", margin: 0, padding: 0 }}>
           {reader ? <>
-            <GuideStep n={1} title="Dictionary" body="Search a word. See Hindu, Buddhist, and Christian meanings side by side." action={go ? "Open Dictionary" : undefined} onAction={go ? () => { go("search"); onClose(); } : undefined} />
+            <GuideStep n={1} title="Dictionary" body="This is a curated list — not every word. Starter chips are on Dictionary. Tap See all words for the full list. If a word is not found, it is not in yet; we do not invent an entry." action="See the word list" onAction={() => { location.href = "/search?list=1"; }} />
             <GuideStep n={2} title="This month" body="One question for everyone. Answers are counted, never named." action={go ? "Open This month" : undefined} onAction={go ? () => { go("month"); onClose(); } : undefined} />
             <GuideStep n={3} title="Map" body="Ideas people shared form a quiet map you can explore." action={go ? "Open Map" : undefined} onAction={go ? () => { go("graph"); onClose(); } : undefined} />
             <GuideStep n={4} title="Pastor or reviewer?" body="If you have an invite code, use Staff sign in — not the public tour." action="Staff sign in" onAction={() => { location.href = "/staff"; }} />

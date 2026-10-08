@@ -45,6 +45,9 @@ declare global {
     CAGuard?: { lockdown?: () => boolean; plain?: () => void; forced?: () => string | null };
     CASession?: { get: () => { kind?: string; name?: string } | null; set: (s: unknown) => void };
     CAGo?: (route: string, t?: string, extra?: Record<string, unknown>) => void;
+    GuideModal?: React.ComponentType<{ open: boolean; onClose: () => void; variant?: string; go?: (id: string) => void }>;
+    GuideBanner?: React.ComponentType<{ variant?: string; go?: (id: string) => void; onOpenGuide?: () => void }>;
+    GuideHeaderButton?: React.ComponentType<{ onClick: () => void; label?: string }>;
     CAPrefs?: { get: () => Record<string, unknown>; set: (patch: Record<string, unknown>) => void };
     SearchScreen?: React.ComponentType<{ open: (t: string) => void }>;
     TermScreen?: React.ComponentType<{ term: string; back: () => void; initialExpert?: boolean }>;
@@ -187,6 +190,7 @@ export function bootKit() {
     await loadScript("/design/ui_kits/public/faithData.js");
     await loadScript("/design/ui_kits/public/verses.js");
     const jsx = [
+      "/design/ui_kits/GuidePanel.jsx",
       "/design/ui_kits/public/Shell.jsx",
       "/design/ui_kits/public/SearchScreen.jsx",
       "/design/ui_kits/public/TermScreen.jsx",

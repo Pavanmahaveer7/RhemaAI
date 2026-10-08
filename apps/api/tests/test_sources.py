@@ -89,6 +89,14 @@ def test_stored_references_point_at_loaded_passages():
 def test_other_spellings_find_the_headword():
     assert [row["term"] for row in client.get("/api/v1/terms", params={"q": "nibbana"}).json()] == ["nirvana"]
     assert "samsara" in [row["term"] for row in client.get("/api/v1/terms", params={"q": "saṃsāra"}).json()]
+    assert [row["term"] for row in client.get("/api/v1/terms", params={"q": "sunyata"}).json()] == ["emptiness"]
+    assert [row["term"] for row in client.get("/api/v1/terms", params={"q": "avatar"}).json()] == ["avatara"]
+
+
+def test_expanded_dictionary_lists_new_headwords():
+    terms = {row["term"] for row in client.get("/api/v1/terms").json()}
+    for word in ("peace", "hope", "yoga", "bhakti", "baptism", "anatta", "mindfulness", "emptiness", "dukkha", "metta", "gospel"):
+        assert word in terms
 
 
 def test_drafted_entries_stay_out_of_faith_mode():

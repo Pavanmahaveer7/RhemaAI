@@ -47,6 +47,9 @@ export default function ReaderChrome({ children, bare }: { children: React.React
   const lk = !!(window.CAGuard?.lockdown && window.CAGuard.lockdown());
   const tabs = lk ? TABS.filter((t) => t.id === "search") : TABS;
   const signedIn = session && (session.kind === "member" || session.kind === "admin");
+  const [guideOpen, setGuideOpen] = useState(false);
+  const GuideBtn = window.GuideHeaderButton;
+  const GuideModal = window.GuideModal;
 
   return (
     <div style={{ minHeight: "100vh", display: "flex", flexDirection: wide && !bare ? "row" : "column", background: "var(--surface-page, #0b0f0c)" }}>
@@ -76,6 +79,7 @@ export default function ReaderChrome({ children, bare }: { children: React.React
             </Link>
           )}
           <div style={{ flex: 1 }} />
+          {!bare && GuideBtn && <GuideBtn onClick={() => setGuideOpen(true)} />}
           {!bare && !signedIn && (
             <button type="button" onClick={() => router.push("/signin")} style={{ minHeight: 36, padding: "0 14px", borderRadius: 999, border: 0, cursor: "pointer", font: "600 13px/1 var(--font-body, system-ui)", background: "var(--surface-raised, #1a211c)", color: "var(--text-strong, #f3f7ee)" }}>
               Sign in
@@ -88,6 +92,9 @@ export default function ReaderChrome({ children, bare }: { children: React.React
           )}
         </header>
         <main style={{ flex: 1, display: "flex", flexDirection: "column", paddingBottom: wide || bare || lk ? 0 : 72 }}>{children}</main>
+        {!bare && GuideModal && (
+          <GuideModal open={guideOpen} onClose={() => setGuideOpen(false)} variant="reader" go={(id) => window.CAGo?.(id)} />
+        )}
       </div>
       {!wide && !bare && !lk && (
         <nav aria-label="Primary" style={{ position: "fixed", left: 0, right: 0, bottom: 0, zIndex: 30, height: 64, display: "grid", gridTemplateColumns: `repeat(${tabs.length},1fr)`, background: "color-mix(in srgb, var(--ink-0, #0b0f0c) 92%, transparent)", borderTop: "1px solid var(--border-subtle, #324034)" }}>

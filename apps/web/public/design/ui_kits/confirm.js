@@ -101,26 +101,37 @@
   var SR_LANG = { en: "en-US", hi: "hi-IN", bn: "bn-BD", ne: "ne-NP", my: "my-MM", km: "km-KH" };
   window.CAMic = function (props) {
     var e = React.createElement, st = React.useState(false), on = st[0], setOn = st[1], rec = React.useRef(null), errSt = React.useState(""), err = errSt[0], setErr = errSt[1];
-    React.useEffect(function () { return function () { try { rec.current && rec.current.abort(); } catch (x) {} }; }, []);
+    var halt = function () { try { if (rec.current) rec.current.abort(); } catch (x) {} rec.current = null; setOn(false); };
+    React.useEffect(function () {
+      var hide = function () { if (document.hidden) halt(); };
+      document.addEventListener("visibilitychange", hide);
+      return function () { document.removeEventListener("visibilitychange", hide); halt(); };
+    }, []);
     if (window.CAGuard && window.CAGuard.lockdown && window.CAGuard.lockdown()) {
       return e("p", { style: { margin: 0, font: "600 13px/1.35 var(--font-body)", color: "var(--text-muted)" } }, "Voice input is paused while a safety alert is on.");
     }
-    if (!SR) {
+    if (!window.isSecureContext || !SR) {
       return e("p", { style: { margin: 0, font: "600 13px/1.35 var(--font-body)", color: "var(--text-muted)" } }, "Voice search needs Chrome, Edge, or Safari on HTTPS (or localhost). Type your word instead.");
     }
     var toggle = function () {
-      if (on) { try { rec.current.stop(); } catch (x) {} return; }
-      var r = new SR(); rec.current = r; r.lang = SR_LANG[window.CA_LANG] || "en-US"; r.interimResults = false; r.maxAlternatives = 1;
-      r.onresult = function (ev) { var t = ev.results[0] && ev.results[0][0] && ev.results[0][0].transcript; if (t) { setErr(""); props.onText(t.trim()); } };
-      r.onend = function () { setOn(false); };
+      if (on) { halt(); return; }
+      var r = new SR(); rec.current = r; r.lang = SR_LANG[window.CA_LANG] || "en-US"; r.continuous = false; r.interimResults = false; r.maxAlternatives = 1;
+      r.onresult = function (ev) {
+        var t = ev.results[0] && ev.results[0][0] && ev.results[0][0].transcript;
+        if (t) { setErr(""); props.onText(t.trim()); }
+        try { r.stop(); } catch (x) {}
+      };
+      r.onend = function () { rec.current = null; setOn(false); };
       r.onerror = function (ev) {
+        rec.current = null;
         setOn(false);
         var code = ev && ev.error;
+        if (code === "aborted") return;
         if (code === "not-allowed" || code === "service-not-allowed") setErr("Microphone blocked. Allow mic for this site in browser settings, then try again.");
         else if (code === "no-speech") setErr("Didn’t catch that. Try again closer to the mic.");
         else setErr("Voice didn’t work this time. Type instead.");
       };
-      try { r.start(); setOn(true); window.CAHaptic && window.CAHaptic("light"); } catch (x) { setOn(false); }
+      try { r.start(); setOn(true); window.CAHaptic && window.CAHaptic("light"); } catch (x) { setOn(false); setErr("Voice didn’t start. Type instead."); }
     };
     var mic = e("svg", { width: props.inline ? 16 : 20, height: props.inline ? 16 : 20, viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: 1.8, strokeLinecap: "round", strokeLinejoin: "round", "aria-hidden": "true" }, e("rect", { x: 9, y: 3, width: 6, height: 11, rx: 3 }), e("path", { d: "M5 11a7 7 0 0 0 14 0M12 18v3" }));
     var label = on ? "Listening… tap to stop" : "Speak instead";
