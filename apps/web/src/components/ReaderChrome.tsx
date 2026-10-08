@@ -8,6 +8,7 @@ import { useSessionState } from "@/src/lib/kit-boot";
 import { useEffect, useState } from "react";
 
 const TABS = [
+  { href: "/", id: "home", label: "Home", icon: "house" },
   { href: "/search", id: "search", label: "Search", icon: "book-open" },
   { href: "/month", id: "month", label: "Month", icon: "message-square-text" },
   { href: "/map", id: "map", label: "Map", icon: "waypoints" },
@@ -43,9 +44,9 @@ export default function ReaderChrome({ children, bare }: { children: React.React
   const wide = useWide();
   const session = useSessionState();
   const extras = extraNav(session?.kind);
-  const top = path.startsWith("/word") ? "search" : path === "/month" ? "month" : path === "/map" ? "map" : path === "/settings" ? "settings" : path.startsWith("/welcome") || path === "/signin" || path === "/staff" ? "" : "search";
+  const top = path === "/" ? "home" : path.startsWith("/word") ? "search" : path === "/month" ? "month" : path === "/map" ? "map" : path === "/settings" ? "settings" : path.startsWith("/welcome") || path === "/signin" || path === "/staff" ? "" : "search";
   const lk = !!(window.CAGuard?.lockdown && window.CAGuard.lockdown());
-  const tabs = lk ? TABS.filter((t) => t.id === "search") : TABS;
+  const tabs = lk ? TABS.filter((t) => t.id === "home" || t.id === "search") : TABS;
   const signedIn = session && (session.kind === "member" || session.kind === "admin");
   const [guideOpen, setGuideOpen] = useState(false);
   const GuideBtn = window.GuideHeaderButton;
@@ -91,13 +92,13 @@ export default function ReaderChrome({ children, bare }: { children: React.React
             </Link>
           )}
         </header>
-        <main style={{ flex: 1, display: "flex", flexDirection: "column", paddingBottom: wide || bare || lk ? 0 : 72 }}>{children}</main>
+        <main style={{ flex: 1, display: "flex", flexDirection: "column", paddingBottom: wide || bare || lk ? 0 : "calc(64px + env(safe-area-inset-bottom))" }}>{children}</main>
         {!bare && GuideModal && (
           <GuideModal open={guideOpen} onClose={() => setGuideOpen(false)} variant="reader" go={(id) => window.CAGo?.(id)} />
         )}
       </div>
       {!wide && !bare && !lk && (
-        <nav aria-label="Primary" style={{ position: "fixed", left: 0, right: 0, bottom: 0, zIndex: 30, height: 64, display: "grid", gridTemplateColumns: `repeat(${tabs.length},1fr)`, background: "color-mix(in srgb, var(--ink-0, #0b0f0c) 92%, transparent)", borderTop: "1px solid var(--border-subtle, #324034)" }}>
+        <nav aria-label="Primary" style={{ position: "fixed", left: 0, right: 0, bottom: 0, zIndex: 30, minHeight: 64, paddingBottom: "env(safe-area-inset-bottom)", display: "grid", gridTemplateColumns: `repeat(${tabs.length},1fr)`, background: "color-mix(in srgb, var(--ink-0, #0b0f0c) 92%, transparent)", borderTop: "1px solid var(--border-subtle, #324034)" }}>
           {tabs.map((t) => (
             <Link key={t.href} href={t.href} aria-current={top === t.id ? "page" : undefined} style={{ background: "none", textDecoration: "none", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 4, color: top === t.id ? "var(--lamp-400, #cfda5c)" : "var(--text-muted, #b8c4b8)", font: "700 12px/1 var(--font-body, system-ui)" }}>
               <span style={{ width: 56, height: 30, display: "grid", placeItems: "center", borderRadius: 999, background: top === t.id ? "var(--surface-raised, #1a211c)" : "transparent" }}>

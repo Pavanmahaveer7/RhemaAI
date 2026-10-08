@@ -77,7 +77,7 @@ function SearchScreen({ open, initial = "" }) {
       <h1 style={{ font: phone ? "800 clamp(36px,11vw,48px)/.96 var(--font-display)" : "800 clamp(52px,15vw,76px)/.92 var(--font-display)", letterSpacing: "var(--tracking-display)", color: "var(--text-strong)", margin: "0 0 14px", textWrap: "balance" }}>{phone ? "Dictionary." : "Comparative dictionary."}</h1>
       {!phone && <p style={{ font: "var(--type-body)", fontSize: 18, color: "var(--text-muted)", margin: "0 0 28px", textWrap: "pretty" }}>Type a word to see what it means in Hindu, Buddhist and Christian traditions, side by side.</p>}
       {note && !team && !phone && <div role="note" style={{ display: "flex", gap: 10, alignItems: "flex-start", padding: 12, marginBottom: 14, borderRadius: "var(--radius-md)", background: "var(--surface-raised)", font: "var(--type-source)", color: "var(--text-body)" }}><span style={{ flex: 1, paddingTop: 3 }}>This tab remembers your search until you close it. On a shared computer, use a private window.</span><button onClick={hideNote} aria-label="Dismiss" style={{ width: 32, height: 32, flex: "none", display: "grid", placeItems: "center", background: "none", border: 0, borderRadius: 99, color: "var(--text-muted)", cursor: "pointer" }}><SsIcon name="x" size={16} /></button></div>}
-      <form onSubmit={e => { e.preventDefault(); run(); }} style={phone ? { position: "fixed", left: 0, right: 0, bottom: lk ? 0 : 72, zIndex: 40, display: "flex", gap: 8, alignItems: "flex-end", padding: "10px var(--gutter-phone) calc(10px + env(safe-area-inset-bottom))", background: "var(--surface-page)", borderTop: "1px solid var(--border-subtle)" } : { display: "flex", flexDirection: "column", gap: 12 }}>
+      <form onSubmit={e => { e.preventDefault(); run(); }} style={{ display: "flex", flexDirection: "column", gap: 12 }}>
         <div style={{ flex: 1, minWidth: 0, display: "flex", gap: 8, alignItems: "flex-end" }}><div style={{ flex: 1, minWidth: 0 }}><SsField label="Look up a word" size="lg" icon="search" type="search" enterKeyHint="search" autoComplete="off" placeholder="karma" value={q} error={qErr || undefined} onChange={e => { setQ(e.target.value); qErr && setQErr(null); }} /></div><window.CAMic size={60} onText={t => { const w = spokenWord(t); if (!w) return; setQ(w); qErr && setQErr(null); run(w); }} /></div>
 
         <SsButton type="submit" variant="accent" size="lg" fullWidth={!phone} loading={phase === "loading"}>Search</SsButton>
@@ -93,7 +93,7 @@ function SearchScreen({ open, initial = "" }) {
         </div>
         {!phone && <p style={{ margin: "14px 0 0", font: "var(--type-source)", color: "var(--text-muted)" }}>If a word is not found, it is not in the dictionary yet. We do not invent an entry.</p>}
       </div>}
-      <div aria-live="polite" style={{ marginTop: phone ? 0 : 28, paddingBottom: phone ? 120 : 0 }}>
+      <div aria-live="polite" style={{ marginTop: phone ? 16 : 28, paddingBottom: phone ? 24 : 0 }}>
         {phase === "loading" && <SsState kind="loading" compact />}
         {phase === "empty" && <>
           <window.WordEmpty word={q.trim()} line="Not in the dictionary yet. This list is curated — we do not invent a missing word." />

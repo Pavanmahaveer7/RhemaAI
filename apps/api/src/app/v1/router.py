@@ -500,9 +500,14 @@ def term_passages(term: str, request: Request, q: str = ""):
     if not store.allow(f"passages:{_client_ip(request)}", 120):
         return _fail(request, 429, "unavailable", "rate_limited", "Try again in a moment.")
     try:
-        return find_passages(term, question)
+        body = find_passages(term, question)
     except Exception:
         return passages_catalog_fallback(term, question)
+    if not body.get("found") and not question:
+        fallback = passages_catalog_fallback(term, question)
+        if fallback.get("found"):
+            return fallback
+    return body
 
 
 @router.post("/terms/{term}/edits")

@@ -263,6 +263,7 @@ def find_passages(term: str, question: str = "", per_tradition: int = 2) -> dict
     words_by_trad = SEARCH_WORDS.get(term, {})
     passages = []
     with _connect(url) as conn:
+        conn.execute("SET statement_timeout = '2500'")
         for tradition in TRADITIONS:
             words = question.split() if question else [term, *words_by_trad.get(tradition, [])]
             query = _tsquery(words)

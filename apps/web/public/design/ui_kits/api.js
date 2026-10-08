@@ -15,9 +15,9 @@
     this.retryable = status === 0 || !!e.retryable;
   }
 
-  function call(method, path, body) {
+  function call(method, path, body, wait) {
     var ctl = typeof AbortController !== "undefined" ? new AbortController() : null;
-    var timer = ctl ? setTimeout(function () { ctl.abort(); }, TIMEOUT) : null;
+    var timer = ctl ? setTimeout(function () { ctl.abort(); }, wait || TIMEOUT) : null;
     return fetch(BASE + path, {
       method: method,
       credentials: "same-origin",
@@ -202,6 +202,13 @@
 
   window.CAApi = {
     get: whenLive("GET"), post: whenLive("POST"), put: whenLive("PUT"), patch: whenLive("PATCH"), del: whenLive("DELETE"),
+    getPassages: function (term, q) {
+      var qs = q ? "?q=" + encodeURIComponent(q) : "";
+      return ready.then(function (ok) {
+        if (!ok) throw new ApiError(-1, { error: { kind: "unavailable", code: "no_api", message: "Preview only." } });
+        return call("GET", "/terms/" + encodeURIComponent(term) + "/passages" + qs, undefined, 20000);
+      });
+    },
     call: call, ready: ready, isLive: function () { return live; }, session: function () { return session; },
     hasLeaderCap: hasLeaderCap,
     hydratePipeline: hydratePipeline, sendCheckin: sendCheckin,

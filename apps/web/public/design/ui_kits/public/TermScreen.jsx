@@ -45,22 +45,37 @@ function NormalEntry({ e }) {
       <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>{e.used.map(u => <TsTag key={u} tone={tsTone[u]}>{u}</TsTag>)}</div>
     </section>
     <section style={tsBox}><TsSources sources={e.sources} title="Sources" emptyText="The dictionary does not cover sources for this term yet." /></section>
-    {window.CAApi && !window.CA_DEMO && <TsPassages term={e.term} />}
+    {window.CAApi && !window.CA_DEMO && <TsPassages term={e.term} sources={e.sources} />}
   </article>;
 }
 
-function TsPassages({ term }) {
+function tsCatalogPassages(sources) {
+  return (sources || []).filter(s => s && s.quote).map(s => ({
+    tradition: s.tradition, work: s.work, reference: s.reference, quote: s.quote,
+    translation: s.translation, license: s.license, url: s.url,
+  }));
+}
+function TsPassages({ term, sources }) {
+  const catalog = tsCatalogPassages(sources);
+  const fromCatalog = catalog.length ? { found: true, passages: catalog } : null;
   const [q, setQ] = React.useState("");
-  const [st, setSt] = React.useState({ kind: "idle" });
-  React.useEffect(() => { setSt({ kind: "idle" }); setQ(""); }, [term]);
+  const [st, setSt] = React.useState(() => fromCatalog ? { kind: "done", r: fromCatalog } : { kind: "idle" });
+  const apply = r => {
+    if (r && r.found && r.passages && r.passages.length) setSt({ kind: "done", r });
+    else if (fromCatalog && !q.trim()) setSt({ kind: "done", r: fromCatalog });
+    else setSt({ kind: "done", r: r || { found: false, passages: [] } });
+  };
   const find = ev => {
     ev && ev.preventDefault();
-    setSt({ kind: "loading" });
-    const qs = q.trim() ? "?q=" + encodeURIComponent(q.trim()) : "";
-    window.CAApi.get("/terms/" + encodeURIComponent(term) + "/passages" + qs)
-      .then(r => setSt({ kind: "done", r }))
-      .catch(err => setSt({ kind: "error", err }));
+    const typed = q.trim();
+    if (!fromCatalog || typed) setSt({ kind: "loading" });
+    const get = window.CAApi.getPassages ? window.CAApi.getPassages(term, typed) : window.CAApi.get("/terms/" + encodeURIComponent(term) + "/passages" + (typed ? "?q=" + encodeURIComponent(typed) : ""));
+    get.then(apply).catch(err => {
+      if (fromCatalog && !typed) apply(fromCatalog);
+      else setSt({ kind: "error", err });
+    });
   };
+  React.useEffect(() => { setQ(""); find(); }, [term]);
   const r = st.r;
   return <section style={tsBox} aria-live="polite">
     <div style={{ ...tsLabel, marginBottom: 8 }}>Read it in the sources</div>
@@ -70,8 +85,8 @@ function TsPassages({ term }) {
       <TsButton variant="secondary" icon="book-open" type="submit" disabled={st.kind === "loading"}>Find passages</TsButton>
     </form>
     {st.kind === "loading" && <div style={{ marginTop: 12 }}><TsState kind="loading" compact /></div>}
-    {st.kind === "error" && <p role="alert" style={{ margin: "12px 0 0", font: "var(--type-source)", color: "var(--text-muted)" }}>{st.err && st.err.code === "no_api" ? "Passages need the live server." : (st.err && st.err.message) || "Could not reach Rhema.ai."}{st.err && st.err.requestId ? ` (ref ${st.err.requestId.slice(0, 8)})` : ""}</p>}
-    {st.kind === "done" && !r.found && <p style={{ margin: "12px 0 0", font: "var(--type-body)", fontStyle: "italic", color: "var(--text-muted)" }}>Not in verified sources.</p>}
+    {st.kind === "error" && <p role="alert" style={{ margin: "12px 0 0", font: "var(--type-source)", color: "var(--text-muted)" }}>{st.err && st.err.code === "no_api" ? "Passages need the live server." : "Could not load extra passages. The citations under Sources still apply."}{st.err && st.err.requestId ? ` (ref ${st.err.requestId.slice(0, 8)})` : ""}</p>}
+    {st.kind === "done" && !r.found && <p style={{ margin: "12px 0 0", font: "var(--type-body)", fontStyle: "italic", color: "var(--text-muted)" }}>Not in verified sources yet. Citations under Sources still apply.</p>}
     {st.kind === "done" && r.found && <>
       <ol style={{ listStyle: "none", margin: "12px 0 0", padding: 0, display: "flex", flexDirection: "column" }}>{r.passages.map((p, i) => <li key={p.tradition + p.work + p.reference} style={{ padding: "12px 0", borderTop: i ? "1px solid var(--border-subtle)" : 0, display: "flex", flexDirection: "column", gap: 6 }}>
         <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}><TsTag tone={tsTone[p.tradition]}>{p.tradition}</TsTag><span style={{ font: "700 15px/1.3 var(--font-body)", color: "var(--text-strong)" }}>{p.work} · {p.reference}</span></div>
