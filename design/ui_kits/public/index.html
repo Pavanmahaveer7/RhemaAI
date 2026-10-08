@@ -1,0 +1,104 @@
+<!-- @dsCard group="Public" viewport="1280x800" name="Public web" subtitle="Search, dictionary word, monthly question, ideas map" -->
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Rhema.ai — App</title>
+<link rel="stylesheet" href="../../styles.css">
+<script src="../theme.js"></script>
+<style>body{margin:0}a{color:var(--lamp-400)}a:hover{color:var(--lamp-300)}::view-transition-group(ca-headword){animation-duration:420ms;animation-timing-function:cubic-bezier(.2,.8,.2,1)}::view-transition-old(root),::view-transition-new(root){animation-duration:200ms}@media (prefers-reduced-motion:reduce){::view-transition-group(*),::view-transition-old(*),::view-transition-new(*){animation:none!important}}</style>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="../../_ds_bundle.js"></script>
+<script src="../guard.js?v=3"></script>
+<script>(function(){var G=window.CAGuard=window.CAGuard||{};var f=new URLSearchParams(location.hash.slice(1)).get("state");if(!G.offline)G.offline=function(){return f==="offline"||navigator.onLine===false};var localLock=function(){if(new URLSearchParams(location.hash.slice(1)).get("lockdown")==="1")return true;try{return (JSON.parse(localStorage.getItem("ca_alerts"))||[]).some(function(a){return a.status==="on"})}catch(e){return false}};G.lockdown=function(){return localLock()};if(G.lockdown()){try{sessionStorage.removeItem("ca_q")}catch(e){}}if(!G.plain)G.plain=function(){try{sessionStorage.clear()}catch(e){}location.replace(new URL("../plain.html",location.href).href)};})();</script>
+<script src="../confirm.js"></script>
+<script src="../i18n.js"></script>
+<script src="../input.js"></script>
+<script src="../rhythm.js"></script>
+<script src="data.js"></script>
+<script src="../api.js"></script>
+<script src="../hydrate.js"></script>
+<script src="curious.js"></script>
+<script src="../messy.js"></script>
+<script src="faithData.js"></script>
+<script src="verses.js"></script>
+</head><body><div id="root"></div>
+<script type="text/babel" src="../GuidePanel.jsx"></script>
+<script type="text/babel" src="Shell.jsx"></script>
+<script type="text/babel" src="GentlePause.jsx"></script>
+<script type="text/babel" src="SearchScreen.jsx"></script>
+<script type="text/babel" src="TermScreen.jsx"></script>
+<script type="text/babel" src="MonthlyScreen.jsx"></script>
+<script type="text/babel" src="GraphScreen.jsx"></script>
+<script type="text/babel" src="MapScreen.jsx"></script>
+<script type="text/babel" src="AuthScreen.jsx"></script>
+<script type="text/babel" src="Onboarding.jsx"></script>
+<script type="text/babel" src="SettingsScreen.jsx"></script>
+<script type="text/babel" src="AccountsScreen.jsx"></script>
+<script type="text/babel" src="MapDraft.jsx"></script>
+<script type="text/babel" src="BetaFeedbackAdmin.jsx"></script>
+<script type="text/babel" src="AdminScreen.jsx"></script>
+<script type="text/babel">
+const StatesBlockNA = () => { const { StateBlock } = window.ChurchAIDesignSystem_06db43; return <StateBlock kind="unavailable" title="Admins only" message="Sign in with an admin account to open accounts and draft tools." />; };
+function AuthLayout({ children }) {
+  const [wide, setWide] = React.useState(innerWidth >= 1000);
+  React.useEffect(() => { const f = () => setWide(innerWidth >= 1000); addEventListener("resize", f); return () => removeEventListener("resize", f); }, []);
+  if (!wide || !window.AuthArt) return children;
+  return <div style={{ flex: 1, width: "100%", maxWidth: 1240, margin: "0 auto", padding: "20px 24px", boxSizing: "border-box", display: "grid", gridTemplateColumns: "minmax(0,1.1fr) minmax(380px,.9fr)", gap: 32, alignItems: "stretch", minHeight: "calc(100svh - 60px)" }}>
+    <window.AuthArt /><div style={{ display: "flex", alignItems: "center" }}>{children}</div></div>;
+}
+// After an in-app move a reload resumes the saved route; flags such as api, as, state and theme stay.
+function dropRouteHash() {
+  const q = new URLSearchParams(location.hash.slice(1));
+  ["r", "t", "step", "mode", "tab", "expert"].forEach(k => q.delete(k));
+  const h = q.toString();
+  history.replaceState(history.state, "", location.pathname + location.search + (h ? "#" + h : ""));
+}
+function App(){
+  const hp = new URLSearchParams(location.hash.slice(1));
+  const PREVIEW = hp.get("preview") === "1";
+  if (hp.get("guest") === "1" && !PREVIEW) { try { localStorage.setItem("ca_guest_first", "1"); localStorage.setItem("ca_onboarded", "1"); } catch (x) {} if (!window.CASession.get()) window.CASession.set({ kind: "guest", name: "Guest" }); }
+  const GF = (hp.get("guest") === "1" && PREVIEW) || localStorage.getItem("ca_guest_first") === "1";
+  if (GF && !window.CASession.get()) window.CASession.set({ kind: "guest", name: "Guest" });
+  const first = !hp.get("r") && !window.CASession.get();
+  const saved = first ? { r: localStorage.getItem("ca_onboarded") ? "welcome" : "intro" } : hp.get("r") ? { r: hp.get("r"), t: hp.get("t") || "karma", m: hp.get("mode"), x: hp.get("expert"), tab: hp.get("tab") } : JSON.parse(localStorage.getItem("ca_public_route") || '{"r":"term","t":"karma"}');
+  const LK = window.CAGuard.lockdown();
+  const [r, setR] = React.useState((LK && ["month", "graph"].includes(saved.r)) || (GF && !hp.get("r") && ["welcome", "intro"].includes(saved.r)) ? { r: "search" } : saved);
+  const go = (route, t, extra) => { if (LK && ["month", "graph"].includes(route)) route = "search"; if (GF && ["welcome", "intro"].includes(route)) route = "search"; const n = { r: route, t: t ?? r.t, ...(extra || {}) }; setR(n); localStorage.setItem("ca_public_route", JSON.stringify(n)); dropRouteHash(); window.scrollTo(0, 0); };
+  window.CAGo = go;
+  const [session] = useSession();
+  const isAdmin = session && session.kind === "admin";
+  const [adminTab, setAdminTab] = React.useState(r.tab); React.useEffect(() => { window.CAAdminTabSeen = setAdminTab; }, []);
+  const bleed = r.r === "graph" || (r.r === "admin" && adminTab === "draftmap");
+  const auth = r.r === "welcome" || r.r === "signin";
+  const intro = r.r === "intro";
+  const forced = window.CAGuard.forced();
+  const fr = forced && forced !== "offline" && ["search", "term", "month", "graph", "admin", "settings"].includes(r.r);
+  return <PublicShell route={r.r} go={go} bleed={bleed} bare={auth || intro}>
+    <GentlePause route={r.r} />
+    {auth && <AuthLayout><AuthScreen key={r.r} go={go} initialTab={r.r === "signin" && r.m !== "register" ? "signin" : "create"} /></AuthLayout>}
+    {intro && <OnboardingScreen go={go} />}
+    {fr && <window.CAGuard.State kind={forced} />}
+    {!fr && r.r === "settings" && <SettingsScreen go={go} />}
+    {!fr && r.r === "search" && <SearchScreen open={t => go("term", t)} />}
+    {!fr && r.r === "term" && <TermScreen key={r.t} term={r.t} initialExpert={r.x === "1"} back={() => go("search")} />}
+    {!fr && r.r === "month" && <MonthlyScreen go={go} />}
+    {!fr && r.r === "graph" && <PublicMap />}
+    {!fr && r.r === "admin" && (isAdmin ? <AdminScreen tab={r.tab} /> : <div style={{ maxWidth: 520, width: "100%", margin: "0 auto", padding: "48px var(--gutter-phone)", display: "flex", flexDirection: "column", gap: 14 }}><StatesBlockNA /><div style={{ display: "flex", gap: 8 }}><window.ChurchAIDesignSystem_06db43.Button variant="primary" onClick={() => go("signin")}>Sign in</window.ChurchAIDesignSystem_06db43.Button></div></div>)}
+    {r.r === "states" && <StatesScreen />}
+  </PublicShell>;
+}
+(window.CAApi ? window.CAApi.ready : Promise.resolve()).then(() => {
+  const hp = new URLSearchParams(location.hash.slice(1));
+  if (window.CAApi && window.CAApi.isLive() && hp.get("guest") === "1" && hp.get("preview") !== "1") return window.CAApi.guest().catch(() => {});
+}).then(() => (window.CAHydrate ? window.CAHydrate() : null)).then(() => {
+  if (window.CAApi && window.CAApi.isLive() && window.CAApi.syncCasession) {
+    window.CAApi.syncCasession(window.CAApi.session());
+    const s = window.CAApi.session();
+    if (s && ["pastor", "reviewer", "leader", "mentor", "expert", "admin"].includes(s.kind) && !location.hash.includes("preview=1")) {
+      const pipe = s.kind === "leader" ? "/pastor#role=leader&r=alerts" : s.kind === "reviewer" || s.kind === "admin" ? "/pastor#role=reviewer&r=queue" : s.kind === "pastor" ? "/pastor#r=tracks" : "/pastor#r=home";
+      location.replace(pipe);
+      return;
+    }
+  }
+  ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+});
+</script></body></html>

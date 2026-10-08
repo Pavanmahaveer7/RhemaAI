@@ -1,0 +1,8 @@
+:root{
+--space-0:0;--space-1:2px;--space-2:4px;--space-3:8px;--space-4:12px;--space-5:16px;--space-6:20px;--space-7:24px;--space-8:32px;--space-9:40px;--space-10:48px;--space-11:64px;--space-12:80px;
+--gutter-phone:20px;/* @kind spacing */--gutter-desktop:40px;/* @kind spacing */
+--content-read:640px;/* @kind spacing */--content-wide:1120px;/* @kind spacing */
+--tap-min:44px;/* @kind spacing */
+--grid-cols-phone:4;/* @kind other */--grid-cols-tablet:8;/* @kind other */--grid-cols-desktop:12;/* @kind other */
+--grid-gap:16px;/* @kind spacing */--grid-gap-desktop:24px;/* @kind spacing */
+}

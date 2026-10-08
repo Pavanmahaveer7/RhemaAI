@@ -1,0 +1,29 @@
+<!-- @dsCard group="Public" viewport="1280x800" name="Landing page" subtitle="Hero word demo, month sequence, sticky header" -->
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Rhema.ai — One word. Three faiths.</title>
+<link rel="stylesheet" href="../../styles.css">
+<script src="../theme.js"></script>
+<style>body{margin:0;background:var(--surface-page)}a{color:var(--lamp-400)}a:hover{color:var(--lamp-300)}
+.lp-nav{color:var(--text-muted);transition:color 150ms var(--ease-out),background 150ms var(--ease-out)}.lp-nav:hover{color:var(--text-strong);background:var(--surface-raised)}
+.lp-link{color:var(--lamp-400);text-decoration:none}.lp-link:hover{color:var(--lamp-300)}
+.lp-chip{transition:border-color 150ms var(--ease-out),background 150ms var(--ease-out)}.lp-chip[aria-pressed="false"]:hover{border-color:var(--border-strong);background:var(--surface-raised)}
+.lp-card{transition:border-color 150ms var(--ease-out),background 150ms var(--ease-out)}.lp-card:hover{border-color:var(--border-strong);background:var(--surface-raised)}</style>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="../../_ds_bundle.js"></script>
+<script src="../guard.js?v=3"></script>
+<script src="../confirm.js"></script>
+<script src="../i18n.js"></script>
+<script>(function(){var G=window.CAGuard=window.CAGuard||{};G.lockdown=function(){try{return (JSON.parse(localStorage.getItem("ca_alerts"))||[]).some(function(a){return a.status==="on"})}catch(e){return false}};})();</script>
+<script src="../public/data.js"></script>
+<script src="../api.js"></script>
+<script src="../hydrate.js"></script>
+<script src="../rhythm.js"></script>
+<script src="../messy.js"></script>
+</head><body><div id="root"></div>
+<script type="text/babel" src="../GuidePanel.jsx"></script>
+<script type="text/babel" src="Landing.jsx"></script>
+<script type="text/babel">
+(window.CAHydrate ? window.CAHydrate() : Promise.resolve()).then(() => ReactDOM.createRoot(document.getElementById("root")).render(<Landing/>));
+</script>
+</body></html>

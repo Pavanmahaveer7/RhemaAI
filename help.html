@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Rhema.ai — Help</title>
+  <link rel="stylesheet" href="/design/styles.css">
+  <style>
+    body { margin: 0; font: 16px/1.55 var(--font-body, system-ui, sans-serif); color: var(--text-body, #e8ece4); background: var(--ink-0, #0b0f0c); }
+    main { max-width: 720px; margin: 0 auto; padding: 32px 20px 64px; }
+    h1 { font: 800 2.2rem/1.1 var(--font-display, Georgia, serif); color: var(--text-strong, #f3f7ee); margin: 0 0 8px; }
+    h2 { font: 700 1.25rem/1.3 var(--font-body, system-ui); color: var(--lamp-400, #cfda5c); margin: 32px 0 12px; }
+    p, li { color: var(--text-muted, #b8c4b8); }
+    a { color: var(--lamp-400, #cfda5c); }
+    .lead { font-size: 1.05rem; color: var(--text-body, #e8ece4); }
+    .box { border: 1px solid var(--border-subtle, #324034); border-radius: 12px; padding: 16px 18px; margin: 16px 0; background: var(--surface-card, #121814); }
+    code { font-size: 0.9em; background: rgba(255,255,255,.06); padding: 2px 6px; border-radius: 4px; }
+    nav.top { display: flex; flex-wrap: wrap; gap: 12px; margin: 20px 0; font-size: 14px; }
+    nav.top a { text-decoration: none; font-weight: 600; }
+  </style>
+</head>
+<body>
+  <main>
+    <p><a href="/">← Rhema.ai home</a></p>
+    <h1>One app. Every layer.</h1>
+    <p class="lead">You do not need to memorize URLs. In the app, use the <strong>Guide</strong> button in the header (or the banner on first visit). This page is optional extra detail for organizers and beta testers.</p>
+    <nav class="top" aria-label="Jump">
+      <a href="#reader">Reader</a>
+      <a href="#staff">Staff</a>
+      <a href="#hidden">Hidden layers</a>
+      <a href="#urls">All URLs</a>
+      <a href="#local">Local rescue</a>
+      <a href="/local">App map</a>
+    </nav>
+
+    <h2 id="reader">Reader (public dictionary)</h2>
+    <div class="box">
+      <p><strong>Start:</strong> <a href="/">Home</a> → <a href="/welcome/1">welcome</a> (Next / Back) → create account or guest. Or <a href="/tour?from=landing">watch the tour</a>, then the same welcome. <a href="/search?guest=1">Skip to the dictionary</a>.</p>
+      <p>Words now in the list include karma, dharma, moksha, nirvana, grace, faith, meditation, suffering, compassion, love, marriage, salvation, samsara, atman, ahimsa, mantra, guru, sangha, rebirth, prayer, sin, forgiveness, judgment, soul, heaven, enlightenment, sacrifice, ritual, community, service, wisdom, ways of living, death, life, murti, deva, avatara, anatta, hope, peace, family, duty, truth, resurrection, repentance, baptism, church, scripture, joy, humility, fasting, pilgrimage, charity, bhakti, yoga, puja, bodhisattva, mindfulness, craving, emptiness, and precept.</p>
+      <ul>
+        <li>Guest: search words, monthly question, map — no email.</li>
+        <li>Member: <a href="/app#r=signin">Sign in</a> with email to save progress.</li>
+        <li>Feedback: <a href="/beta-survey">Beta survey</a> (~1 min).</li>
+        <li>The dictionary is a <strong>curated list</strong>, not every word. On Dictionary, tap a starter chip or <a href="/search?list=1">See all words</a>. If a word is not found, it is not in yet — we do not invent an entry.</li>
+      </ul>
+    </div>
+
+    <h2 id="staff">Staff (Layer 3)</h2>
+    <div class="box">
+      <p><strong>Always enter here:</strong> <a href="/staff">/staff</a> — not the public tour.</p>
+      <ul>
+        <li><strong>Code sign-in</strong> — organizer gives code (e.g. P-0233) + password.</li>
+        <li><strong>Phone demo</strong> — <a href="/staff?register=phone">Register</a> or <a href="/staff?signin=phone">Sign in with phone</a>; code shows on screen (SMS demo).</li>
+        <li>After sign-in you open <strong>Staff</strong> at <code>/pastor</code> — check-in, tracks, review, alerts.</li>
+      </ul>
+    </div>
+
+    <h2 id="hidden">Hidden layers (same app)</h2>
+    <div class="box">
+      <ul>
+        <li><strong>Admin</strong> — sign in as A-0100 → Admin in Reader app (beta CSV, accounts, map draft).</li>
+        <li><strong>Expert / Faith</strong> — hold a word headword for parallel traditions; edits go to human review.</li>
+        <li><strong>Safety</strong> — harmful or injection text blocked; crisis check-ins held for a person.</li>
+        <li><strong>QA only</strong> — <code>#api=0</code>, <a href="/screens">/screens</a> (not for public testers).</li>
+      </ul>
+    </div>
+
+    <h2 id="local">Local rescue (no Vercel)</h2>
+    <div class="box">
+      <p>Run the full app on your machine when production fails:</p>
+      <pre style="overflow:auto;font-size:13px;padding:12px;border-radius:8px;background:rgba(0,0,0,.25)">cd church-ai-stack
+.\scripts\run_local.ps1</pre>
+      <p>Then open the URL the script prints (usually <a href="http://127.0.0.1:3010/">http://127.0.0.1:3010/</a>).</p>
+      <p>Demo staff codes and passwords live only in the private repo doc <code>docs/local-rescue.md</code> — not on this public help page.</p>
+    </div>
+
+    <h2 id="urls">Canonical URLs</h2>
+    <div class="box">
+      <table style="width:100%;border-collapse:collapse;font-size:14px">
+        <tr><td style="padding:6px 0">Home</td><td><a href="/">/</a></td></tr>
+        <tr><td style="padding:6px 0">Reader app</td><td><a href="/app">/app</a></td></tr>
+        <tr><td style="padding:6px 0">Dictionary (guest)</td><td><a href="/dictionary">/dictionary</a></td></tr>
+        <tr><td style="padding:6px 0">Staff sign-in</td><td><a href="/staff">/staff</a></td></tr>
+        <tr><td style="padding:6px 0">Staff workspace</td><td><a href="/pastor">/pastor</a> (after auth)</td></tr>
+        <tr><td style="padding:6px 0">Beta survey</td><td><a href="/beta-survey">/beta-survey</a></td></tr>
+        <tr><td style="padding:6px 0">Feedback board</td><td><a href="/feedback">/feedback</a></td></tr>
+        <tr><td style="padding:6px 0">Waitlist</td><td><a href="/waitlist">/waitlist</a></td></tr>
+        <tr><td style="padding:6px 0">Analytics (admin)</td><td><a href="/analytics">/analytics</a></td></tr>
+      </table>
+    </div>
+    <p style="margin-top:24px;font-size:14px">Full manual for judges and builders: <code>docs/user-manual.md</code> in the GitHub repo (RhemaAI).</p>
+  </main>
+</body>
+</html>
