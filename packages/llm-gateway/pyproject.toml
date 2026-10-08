@@ -1,9 +1,9 @@
 [project]
 name = "llm-gateway"
 version = "0.1.0"
-description = "Single entry for model calls. Phase 0 stub does not call a provider SDK."
+description = "Single entry for chat and embedding model calls. Local MiniLM embeddings are free."
 requires-python = ">=3.12"
-dependencies = ["guardrails"]
+dependencies = ["guardrails", "fastembed"]
 
 [tool.uv.sources]
 guardrails = { workspace = true }

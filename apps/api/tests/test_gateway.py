@@ -4,7 +4,7 @@ import pytest
 
 from agents.packet import WHY, prepare
 from guardrails import GuardrailError, apply_input, apply_output
-from llm_gateway import GatewayError, breaker, complete
+from llm_gateway import GatewayError, breaker, complete, embed
 from llm_gateway import gateway as gw
 
 
@@ -41,6 +41,76 @@ def test_off_mode_fails_closed(monkeypatch):
     monkeypatch.setenv("LLM_MODE", "off")
     with pytest.raises(GatewayError) as exc:
         complete(agent="checkin-analyst", user_text="hello")
+    assert exc.value.code == "UNAVAILABLE"
+
+
+def test_embed_stub_does_not_turn_on_chat(monkeypatch):
+    monkeypatch.setenv("LLM_MODE", "off")
+    monkeypatch.setenv("EMBED_MODE", "stub")
+    vectors = embed(["karma is action and its fruit"])
+    assert len(vectors) == 1
+    assert len(vectors[0]) == 384
+    assert abs(sum(v * v for v in vectors[0]) - 1) < 1e-5
+    with pytest.raises(GatewayError) as exc:
+        complete(agent="compare", user_text="karma")
+    assert exc.value.code == "UNAVAILABLE"
+
+
+def test_embed_local_uses_on_device_model(monkeypatch):
+    monkeypatch.setenv("EMBED_MODE", "local")
+    monkeypatch.setattr(
+        gw,
+        "_embed_local",
+        lambda texts: [[1.0] + [0.0] * 383 for _ in texts],
+    )
+    out = embed(["karma"])
+    assert len(out[0]) == 384
+    assert out[0][0] == 1.0
+
+
+def test_embed_off_fails_closed(monkeypatch):
+    monkeypatch.setenv("EMBED_MODE", "off")
+    with pytest.raises(GatewayError) as exc:
+        embed(["karma"])
+    assert exc.value.code == "UNAVAILABLE"
+
+
+def test_live_embed_reads_hf_vectors(monkeypatch):
+    dim = 384
+    captured = {}
+
+    class _Resp:
+        def read(self):
+            return json.dumps([[0.05] * dim]).encode()
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *args):
+            return False
+
+    def fake_urlopen(request, timeout):
+        captured["url"] = request.full_url
+        captured["body"] = json.loads(request.data)
+        return _Resp()
+
+    monkeypatch.setenv("EMBED_MODE", "live")
+    monkeypatch.setenv("HF_TOKEN", "test-hf")
+    monkeypatch.setenv("EMBED_BASE_URL", "https://example.test/models")
+    monkeypatch.setattr(gw.urllib.request, "urlopen", fake_urlopen)
+    out = embed(["karma"])
+    assert len(out[0]) == dim
+    assert captured["url"].endswith("sentence-transformers/all-MiniLM-L6-v2")
+    assert captured["body"]["inputs"] == ["karma"]
+
+
+def test_live_embed_without_a_key_fails_closed(monkeypatch):
+    monkeypatch.setenv("EMBED_MODE", "live")
+    monkeypatch.delenv("EMBED_API_KEY", raising=False)
+    monkeypatch.delenv("HF_TOKEN", raising=False)
+    monkeypatch.delenv("HUGGING_FACE_HUB_TOKEN", raising=False)
+    with pytest.raises(GatewayError) as exc:
+        embed(["karma"])
     assert exc.value.code == "UNAVAILABLE"
 
 

@@ -43,7 +43,7 @@ See `docs/adr/ADR-004-tech-stack.md` for the full decision, pinned models, and a
 1. Web → Edge (WAF, rate limit) → API (`POST /api/l1/compare`).
 2. API authenticates (optional for public), applies quota, calls **intake**. Because the route
    already implies L1, intake routes deterministically without an LLM call.
-3. **Compare agent** calls `vocab.search_sources` via tool guardrails → gets source chunks (sanitised).
+3. **Compare agent** calls `vocab.search_sources` via tool guardrails → gateway `embed` (if `EMBED_MODE` is stub/live and chunks have vectors) or full-text search → source chunks (sanitised).
 4. Compare agent calls `llm-gateway.complete` → input guardrails → model → output guardrails
    (schema, citation check, tone/neutrality, safety, refusal, advice, flourishing).
 5. Validated JSON returned to the client; trace + cost recorded; lookup logged.
@@ -85,6 +85,7 @@ See `docs/adr/ADR-004-tech-stack.md` for the full decision, pinned models, and a
 | Server | Tool | Mode | Role | Data class |
 |---|---|---|---|---|
 | vocab | `lookup_term(term)` | read | public | PUBLIC |
+| vocab | `search_terms(q)` | read | public | PUBLIC |
 | vocab | `search_sources(query, traditions[], k≤8)` | read | public | PUBLIC |
 | graph | `fetch_responses(question_id, month, limit)` | read | system/admin | COMMUNITY |
 | graph | `get_previous_snapshot(question_id)` | read | system/admin | COMMUNITY |
@@ -99,7 +100,8 @@ Intake routes by the URL and does not call a model (ADR-002). Every model call g
 
 | Path | Model |
 |---|---|
-| Dictionary and Faith read | No. Faith copy still follows principle 7, because a person writes it. |
+| Dictionary and Faith read | No chat model. Optional L1 embeddings through `llm-gateway.embed` (free local MiniLM, stub, or paid HF Inference); quotes stay stored public-domain text. |
+| Dictionary extra passages | Same: retrieval only. `model` is always null. |
 | Map, monthly question, draft, alerts, church registration | No |
 | Compare, once that slice exists | Yes. Gateway only, then the seven-principle check. |
 | Graph builder batch, once that slice exists | Yes. Gateway only. It extracts concepts. It does not coach. |

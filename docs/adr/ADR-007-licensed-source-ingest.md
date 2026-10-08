@@ -37,8 +37,9 @@ Bhikkhu's translations, Rangjung Yeshe, Prabhupada's Bhagavad Gita As It Is, NIV
 
 ## Alternatives considered
 - Generate answers with a model now: no key, and model text would need review before showing.
-- pgvector embeddings: better recall, but needs an embedding model (and a key); full-text search is enough
-  for headword lookups and can be swapped later behind `find_passages`.
+- pgvector embeddings: now optional behind `vocab.search_sources` and `find_passages`. `ingest --embed`
+  stores vectors; `llm-gateway.embed` is the only caller (Hugging Face live or local stub). Chat
+  `LLM_MODE` stays independent and can remain off. Full-text search still runs when embeddings are off.
 - Telang's verse-numbered Gita (1882): public domain, but no clean machine-readable copy was found yet.
 
 ## Consequences (good, bad, follow-ups)

@@ -6,6 +6,7 @@ ALLOWED_TOOLS = {
     "vocab.lookup_term": {"roles": {"public", "pastor", "admin", "system"}, "mode": "read"},
     "vocab.lookup_faith": {"roles": {"public", "pastor", "admin", "system"}, "mode": "read"},
     "vocab.search_terms": {"roles": {"public", "pastor", "admin", "system"}, "mode": "read"},
+    "vocab.search_sources": {"roles": {"public", "pastor", "admin", "system"}, "mode": "read"},
 }
 
 
@@ -40,6 +41,21 @@ def _validate(name: str, params: dict) -> None:
         query = params.get("q", "")
         if not isinstance(query, str) or len(query) > 200:
             raise ToolError("VALIDATION_ERROR", "query must be at most 200 characters")
+    if name == "vocab.search_sources":
+        query = params.get("query", "")
+        if not isinstance(query, str) or not query.strip() or len(query) > 200:
+            raise ToolError("VALIDATION_ERROR", "query must be 1-200 characters")
+        traditions = params.get("traditions")
+        if traditions is None:
+            traditions = []
+        if not isinstance(traditions, list) or any(not isinstance(item, str) for item in traditions):
+            raise ToolError("VALIDATION_ERROR", "traditions must be a list of names")
+        allowed = {"hindu", "buddhist", "christian"}
+        if any(item.strip().lower() not in allowed for item in traditions if item.strip()):
+            raise ToolError("VALIDATION_ERROR", "traditions must be hindu, buddhist, or christian")
+        k = params.get("k", 8)
+        if not isinstance(k, int) or isinstance(k, bool) or k < 1 or k > 8:
+            raise ToolError("VALIDATION_ERROR", "k must be an integer from 1 to 8")
 
 
 def _sanitise(value):

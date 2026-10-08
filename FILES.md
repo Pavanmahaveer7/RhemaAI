@@ -18,7 +18,7 @@ Every file in this repo and what it's for.
 - `packages/agents/` — Deterministic intake routing
 - `packages/llm-gateway/` — Stub gateway; only place a model SDK may be imported later
 - `packages/guardrails/` — Fail-closed guardrail stubs and tool allowlist
-- `packages/mcp/vocab/` — L1 dictionary store, seed, lookup and search
+- `packages/mcp/vocab/` — L1 dictionary store, seed, lookup, search_terms, search_sources
 - `.cursor/plan-prompts/00-load-context.md`
 - `.cursor/plan-prompts/01-master-plan.md`
 - `.cursor/plan-prompts/02-architecture-lock.md`

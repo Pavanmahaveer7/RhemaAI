@@ -1,9 +1,12 @@
 [project]
 name = "vocab-mcp"
 version = "0.1.0"
-description = "L1 vocab data access. lookup_term and search_terms."
+description = "L1 vocab data access. lookup_term, search_terms, and search_sources."
 requires-python = ">=3.12"
-dependencies = ["psycopg[binary]>=3.2"]
+dependencies = ["psycopg[binary]>=3.2", "llm-gateway"]
+
+[tool.uv.sources]
+llm-gateway = { workspace = true }
 
 [build-system]
 requires = ["setuptools>=68"]

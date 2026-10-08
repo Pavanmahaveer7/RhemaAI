@@ -131,6 +131,34 @@ def test_a_word_with_nothing_loaded_is_not_found(loaded):
 
 
 @needs_db
+def test_search_sources_can_use_stub_embeddings(loaded, monkeypatch):
+    monkeypatch.setenv("EMBED_MODE", "stub")
+    from llm_gateway import embed
+    from psycopg.rows import dict_row
+    from vocab_mcp.search_sources import search_sources
+    from vocab_mcp.store import save_source_embeddings
+    from guardrails.tools import call_tool
+
+    chunks = _fixture_chunks()
+    with psycopg.connect(TEST_URL, row_factory=dict_row) as conn:
+        vectors = embed([item["text"] for item in chunks])
+        written = save_source_embeddings(conn, list(zip((item["id"] for item in chunks), vectors)))
+        conn.commit()
+    assert written == len(chunks)
+    body = call_tool(
+        "vocab.search_sources",
+        {"query": "sow reap deeds intention", "traditions": ["christian", "buddhist"], "k": 4},
+        role="public",
+        handler=search_sources,
+    )
+    assert body["model"] is None
+    assert body["retrieval"] in {"vector", "fts"}
+    assert body["chunks"]
+    blob = " ".join(item["text"].lower() for item in body["chunks"])
+    assert "sow" in blob or "intention" in blob
+
+
+@needs_db
 def test_term_sources_carry_their_quote_and_faith_verses(loaded):
     body = TestClient(app).get("/api/v1/terms/karma").json()
     gal = next(s for s in body["sources"] if s["work"] == "Galatians")

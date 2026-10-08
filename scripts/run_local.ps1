@@ -18,6 +18,7 @@ if (-not $NoKillPorts) {
 }
 
 $env:LLM_MODE = "off"
+# HF embeddings: apps/api/.env.local is loaded by the API (gitignored). Chat stays off.
 $env:APP_ENV = "development"
 # Always use the documented local password (ignore Vercel .env on your machine).
 $env:DEMO_SIGNIN_PASSWORD = "dev-only-change-me"

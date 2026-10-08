@@ -16,7 +16,10 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 from llm_gateway import ping as gateway_ping
 from vocab_mcp import init_db
 
+from app.envfile import load_local_env
 from app.errors import error_body
+
+load_local_env()
 from app.v1.errors import api_error
 
 log = logging.getLogger("church_ai.api")

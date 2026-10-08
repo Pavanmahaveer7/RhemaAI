@@ -2,6 +2,7 @@
 
     python -m app.ingest            # download (cached) and load everything
     python -m app.ingest --dry-run  # parse and count, write nothing
+    python -m app.ingest --embed    # also write gateway embeddings (EMBED_MODE=stub or live)
 
 Only the sources in SOURCES are loaded. The "do not ship" list in ADR-007
 (DPD, CBETA, 84000, GRETIL, Thanissaro, Rangjung Yeshe, Prabhupada, NIV, ESV)
@@ -18,7 +19,10 @@ import urllib.request
 import zipfile
 from pathlib import Path
 
+from app.envfile import load_local_env
 from app.v1.sources import BOOKS, COLLECTIONS, tags_for, upsert_chunks
+
+load_local_env()
 
 SC_BASE = "https://raw.githubusercontent.com/suttacentral/bilara-data/published/translation/en/sujato/sutta/"
 SC_DHP_LIST = "https://api.github.com/repos/suttacentral/bilara-data/contents/translation/en/sujato/sutta/kn/dhp?ref=published"
@@ -184,6 +188,7 @@ def load_arnold() -> list[dict]:
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--dry-run", action="store_true")
+    parser.add_argument("--embed", action="store_true", help="Write gateway embeddings for loaded chunks (EMBED_MODE=stub or live)")
     parser.add_argument("--database-url", default=os.getenv("DATABASE_URL", "postgresql://app:app@localhost:5432/church_ai"))
     args = parser.parse_args(argv)
     chunks = load_web() + load_sujato() + load_arnold()
@@ -198,9 +203,33 @@ def main(argv: list[str] | None = None) -> int:
 
     with psycopg.connect(args.database_url, connect_timeout=5) as conn:
         written = upsert_chunks(conn, chunks)
+        embedded = _embed_chunks(conn, chunks) if args.embed else 0
         conn.commit()
     print(f"loaded {written} passages")
+    if args.embed:
+        print(f"embedded {embedded} passages")
     return 0
+
+
+def _embed_chunks(conn, chunks: list[dict]) -> int:
+    from llm_gateway import GatewayError, embed, embed_mode
+    from vocab_mcp.store import save_source_embeddings
+
+    mode = embed_mode()
+    if mode == "off":
+        print("skip embeddings: set EMBED_MODE=local, stub, or live")
+        return 0
+    if mode == "live" and len(chunks) > 500:
+        print(f"warning: live embeddings for {len(chunks)} chunks will call Hugging Face in batches")
+    vectors: list[list[float]] = []
+    batch = 32
+    try:
+        for i in range(0, len(chunks), batch):
+            vectors.extend(embed([item["text"] for item in chunks[i : i + batch]]))
+    except GatewayError as exc:
+        print(f"skip embeddings: {exc.message}")
+        return 0
+    return save_source_embeddings(conn, list(zip((item["id"] for item in chunks), vectors)))
 
 
 if __name__ == "__main__":

@@ -291,6 +291,7 @@ def find_passages(term: str, question: str = "", per_tradition: int = 2) -> dict
                         "url": row["source_url"],
                     }
                 )
+        passages, used_vector = _fill_vector_passages(term, question, per_tradition, passages)
     return {
         "term": term,
         "question": question or None,
@@ -298,8 +299,64 @@ def find_passages(term: str, question: str = "", per_tradition: int = 2) -> dict
         "passages": passages,
         "found": bool(passages),
         "model": None,
-        "note": "Quotes found by word match in licence-checked sources. Not reviewed, and not an answer written by a model.",
+        "note": (
+            "Quotes found by word match and similarity in licence-checked sources. Not reviewed, and not an answer written by a model."
+            if used_vector
+            else "Quotes found by word match in licence-checked sources. Not reviewed, and not an answer written by a model."
+        ),
     }
+
+
+def _fill_vector_passages(term: str, question: str, per_tradition: int, passages: list[dict]) -> tuple[list[dict], bool]:
+    """Add similar licensed chunks when a tradition is short. Dictionary JSON shape stays the same."""
+    from llm_gateway import embed_mode
+    from vocab_mcp.search_sources import search_sources
+
+    if embed_mode() == "off":
+        return passages, False
+    used = False
+    have = {(item["work"], item["reference"], item["quote"]) for item in passages}
+    counts = {name: 0 for name in TRADITIONS}
+    for item in passages:
+        if item["tradition"] in counts:
+            counts[item["tradition"]] += 1
+    words_by_trad = SEARCH_WORDS.get(term, {})
+    for tradition in TRADITIONS:
+        if counts[tradition] >= per_tradition:
+            continue
+        words = question.split() if question else [term, *words_by_trad.get(tradition, [])]
+        query = " ".join(words).strip()[:200]
+        if not query:
+            continue
+        try:
+            found = search_sources({"query": query, "traditions": [tradition], "k": per_tradition})
+        except Exception:
+            continue
+        if found.get("retrieval") != "vector":
+            continue
+        for chunk in found.get("chunks") or []:
+            quote = chunk.get("text") or ""
+            key = (chunk.get("work"), chunk.get("reference"), quote)
+            if not quote or key in have:
+                continue
+            label = chunk["tradition"] if chunk["tradition"] in TRADITIONS else tradition
+            passages.append(
+                {
+                    "tradition": label,
+                    "work": chunk["work"],
+                    "reference": chunk["reference"],
+                    "quote": quote,
+                    "translation": chunk.get("translation"),
+                    "license": chunk["license"],
+                    "url": chunk.get("url"),
+                }
+            )
+            have.add(key)
+            counts[tradition] += 1
+            used = True
+            if counts[tradition] >= per_tradition:
+                break
+    return passages, used
 
 
 def passages_catalog_fallback(term: str, question: str = "") -> dict:

@@ -38,9 +38,10 @@ and stays hidden.
 ## Source passages (`source_chunk`)
 
 PUBLIC. One row per verse or section: tradition, work, reference, translation, licence, text,
-`source_url`, topic tags, and a Postgres full-text column (`tsv`). Embeddings (`pgvector`) are not
-loaded yet; full-text search is what "Find passages" uses. See ADR-007 for which texts are loaded
-and which must never be added.
+`source_url`, topic tags, a Postgres full-text column (`tsv`), and an optional `embedding vector(384)`
+written by `python -m app.ingest --embed` through `llm-gateway.embed`. Full-text search is the
+default; vectors are used only when `EMBED_MODE` is stub or live and rows have embeddings. See
+ADR-007 for which texts are loaded and which must never be added.
 
 ## Not built yet
 

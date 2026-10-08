@@ -36,6 +36,22 @@ def test_tool_rejects_unknown_name():
     assert raised
 
 
+def test_search_sources_is_allowlisted_and_capped():
+    payload = call_tool(
+        "vocab.search_sources",
+        {"query": "karma", "traditions": ["hindu"], "k": 3},
+        role="public",
+        handler=lambda params: {"query": params["query"], "chunks": [], "retrieval": "none", "model": None},
+    )
+    assert payload["model"] is None
+    try:
+        call_tool("vocab.search_sources", {"query": "karma", "k": 99}, role="public", handler=lambda params: {})
+        raised = False
+    except ToolError as exc:
+        raised = exc.code == "VALIDATION_ERROR"
+    assert raised
+
+
 def test_there_is_no_public_faith_path():
     response = client.get("/api/l1/terms/karma/faith")
     assert response.status_code == 404

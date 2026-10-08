@@ -1,6 +1,7 @@
 """Postgres access for L1 dictionary data. Not called from inside an agent."""
 
 import os
+import re
 
 import psycopg
 from psycopg.rows import dict_row
@@ -40,7 +41,144 @@ CREATE TABLE IF NOT EXISTS lookup_log (
   user_id TEXT,
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
+ALTER TABLE source_chunk ADD COLUMN IF NOT EXISTS source_url TEXT;
+ALTER TABLE source_chunk ADD COLUMN IF NOT EXISTS tsv tsvector
+  GENERATED ALWAYS AS (to_tsvector('english', text)) STORED;
+CREATE INDEX IF NOT EXISTS source_chunk_tsv ON source_chunk USING GIN (tsv);
 """
+
+TRADITIONS = ("hindu", "buddhist", "christian")
+MIN_VECTOR_SCORE = 0.28
+
+
+def vector_literal(values: list[float]) -> str:
+    return "[" + ",".join(f"{float(v):.7f}" for v in values) + "]"
+
+
+def ensure_source_embeddings(conn) -> bool:
+    """Add pgvector embedding column when the extension is available. Leaves FTS alone if not."""
+    try:
+        conn.execute("SAVEPOINT source_embed_schema")
+        conn.execute("CREATE EXTENSION IF NOT EXISTS vector")
+        conn.execute("ALTER TABLE source_chunk ADD COLUMN IF NOT EXISTS embedding vector(384)")
+        conn.execute("RELEASE SAVEPOINT source_embed_schema")
+        return True
+    except Exception:
+        try:
+            conn.execute("ROLLBACK TO SAVEPOINT source_embed_schema")
+        except Exception:
+            pass
+        return False
+
+
+def has_source_embeddings(conn) -> bool:
+    try:
+        conn.execute("SAVEPOINT source_embed_check")
+        row = conn.execute(
+            """
+            SELECT 1
+            FROM information_schema.columns
+            WHERE table_name = 'source_chunk' AND column_name = 'embedding'
+            """
+        ).fetchone()
+        found = None
+        if row:
+            found = conn.execute("SELECT 1 FROM source_chunk WHERE embedding IS NOT NULL LIMIT 1").fetchone()
+        conn.execute("RELEASE SAVEPOINT source_embed_check")
+        return found is not None
+    except Exception:
+        try:
+            conn.execute("ROLLBACK TO SAVEPOINT source_embed_check")
+        except Exception:
+            pass
+        return False
+
+
+def save_source_embeddings(conn, items: list[tuple[str, list[float]]]) -> int:
+    if not items or not ensure_source_embeddings(conn):
+        return 0
+    with conn.cursor() as cur:
+        cur.executemany(
+            "UPDATE source_chunk SET embedding = %s::vector WHERE id = %s",
+            [(vector_literal(vec), chunk_id) for chunk_id, vec in items],
+        )
+    return len(items)
+
+
+def search_source_chunks(conn, *, query_vector: list[float], traditions: list[str], k: int) -> list[dict]:
+    if not query_vector or not ensure_source_embeddings(conn):
+        return []
+    lit = vector_literal(query_vector)
+    names = [name.lower() for name in traditions] or list(TRADITIONS)
+    try:
+        conn.execute("SAVEPOINT source_vector_search")
+        rows = conn.execute(
+            """
+            SELECT id, tradition, work, reference, translation, license, text, source_url,
+                   (1 - (embedding <=> %s::vector)) AS score
+            FROM source_chunk
+            WHERE embedding IS NOT NULL
+              AND lower(tradition) = ANY(%s)
+              AND length(text) BETWEEN 40 AND 1400
+            ORDER BY embedding <=> %s::vector
+            LIMIT %s
+            """,
+            (lit, names, lit, max(k * 3, k)),
+        ).fetchall()
+        conn.execute("RELEASE SAVEPOINT source_vector_search")
+    except Exception:
+        try:
+            conn.execute("ROLLBACK TO SAVEPOINT source_vector_search")
+        except Exception:
+            pass
+        return []
+    out = []
+    for row in rows:
+        score = float(row["score"] or 0)
+        if score < MIN_VECTOR_SCORE:
+            continue
+        item = dict(row)
+        item["score"] = round(score, 4)
+        out.append(item)
+        if len(out) >= k:
+            break
+    return out
+
+
+def search_source_chunks_fts(conn, *, query: str, traditions: list[str], k: int) -> list[dict]:
+    names = [name.lower() for name in traditions] or list(TRADITIONS)
+    words = [w for w in re.findall(r"[a-z0-9]+", query.lower()) if w]
+    if not words:
+        return []
+    tsquery = " or ".join(words)
+    try:
+        conn.execute("SAVEPOINT source_fts_search")
+        rows = conn.execute(
+            """
+            SELECT id, tradition, work, reference, translation, license, text, source_url,
+                   ts_rank_cd(tsv, q, 1) AS score
+            FROM source_chunk, websearch_to_tsquery('english', %s) AS q
+            WHERE tsv @@ q
+              AND lower(tradition) = ANY(%s)
+              AND length(text) BETWEEN 40 AND 1400
+            ORDER BY ts_rank_cd(tsv, q, 1) DESC, id
+            LIMIT %s
+            """,
+            (tsquery, names, k),
+        ).fetchall()
+        conn.execute("RELEASE SAVEPOINT source_fts_search")
+    except Exception:
+        try:
+            conn.execute("ROLLBACK TO SAVEPOINT source_fts_search")
+        except Exception:
+            pass
+        return []
+    out = []
+    for row in rows:
+        item = dict(row)
+        item["score"] = round(float(row["score"] or 0), 4)
+        out.append(item)
+    return out
 
 
 def database_url() -> str:

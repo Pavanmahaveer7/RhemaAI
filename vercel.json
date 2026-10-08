@@ -5,6 +5,7 @@
     "APP_ENV": "production",
     "CONTRACT_STORE": "auto",
     "LLM_MODE": "off",
+    "EMBED_MODE": "off",
     "BETA_SHARED_STAFF_LOGIN": "true",
     "STAFF_PHONE_OTP_DEMO": "true",
     "STAFF_PHONE_REGISTER": "true",
