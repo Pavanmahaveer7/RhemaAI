@@ -9,6 +9,7 @@ for rel in (
     "packages/guardrails/src",
     "packages/agents/src",
     "packages/mcp/vocab/src",
+    "packages/mcp/graph/src",
 ):
     p = str(ROOT / rel)
     if p not in sys.path:

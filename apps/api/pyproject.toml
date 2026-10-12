@@ -12,6 +12,7 @@ dependencies = [
   "guardrails",
   "agents",
   "vocab-mcp",
+  "graph-mcp",
   "mangum>=0.19",
 ]
 
@@ -20,6 +21,7 @@ llm-gateway = { workspace = true }
 guardrails = { workspace = true }
 agents = { workspace = true }
 vocab-mcp = { workspace = true }
+graph-mcp = { workspace = true }
 
 [dependency-groups]
 dev = ["pytest>=8.3", "httpx>=0.27"]

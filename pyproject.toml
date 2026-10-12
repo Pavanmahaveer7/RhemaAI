@@ -15,7 +15,7 @@ dev = ["pytest>=8.3", "httpx>=0.27"]
 testpaths = ["apps/api/tests"]
 
 [tool.uv.workspace]
-members = ["apps/api", "packages/llm-gateway", "packages/guardrails", "packages/agents", "packages/mcp/vocab"]
+members = ["apps/api", "packages/llm-gateway", "packages/guardrails", "packages/agents", "packages/mcp/vocab", "packages/mcp/graph"]
 
 [tool.vercel]
 entrypoint = "api.index:app"

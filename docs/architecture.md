@@ -65,7 +65,7 @@ See `docs/adr/ADR-004-tech-stack.md` for the full decision, pinned models, and a
 | Input/Output/Tool guardrails | AI | See `guardrails.md` | Presidio, moderation model, injection classifier, Pydantic |
 | MCP servers (3) | AI | Data access for agents via tools | Official MCP Python SDK |
 | Relational DB | SWE | Users, lookups, modules, check-ins | **Postgres + pgvector** (Supabase) |
-| Graph DB | SWE | L2 concept graph snapshots | **Memgraph** |
+| Graph DB | SWE | L2 concept graph snapshots | **NetworkX + Postgres JSONB** (optional Neo4j Community later) |
 | Session store | SWE | Conversation + inter-agent state, rate-limit counters | **Redis** |
 | Observability | AI+SWE | Traces, prompts, tool calls, cost; infra metrics | **Langfuse cloud** + OpenTelemetry |
 | Cost & quota | AI | Per-request token caps, per-user daily quota, monthly budget | Gateway + Redis counters |
@@ -77,7 +77,7 @@ See `docs/adr/ADR-004-tech-stack.md` for the full decision, pinned models, and a
 |---|---|---|---|
 | intake | none | `schemas/intake.output.json` | small |
 | compare | `vocab.lookup_term`, `vocab.search_sources` | `schemas/compare.output.json` | mid |
-| graph-builder | `graph.fetch_responses`, `graph.get_previous_snapshot`, `graph.save_graph_snapshot` | `schemas/graph.output.json` | mid |
+| graph-builder | `graph.fetch_responses`, `graph.query_concept`, `graph.get_previous_snapshot`, `graph.save_graph_snapshot` | `schemas/graph.output.json` | mid |
 | checkin-analyst | `pastoral.get_checkin_history`, `pastoral.save_analysis`, `pastoral.get_module_progress` | `schemas/checkin.output.json` | mid / self-hosted |
 
 ## MCP servers
@@ -88,11 +88,14 @@ See `docs/adr/ADR-004-tech-stack.md` for the full decision, pinned models, and a
 | vocab | `search_terms(q)` | read | public | PUBLIC |
 | vocab | `search_sources(query, traditions[], k≤8)` | read | public | PUBLIC |
 | graph | `fetch_responses(question_id, month, limit)` | read | system/admin | COMMUNITY |
+| graph | `query_concept(label, month?, k≤12)` | read | public | COMMUNITY |
 | graph | `get_previous_snapshot(question_id)` | read | system/admin | COMMUNITY |
 | graph | `save_graph_snapshot(question_id, month, graph, idempotency_key)` | write | system | COMMUNITY |
 | pastoral | `get_checkin_history(pastor_id, days≤14)` | read | pastor(self)/admin/system | PRIVATE |
 | pastoral | `save_analysis(checkin_id, analysis, idempotency_key)` | write | system | PRIVATE |
 | pastoral | `get_module_progress(pastor_id)` | read | pastor(self)/admin | PRIVATE |
+
+L2 snapshots persist in `graph_snapshots` (Postgres JSONB). NetworkX walks the graph. Counts below 3 are dropped. People keys (`device_hash`, emails, church/pastor ids) are rejected. The public map JSON is a separate collection and these tools do not rewrite it.
 
 ## Which paths call a model
 

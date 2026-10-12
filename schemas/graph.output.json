@@ -43,7 +43,8 @@
       "properties": {
         "responses_processed": { "type": "integer" },
         "flagged_inputs": { "type": "integer" },
-        "new_concepts_vs_previous": { "type": "array", "items": { "type": "string" } }
+        "new_concepts_vs_previous": { "type": "array", "items": { "type": "string" } },
+        "engine": { "type": "string" }
       }
     }
   }

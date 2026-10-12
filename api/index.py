@@ -9,6 +9,7 @@ for rel in (
     "packages/guardrails/src",
     "packages/agents/src",
     "packages/mcp/vocab/src",
+    "packages/mcp/graph/src",
 ):
     sys.path.insert(0, str(ROOT / rel))
 

@@ -37,7 +37,7 @@ CREATE TABLE IF NOT EXISTS store_state (
 # Saved to Postgres after every write (ADR-006). Rate-limit windows stay in memory.
 PERSISTED = (
     "accounts", "identities", "reveal_log", "devices", "sessions", "preferences", "memory", "onboarding",
-    "terms", "expert_edits", "months", "answers", "concepts", "links", "maps", "churches", "pastors",
+    "terms", "expert_edits", "months", "answers", "concepts", "links", "maps", "graph_snapshots", "churches", "pastors",
     "checkins", "mentor_notes", "packs", "review_packs", "decisions", "acks", "alert_log", "alerts",
     "integrations", "imported_rows", "helped", "term_reports", "beta_surveys", "community_feedback",
     "feedback_changelog", "waitlist", "events", "audit",
@@ -180,6 +180,7 @@ class ContractStore:
         self.concepts: dict[str, list] = {}
         self.links: dict[str, list] = {}
         self.maps: dict[str, dict] = {}
+        self.graph_snapshots: dict[str, dict] = {}
         self.churches: dict[str, dict] = {}
         self.pastors: dict[str, dict] = {}
         self.checkins: list[dict] = []

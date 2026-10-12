@@ -21,6 +21,7 @@ own data and stays behind a role check. PRIVATE, encrypted is unreadable without
 | months | the open question, counts | PUBLIC |
 | answers | month, redacted text, and a device hash salted with the month id | COMMUNITY |
 | concepts, links, maps | grouped ideas and the published map | COMMUNITY |
+| graph_snapshots | NetworkX snapshots for the L2 graph MCP (nodes/edges, no people) | COMMUNITY |
 | churches, pastors | church and stage. The reviewer queue shows a region, not the church name | PRIVATE |
 | checkins | mood and counts in the clear; struggles and wins encrypted | PRIVATE, encrypted |
 | mentor_notes, packs, review_packs, decisions, acks | the pastor pipeline | PRIVATE |

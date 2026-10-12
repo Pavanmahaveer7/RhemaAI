@@ -1,5 +1,6 @@
 """Tool guardrail wrapper. Agents and the API call tools only through this."""
 
+import re
 from collections.abc import Callable
 
 ALLOWED_TOOLS = {
@@ -7,6 +8,10 @@ ALLOWED_TOOLS = {
     "vocab.lookup_faith": {"roles": {"public", "pastor", "admin", "system"}, "mode": "read"},
     "vocab.search_terms": {"roles": {"public", "pastor", "admin", "system"}, "mode": "read"},
     "vocab.search_sources": {"roles": {"public", "pastor", "admin", "system"}, "mode": "read"},
+    "graph.fetch_responses": {"roles": {"admin", "system"}, "mode": "read"},
+    "graph.query_concept": {"roles": {"public", "pastor", "admin", "system"}, "mode": "read"},
+    "graph.get_previous_snapshot": {"roles": {"admin", "system"}, "mode": "read"},
+    "graph.save_graph_snapshot": {"roles": {"system"}, "mode": "write"},
 }
 
 
@@ -56,6 +61,48 @@ def _validate(name: str, params: dict) -> None:
         k = params.get("k", 8)
         if not isinstance(k, int) or isinstance(k, bool) or k < 1 or k > 8:
             raise ToolError("VALIDATION_ERROR", "k must be an integer from 1 to 8")
+    if name == "graph.fetch_responses":
+        _require_id(params.get("question_id"), "question_id")
+        _require_month(params.get("month"))
+        limit = params.get("limit", 50)
+        if not isinstance(limit, int) or isinstance(limit, bool) or limit < 1 or limit > 200:
+            raise ToolError("VALIDATION_ERROR", "limit must be an integer from 1 to 200")
+    if name == "graph.query_concept":
+        label = params.get("label")
+        if not isinstance(label, str) or not label.strip() or len(label) > 60:
+            raise ToolError("VALIDATION_ERROR", "label must be 1-60 characters")
+        if params.get("month") is not None:
+            _require_month(params.get("month"))
+        k = params.get("k", 8)
+        if not isinstance(k, int) or isinstance(k, bool) or k < 1 or k > 12:
+            raise ToolError("VALIDATION_ERROR", "k must be an integer from 1 to 12")
+    if name == "graph.get_previous_snapshot":
+        _require_id(params.get("question_id"), "question_id")
+    if name == "graph.save_graph_snapshot":
+        _require_id(params.get("question_id"), "question_id")
+        _require_month(params.get("month"))
+        key = params.get("idempotency_key")
+        if not isinstance(key, str) or not (8 <= len(key.strip()) <= 80):
+            raise ToolError("VALIDATION_ERROR", "idempotency_key must be 8-80 characters")
+        graph = params.get("graph")
+        if not isinstance(graph, dict):
+            raise ToolError("VALIDATION_ERROR", "graph must be an object")
+        nodes = graph.get("nodes")
+        edges = graph.get("edges")
+        if not isinstance(nodes, list) or len(nodes) > 200:
+            raise ToolError("VALIDATION_ERROR", "nodes must be a list of at most 200")
+        if not isinstance(edges, list) or len(edges) > 1000:
+            raise ToolError("VALIDATION_ERROR", "edges must be a list of at most 1000")
+
+
+def _require_id(value, field: str) -> None:
+    if not isinstance(value, str) or not value.strip() or len(value) > 80:
+        raise ToolError("VALIDATION_ERROR", f"{field} must be 1-80 characters")
+
+
+def _require_month(value) -> None:
+    if not isinstance(value, str) or not re.fullmatch(r"[0-9]{4}-[0-9]{2}", value.strip()):
+        raise ToolError("VALIDATION_ERROR", "month must be YYYY-MM")
 
 
 def _sanitise(value):
@@ -65,7 +112,7 @@ def _sanitise(value):
             return "[removed instruction-like text]"
         return value[:4000]
     if isinstance(value, list):
-        return [_sanitise(item) for item in value[:50]]
+        return [_sanitise(item) for item in value[:200]]
     if isinstance(value, dict):
         return {key: _sanitise(item) for key, item in value.items()}
     return value

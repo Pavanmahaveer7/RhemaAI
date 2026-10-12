@@ -1,0 +1,16 @@
+[project]
+name = "graph-mcp"
+version = "0.1.0"
+description = "L2 idea graph. NetworkX over JSONB snapshots. Never stores people."
+requires-python = ">=3.12"
+dependencies = ["networkx>=3.3", "guardrails"]
+
+[tool.uv.sources]
+guardrails = { workspace = true }
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
