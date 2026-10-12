@@ -59,6 +59,15 @@ def test_public_map_hides_rare_concepts_and_answer_text():
             assert answer["text_redacted"] not in blob
 
 
+def test_public_can_walk_family_on_the_map():
+    response = client.get("/api/v1/maps/latest/concept", params={"label": "family", "month": "2026-09"})
+    assert response.status_code == 200
+    body = response.json()
+    assert body["found"] is True
+    assert any(row["id"] == "duty" for row in body["neighbors"])
+    assert "device_hash" not in json.dumps(body)
+
+
 def test_compare_previous_is_null_when_only_one_month_is_published():
     store = get_store()
     store.maps["2026-08"]["status"] = "draft"

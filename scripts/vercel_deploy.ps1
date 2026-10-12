@@ -61,17 +61,23 @@ Write-Host "=== Deploy API ($ApiProject) from repo root (monorepo bundle) ==="
 foreach ($k in @("DEMO_SIGNIN_PASSWORD", "CHECKIN_ENCRYPTION_KEY", "AGENT_SERVICE_TOKEN", "INTEGRATION_WEBHOOK_SECRET")) {
   Set-VercelEnv -Name $k -Value (Get-Item "env:$k").Value -Cwd $root
 }
+function Test-HostedPostgresUrl([string]$Url) {
+  if (-not $Url) { return $false }
+  if ($Url -notmatch "^postgres(ql)?://") { return $false }
+  if ($Url -match "@(localhost|127\.0\.0\.1|::1)[:/]") { return $false }
+  return $true
+}
 $dbUrl = $env:DATABASE_URL
-if (-not $dbUrl -and (Test-Path $secretFile)) {
+if (-not (Test-HostedPostgresUrl $dbUrl) -and (Test-Path $secretFile)) {
   $line = Get-Content $secretFile | Where-Object { $_ -match '^DATABASE_URL=' } | Select-Object -First 1
   if ($line -match '^DATABASE_URL=(.*)$') { $dbUrl = $Matches[1].Trim() }
 }
-if ($dbUrl) {
-  Write-Host "Setting DATABASE_URL + CONTRACT_STORE=postgres on API"
+if (Test-HostedPostgresUrl $dbUrl) {
+  Write-Host "Setting hosted DATABASE_URL + CONTRACT_STORE=postgres on API"
   Set-VercelEnv -Name "DATABASE_URL" -Value $dbUrl -Cwd $root
   Set-VercelEnv -Name "CONTRACT_STORE" -Value "postgres" -Cwd $root -Type config
 } else {
-  Write-Host "No DATABASE_URL - beta data stays in memory until you run scripts/vercel_set_database.ps1 (see docs/vercel-live.md)"
+  Write-Host "Keeping Vercel Neon DATABASE_URL (local/localhost URLs are not pushed)"
 }
 $apiOut = (& npx --yes vercel@latest deploy --prod --yes --cwd $root 2>&1 | Out-String)
 Write-Host $apiOut

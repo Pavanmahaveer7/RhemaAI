@@ -137,9 +137,9 @@ _cache_lock = threading.Lock()
 
 
 def database_url() -> str | None:
-    if os.getenv("CONTRACT_STORE", "auto") == "memory":
-        return None
-    return os.getenv("DATABASE_URL", "").strip() or None
+    from app.v1.store import _database_url
+
+    return _database_url()
 
 
 def _connect(url: str | None = None):

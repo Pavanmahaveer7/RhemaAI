@@ -38,6 +38,8 @@ function PublicMap() {
   const [k, setK] = React.useState(() => (release && !mpReduce()) ? 0 : 1);
   const morphed = React.useRef(false);
   const [sel, setSel] = React.useState(null);
+  const [find, setFind] = React.useState("");
+  const [extraNbs, setExtraNbs] = React.useState([]);
   const [tab, setTab] = React.useState("list");
   const [settled, setSettled] = React.useState(mpReduce());
   React.useEffect(() => { RH && RH.seeRelease(); }, []);
@@ -75,9 +77,32 @@ function PublicMap() {
   const delta = id => two && show === cur ? (wc[id] || 0) - (wl[id] || 0) : 0;
   const rows = ids.filter(id => side(id) > 0).sort((a, b) => side(b) - side(a));
   const nbs = id => show.links.filter(l => (l[0] === id || l[1] === id)).sort((a, b) => b[2] - a[2]).map(l => l[0] === id ? l[1] : l[0]).filter(n => side(n) > 0);
-  const focusSet = sel ? new Set([sel, ...nbs(sel)]) : null;
+  const nbsWalk = id => {
+    const local = nbs(id);
+    if (id !== sel) return local;
+    const seen = new Set(local);
+    extraNbs.forEach(n => { if (side(n) > 0) seen.add(n); });
+    return [...seen];
+  };
+  const focusSet = sel ? new Set([sel, ...nbsWalk(sel)]) : null;
   const go = to => { cancelAnimationFrame(anim.current); setSel(null); if (mpReduce()) { setK(to); return; } const from = k, t0 = performance.now(); const dur = morphed.current && from === 0 ? 1400 : 650; const f = now => { const p = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - p, 3); setK(from + (to - from) * e); if (p < 1) anim.current = requestAnimationFrame(f); }; anim.current = requestAnimationFrame(f); };
-  const pick = id => { if (mpTerms.includes(id) && window.CAGo) { window.CAGo("term", id); return; } setSel(s => s === id ? null : id); };
+  const pick = id => { setSel(s => s === id ? null : id); if (sel !== id) setTab("map"); };
+  React.useEffect(() => {
+    if (!sel) { setExtraNbs([]); return; }
+    if (!(window.CAApi && window.CAApi.isLive && window.CAApi.isLive())) return;
+    let gone = false;
+    window.CAApi.get("/maps/latest/concept?label=" + encodeURIComponent(sel) + "&month=" + encodeURIComponent(show.id)).then(body => {
+      if (gone || !body || !body.neighbors) return;
+      setExtraNbs(body.neighbors.map(n => n.id).filter(Boolean));
+    }).catch(() => {});
+    return () => { gone = true; };
+  }, [sel, show.id]);
+  React.useEffect(() => {
+    if (!sel || !pos[sel]) return;
+    const p = pos[sel];
+    setTouched(true);
+    setView(v => { const S = sc * v.z; return { z: v.z, x: -(p.x - cx) * S, y: -(p.y - cy) * S }; });
+  }, [sel]);
   const grew = rows.filter(id => (wl[id] || 0) > 0 && delta(id) > 0).sort((a, b) => delta(b) - delta(a))[0];
   const nNew = rows.filter(isNew).length;
   const mineRaw = RH && RH.mine(show.id); const mineId = mineRaw && rows.includes(mineRaw) ? mineRaw : null;
@@ -89,7 +114,7 @@ function PublicMap() {
   const cx = (ext.x0 + ext.x1) / 2, cy = (ext.y0 + ext.y1) / 2;
 
   const Trend = ({ id, size = 16 }) => { if (isNew(id)) return <MpIcon name="circle-plus" size={size} color="var(--lamp-400)" label="New this month" />; const d = delta(id); if (!d) return null; return <MpIcon name={d > 0 ? "arrow-up-right" : "arrow-down-right"} size={size} color={d > 0 ? "var(--ok-400)" : "var(--text-muted)"} label={d > 0 ? "Up" : "Down"} />; };
-  const Chips = id => <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>{nbs(id).slice(0, 6).map(n => <button key={n} onClick={() => pick(n)} style={{ height: 40, padding: "0 14px", borderRadius: 999, border: "1px solid var(--border-default)", background: "transparent", color: "var(--text-body)", font: "600 16px/1 var(--font-body)", cursor: "pointer", display: "inline-flex", alignItems: "center", gap: 6 }}>{n}{mpTerms.includes(n) && <MpIcon name="book-open" size={16} color="var(--text-muted)" />}</button>)}{!nbs(id).length && <span style={{ font: "var(--type-body)", fontSize: 16, color: "var(--text-muted)" }}>Said on its own this month.</span>}</div>;
+  const Chips = id => <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>{nbsWalk(id).slice(0, 8).map(n => <button key={n} onClick={() => pick(n)} style={{ height: 40, padding: "0 14px", borderRadius: 999, border: "1px solid var(--border-default)", background: "transparent", color: "var(--text-body)", font: "600 16px/1 var(--font-body)", cursor: "pointer", display: "inline-flex", alignItems: "center", gap: 6 }}>{n}</button>)}{!nbsWalk(id).length && <span style={{ font: "var(--type-body)", fontSize: 16, color: "var(--text-muted)" }}>Said on its own this month.</span>}</div>;
   const Detail = (id, onBack) => { const d = delta(id); return <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
     <button onClick={onBack} style={{ alignSelf: "flex-start", display: "inline-flex", gap: 6, alignItems: "center", height: 40, padding: 0, background: "none", border: 0, color: "var(--text-muted)", font: "600 16px/1 var(--font-body)", cursor: "pointer" }}><MpIcon name="arrow-left" size={16} />All ideas</button>
     <div style={{ font: "800 48px/1 var(--font-display)", letterSpacing: "var(--tracking-display)", color: "var(--text-strong)", overflowWrap: "anywhere" }}>{id}</div>
@@ -99,6 +124,7 @@ function PublicMap() {
     </div>
     <div style={{ font: "700 13px/1 var(--font-body)", color: "var(--text-muted)", marginTop: 4 }}>Said with</div>
     {Chips(id)}
+    {mpTerms.includes(id) && window.CAGo && <MpButton size="sm" variant="secondary" onClick={() => window.CAGo("term", id)}>Open in dictionary</MpButton>}
   </div>; };
 
   const Row = (id, i) => { const open = sel === id, term = mpTerms.includes(id);
@@ -119,14 +145,18 @@ function PublicMap() {
     <h1 style={{ font: "800 clamp(28px,7vw,36px)/1.05 var(--font-display)", letterSpacing: "var(--tracking-display)", color: "var(--text-strong)", margin: "4px 0 0", textWrap: "balance" }}>{window.CAQuestionText ? <window.CAQuestionText month={show} /> : show.question}</h1>
     <div style={{ display: "flex", gap: 14, alignItems: "baseline", flexWrap: "wrap" }}><span style={{ font: "800 32px/1 var(--font-display)", color: "var(--text-strong)", fontVariantNumeric: "tabular-nums" }}>{Math.round((last ? last.answers : 0) + (cur.answers - (last ? last.answers : 0)) * (two ? k : 1))}</span><span style={{ font: "var(--type-body)", fontSize: 16, color: "var(--text-muted)" }}>answers · counts only, no names</span></div>
     <p style={{ font: "700 18px/1.35 var(--font-body)", color: "var(--text-strong)", margin: 0 }}>{sentence}</p>
-    <p style={{ display: "flex", gap: 8, alignItems: "flex-start", font: "var(--type-source)", color: "var(--text-muted)", margin: 0 }}><MpIcon name="shield" size={16} style={{ flex: "none", marginTop: 1 }} />Ideas only, never words. Small counts show as “under 10”. A region shows once 50 people there have answered.</p>
+    <p style={{ display: "flex", gap: 8, alignItems: "flex-start", font: "var(--type-source)", color: "var(--text-muted)", margin: 0 }}><MpIcon name="shield" size={16} style={{ flex: "none", marginTop: 1 }} />Ideas only, never names. Tap a bubble, then tap what it was said with.</p>
+    <form onSubmit={e => { e.preventDefault(); const q = find.trim().toLowerCase(); const id = rows.find(r => r === q) || rows.find(r => r.startsWith(q)); if (id) pick(id); }} style={{ display: "flex", gap: 8 }}>
+      <input value={find} onChange={e => setFind(e.target.value)} placeholder="Find an idea" aria-label="Find an idea" style={{ flex: 1, minHeight: 44, padding: "0 14px", borderRadius: 999, border: "1px solid var(--border-default)", background: "var(--surface-card)", color: "var(--text-strong)", font: "600 16px/1 var(--font-body)" }} />
+      <button type="submit" style={{ height: 44, padding: "0 16px", borderRadius: 999, border: 0, cursor: "pointer", background: "var(--bone-8)", color: "var(--ink-0)", font: "600 14px/1 var(--font-body)" }}>Find</button>
+    </form>
     {mineId && <p style={{ display: "flex", gap: 8, alignItems: "center", font: "600 16px/1.3 var(--font-body)", color: "var(--text-body)", margin: 0 }}><MpIcon name="circle-dot" size={16} color="var(--bone-8)" />You said “{mineId}”. Only this device knows.</p>}
   </div>;
 
   const S = sc * view.z, X = id => bw.w / 2 + (pos[id].x - cx) * S + view.x, Y = id => bw.h / 2 + (pos[id].y - cy) * S + view.y;
   const ctl = { width: 44, height: 44, display: "grid", placeItems: "center", border: 0, background: "transparent", color: "var(--text-strong)", cursor: "pointer" };
   const Bubbles = () => <div ref={box} tabIndex={0} role="application" aria-label="Map of ideas. Drag to move, scroll or pinch to zoom. Plus, minus and 0 keys also work." onKeyDown={onKey} onPointerDown={onPD} onPointerMove={onPM} onPointerUp={onPU} onPointerCancel={onPU} onClickCapture={e => { if (moved.current) { e.stopPropagation(); e.preventDefault(); moved.current = false; } }} onDoubleClick={e => { if (e.target === e.currentTarget) { const r = e.currentTarget.getBoundingClientRect(); zoomAt(1.6, e.clientX - r.left, e.clientY - r.top); } }} style={{ position: "relative", width: "100%", height: "100%", minHeight: wide ? 0 : 420, overflow: "hidden", borderRadius: wide ? 0 : "var(--radius-lg)", background: "var(--surface-page)", border: wide ? 0 : "1px solid var(--border-subtle)", touchAction: "none", cursor: drag.current && moved.current ? "grabbing" : "grab", outline: "none" }} onClick={e => { if (e.target === e.currentTarget) setSel(null); }}>
-    {sel && <svg aria-hidden="true" width={bw.w} height={bw.h} style={{ position: "absolute", inset: 0, pointerEvents: "none" }}>{nbs(sel).map(n => pos[n] && <line key={n} x1={X(sel)} y1={Y(sel)} x2={X(n)} y2={Y(n)} stroke="var(--bone-7)" strokeOpacity=".55" strokeWidth="1.5" />)}</svg>}
+    {sel && <svg aria-hidden="true" width={bw.w} height={bw.h} style={{ position: "absolute", inset: 0, pointerEvents: "none" }}>{nbsWalk(sel).map(n => pos[n] && <line key={n} x1={X(sel)} y1={Y(sel)} x2={X(n)} y2={Y(n)} stroke="var(--bone-7)" strokeOpacity=".55" strokeWidth="1.5" />)}</svg>}
     {ids.map((id, i) => { const p = pos[id], w = val(id), r = mpR(w) * S; if (r < 2) return null; const nw = isNew(id), on = sel === id, dim = focusSet && !focusSet.has(id), term = mpTerms.includes(id);
       const fs = Math.max(12, Math.min(26, r * 0.36));
       return <button key={id} onClick={() => pick(id)} aria-label={`${id}, ${few(w)} mentions${nw ? ", new this month" : ""}${term ? ", opens in the dictionary" : ""}`} title={r < 22 ? `${id} · ${few(w)}` : undefined} style={{ position: "absolute", left: X(id) - r, top: Y(id) - r, width: r * 2, height: r * 2, borderRadius: "50%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 2, padding: 4, cursor: "pointer",

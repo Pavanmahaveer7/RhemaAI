@@ -79,3 +79,13 @@ def test_a_check_in_is_saved_encrypted(saved_store):
 
 def test_memory_mode_saves_nothing():
     assert get_store().persistent is False
+
+
+def test_vercel_skips_localhost_and_uses_hosted_postgres(monkeypatch):
+    from app.v1.store import _database_url
+
+    monkeypatch.setenv("VERCEL", "1")
+    monkeypatch.setenv("CONTRACT_STORE", "auto")
+    monkeypatch.setenv("DATABASE_URL", "postgresql://app:app@localhost:5432/church_ai")
+    monkeypatch.setenv("POSTGRES_URL", "postgresql://app:app@ep-example.neon.tech/neondb")
+    assert _database_url() == "postgresql://app:app@ep-example.neon.tech/neondb"

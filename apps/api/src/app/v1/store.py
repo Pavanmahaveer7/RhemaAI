@@ -15,6 +15,7 @@ import secrets
 import threading
 import uuid
 from datetime import datetime, timezone
+from urllib.parse import urlparse
 
 from app.v1.crypto import decrypt, encrypt, key_bytes
 
@@ -44,10 +45,33 @@ PERSISTED = (
 )
 
 
+# Neon free sleeps. First connect often needs more than one or two seconds.
+CONNECT_TIMEOUT = 10
+_DB_URL_KEYS = (
+    "DATABASE_URL",
+    "POSTGRES_URL",
+    "POSTGRES_PRISMA_URL",
+    "DATABASE_URL_UNPOOLED",
+    "POSTGRES_URL_NON_POOLING",
+)
+
+
+def _is_local_db(url: str) -> bool:
+    host = (urlparse(url).hostname or "").lower()
+    return host in {"localhost", "127.0.0.1", "::1"}
+
+
 def _database_url() -> str | None:
     if os.getenv("CONTRACT_STORE", "auto") == "memory":
         return None
-    return os.getenv("DATABASE_URL", "").strip() or None
+    found = [raw for key in _DB_URL_KEYS if (raw := os.getenv(key, "").strip())]
+    hosted = [url for url in found if not _is_local_db(url)]
+    if hosted:
+        return hosted[0]
+    # Local Docker only. Vercel must never try this machine.
+    if found and not os.getenv("VERCEL"):
+        return found[0]
+    return None
 
 
 # Other spellings people type for a headword (lexicon-standards: "finds the word without the marks").
@@ -828,7 +852,7 @@ class ContractStore:
         try:
             import psycopg
 
-            with psycopg.connect(url, connect_timeout=2) as conn:
+            with psycopg.connect(url, connect_timeout=CONNECT_TIMEOUT) as conn:
                 conn.execute(STATE_SCHEMA)
                 rows = conn.execute("SELECT name, data FROM store_state").fetchall()
                 if rows:
@@ -870,7 +894,7 @@ class ContractStore:
                     changed[name] = (value, digest)
             if not changed:
                 return
-            with psycopg.connect(_database_url(), connect_timeout=2) as conn:
+            with psycopg.connect(_database_url(), connect_timeout=CONNECT_TIMEOUT) as conn:
                 for name, (value, _) in changed.items():
                     conn.execute(
                         """

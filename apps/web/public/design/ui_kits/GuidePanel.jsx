@@ -30,16 +30,16 @@ function GuideModal({ open, onClose, variant, go }) {
         <div style={{ display: "flex", gap: 12, alignItems: "flex-start" }}>
           <div style={{ flex: 1 }}>
             <h2 id="gd-title" style={{ margin: 0, font: "800 clamp(26px,6vw,32px)/1.1 var(--font-display)", letterSpacing: "var(--tracking-display)", color: "var(--text-strong)" }}>{reader ? "Your first two minutes" : "Staff beta — how to enter"}</h2>
-            <p style={{ margin: "10px 0 0", font: "var(--type-body)", fontSize: 16, color: "var(--text-muted)" }}>{reader ? "Everything lives on one site. Use the tabs below — no URLs to remember." : "Pastors, leaders, and reviewers use a separate workspace from the public dictionary."}</p>
+            <p style={{ margin: "10px 0 0", font: "var(--type-body)", fontSize: 16, color: "var(--text-muted)" }}>{reader ? "Three rooms: words, shared ideas, and staff care. Use the tabs — no URLs to remember." : "Pastors, leaders, and reviewers use a separate workspace from the public dictionary."}</p>
           </div>
           <button type="button" aria-label="Close guide" onClick={onClose} style={{ width: 44, height: 44, flex: "none", border: 0, borderRadius: 999, cursor: "pointer", background: "var(--surface-raised)", color: "var(--text-muted)" }}><GdIcon name="x" size={20} /></button>
         </div>
         <ol style={{ listStyle: "none", margin: 0, padding: 0 }}>
           {reader ? <>
-            <GuideStep n={1} title="Dictionary" body="This is a curated list — not every word. Starter chips are on Dictionary. Tap See all words for the full list. If a word is not found, it is not in yet; we do not invent an entry." action="See the word list" onAction={() => { location.href = "/search?list=1"; }} />
-            <GuideStep n={2} title="This month" body="One question for everyone. Answers are counted, never named." action={go ? "Open This month" : undefined} onAction={go ? () => { go("month"); onClose(); } : undefined} />
-            <GuideStep n={3} title="Map" body="Ideas people shared form a quiet map you can explore." action={go ? "Open Map" : undefined} onAction={go ? () => { go("graph"); onClose(); } : undefined} />
-            <GuideStep n={4} title="Pastor or reviewer?" body="If you have an invite code, use Staff sign in — not the public tour." action="Staff sign in" onAction={() => { location.href = "/staff"; }} />
+            <GuideStep n={1} title="Dictionary" body="Published words and sources. We do not need your name." action="Open Dictionary" onAction={() => { if (go) { go("search"); onClose(); } else location.href = "/search?guest=1"; }} />
+            <GuideStep n={2} title="This month" body="One question. We keep the idea, not you." action={go ? "Open This month" : undefined} onAction={go ? () => { go("month"); onClose(); } : undefined} />
+            <GuideStep n={3} title="Map" body="Tap an idea, then tap what it was said with. Names never go on the map." action={go ? "Open Map" : undefined} onAction={go ? () => { go("graph"); onClose(); } : undefined} />
+            <GuideStep n={4} title="Staff only" body="Care is a locked office. Use Staff sign in only if you have a code." action="Staff sign in" onAction={() => { location.href = "/staff"; }} />
           </> : <>
             <GuideStep n={1} title="Open Staff sign in" body="Use the link your organizer sent. Bookmark it once — we always bring you back here." action="Go to Staff sign in" onAction={() => { location.href = "/staff"; }} />
             <GuideStep n={2} title="Code + password" body="Enter your assigned code (e.g. P-0233) and the password they sent separately." />
@@ -61,7 +61,13 @@ function GuideBanner({ variant, go, onOpenGuide }) {
   const [modal, setModal] = React.useState(false);
   const [phone, setPhone] = React.useState(() => typeof innerWidth === "number" && innerWidth < 900);
   React.useEffect(() => { const f = () => setPhone(innerWidth < 900); addEventListener("resize", f); return () => removeEventListener("resize", f); }, []);
-  if (hidden || phone) return null;
+  if (hidden) return null;
+  if (phone) return <>
+    <div style={{ display: "flex", justifyContent: "center", padding: "8px var(--gutter-phone)", borderBottom: "1px solid var(--border-subtle)", background: "var(--surface-raised)" }}>
+      <GdBtn size="sm" variant="secondary" onClick={open}>Guide</GdBtn>
+    </div>
+    {!onOpenGuide && <GuideModal open={modal} onClose={() => setModal(false)} variant={variant} go={go} />}
+  </>;
   const reader = variant !== "staff";
   const open = () => { if (onOpenGuide) onOpenGuide(); else setModal(true); };
   return <>

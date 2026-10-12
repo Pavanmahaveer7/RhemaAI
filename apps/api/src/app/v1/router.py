@@ -728,6 +728,22 @@ def compare_maps():
     return {"current": current, "previous": previous, "changes": changes}
 
 
+@router.get("/maps/latest/concept")
+def latest_concept(label: str = "", month: str = ""):
+    """Public walk of the idea graph. Names and device hashes never come back."""
+    from graph_mcp import query_concept
+    from guardrails.tools import ToolError, call_tool
+
+    params = {"label": (label or "").strip(), "k": 8}
+    if (month or "").strip():
+        params["month"] = month.strip()
+    try:
+        return call_tool("graph.query_concept", params, role="public", handler=query_concept)
+    except ToolError as exc:
+        status = 400 if exc.code == "VALIDATION_ERROR" else 403
+        return _fail_bare(status, "error", exc.code.lower(), exc.message)
+
+
 @router.get("/maps/draft")
 def read_draft(request: Request):
     _actor_row, denied = _require(request, {"admin"})
@@ -1550,7 +1566,12 @@ def _probe_database() -> str:
         return "down"
     import psycopg
 
-    return _probe(lambda: psycopg.connect(os.environ["DATABASE_URL"], connect_timeout=1).close())
+    from app.v1.store import _database_url
+
+    url = _database_url()
+    if not url:
+        return "degraded"
+    return _probe(lambda: psycopg.connect(url, connect_timeout=10).close())
 
 
 def _probe_redis() -> None:
