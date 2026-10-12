@@ -1,0 +1,18 @@
+<!-- @dsCard group="Components" viewport="700x420" name="Feedback" -->
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="../../styles.css">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="../../_ds_bundle.js"></script>
+<style>body{padding:20px}.r{display:flex;gap:12px;flex-wrap:wrap;align-items:center}.c{display:flex;flex-direction:column;gap:14px}.k{font:var(--type-source);color:var(--text-faint);width:72px;flex:none}</style></head><body><div id="root"></div>
+<script type="text/babel">
+const NS = window.ChurchAIDesignSystem_06db43;
+const { StateBlock, Toast, Tooltip, Dialog, CheckBadge, Button, IconButton } = NS;
+function App(){return <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"8px 24px"}}>
+<div className="c" style={{gap:4}}><StateBlock kind="loading"/><StateBlock kind="empty" message="No matching terms in the lexicon."/><StateBlock kind="error" message="The lexicon service is down right now." onRetry={()=>{}}/><StateBlock kind="unavailable" compact message="Graph database unavailable. Try later."/><div style={{height:10}}/><StateBlock kind="uncovered" compact message="Not in the lexicon yet."/></div>
+<div className="c"><div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8}}><CheckBadge label="Lexicon" status="pass" reason="Verified"/><CheckBadge label="Citation" status="fail" reason="Timeline unsourced"/><CheckBadge label="Tone audit"/></div>
+<Toast tone="ok" onClose={()=>{}}>Answer received. Thank you.</Toast>
+<Dialog open inline title="Publish September map?" actions={<><Button variant="ghost" size="sm">Cancel</Button><Button variant="accent" size="sm">Publish</Button></>}>42 concepts will be public. Original sentences stay private.</Dialog>
+<div className="r"><Tooltip content="Zoom in" placement="bottom"><IconButton icon="plus" label="Zoom in" variant="filled"/></Tooltip><span style={{fontSize:13,color:"var(--text-muted)"}}>← hover for tooltip</span></div></div></div>}
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script></body></html>

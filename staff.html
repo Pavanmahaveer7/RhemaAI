@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Rhema.ai — Staff sign in</title>
+  <script>
+    var q = new URLSearchParams(location.search);
+    var next = "/staff";
+    if (q.get("register") === "phone") next = "/staff?register=phone";
+    else if (q.get("signin") === "phone") next = "/staff?signin=phone";
+    location.replace(next);
+  </script>
+</head>
+<body>
+  <p><a href="/staff">Continue to staff sign in</a></p>
+</body>
+</html>

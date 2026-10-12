@@ -1,0 +1,29 @@
+*,*::before,*::after{box-sizing:border-box}
+html,body{margin:0;background:var(--surface-page);color:var(--text-body);font:var(--type-body);-webkit-font-smoothing:antialiased}
+a{color:var(--text-accent);text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:1px}
+a:hover{color:var(--lamp-300)}
+:focus-visible{outline:none;box-shadow:var(--focus-ring);border-radius:var(--radius-sm)}
+/* Universal 4 states for every button/link-button: default · hover · pressed · focus (+ disabled) */
+button,[role="button"],a.btn{transition:background-color var(--dur-fast) var(--ease-out),color var(--dur-fast) var(--ease-out),border-color var(--dur-fast) var(--ease-out),transform var(--dur-fast) var(--ease-out),box-shadow var(--dur-fast) var(--ease-out),filter var(--dur-fast) var(--ease-out)}
+@media (hover:hover){button:not(:disabled):hover,[role="button"]:hover{filter:brightness(1.08)}}
+button:not(:disabled):active,[role="button"]:active{transform:scale(var(--press-scale))}
+button:disabled,[aria-disabled="true"]{cursor:not-allowed;opacity:.45;filter:none;transform:none}
+button svg,[role="button"] svg{flex:none}
+::selection{background:var(--lamp-400);color:var(--ink-0)}
+@keyframes ca-pulse{0%,100%{opacity:.45}50%{opacity:.9}}
+@keyframes ca-spin{to{transform:rotate(360deg)}}
+@keyframes ca-in-left{from{opacity:0;transform:translateX(24px)}to{opacity:1;transform:none}}
+@keyframes ca-in-right{from{opacity:0;transform:translateX(-24px)}to{opacity:1;transform:none}}
+@keyframes ca-hint{0%,100%{transform:translateX(0)}50%{transform:translateX(-6px)}}
+@keyframes ca-pop{0%{transform:scale(.9);opacity:0}60%{transform:scale(1.04);opacity:1}100%{transform:scale(1)}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:1ms!important;animation-iteration-count:1!important;transition-duration:1ms!important}}
+@keyframes ca-tab-l{from{opacity:.4;transform:translateX(-18px)}to{opacity:1;transform:none}}
+@keyframes ca-tab-r{from{opacity:.4;transform:translateX(18px)}to{opacity:1;transform:none}}
+@keyframes ca-turn{from{opacity:0;transform:rotate(-90deg) scale(.6)}to{opacity:1;transform:none}}
+@keyframes ca-word-settle{from{opacity:0;transform:translateY(8px);letter-spacing:.06em}to{opacity:1;transform:none;letter-spacing:-0.02em}}
+@keyframes ca-drift{0%,100%{transform:translate(0,0)}50%{transform:translate(var(--dx,4px),var(--dy,-5px))}}
+@keyframes ca-breathe{0%,100%{transform:scale(1);opacity:.55}50%{transform:scale(1.08);opacity:1}}
+@keyframes ca-orbit{to{transform:rotate(360deg)}}
+@keyframes ca-draw{from{stroke-dashoffset:var(--len,60)}to{stroke-dashoffset:0}}
+@keyframes ca-fade-in{from{opacity:0}to{opacity:1}}
+@keyframes ca-rise{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}

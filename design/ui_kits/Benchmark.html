@@ -1,0 +1,70 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Benchmark</title><link rel="stylesheet" href="../styles.css">
+<style>body{margin:0;padding:24px 20px 60px;background:var(--surface-page);color:var(--text-body);font:15px/1.45 var(--font-body)}main{max-width:1200px;margin:0 auto;display:flex;flex-direction:column;gap:26px}h1{font:800 34px/1.05 var(--font-display);color:var(--text-strong);margin:0}h2{font:var(--type-section);color:var(--text-strong);margin:0 0 4px}p{margin:4px 0}table{border-collapse:collapse;width:100%;margin-top:8px}td,th{padding:7px 10px;border-bottom:1px solid var(--border-subtle);text-align:left;vertical-align:top}th{color:var(--text-muted);font-weight:600}.ok{color:var(--ok-400);font-weight:700}.no{color:var(--danger-400);font-weight:700}.wn{color:var(--lamp-400);font-weight:700}code{font:12px/1.4 var(--font-mono)}.wrap{overflow-x:auto}.tot{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr));gap:12px}.k{border:1px solid var(--border-subtle);border-radius:var(--radius-md);padding:16px;background:var(--surface-raised)}.k b{display:block;font:800 28px/1 var(--font-display);margin-bottom:6px}#f{position:absolute;left:-9999px;top:0;width:390px;height:844px;border:0}button.b{min-height:44px;padding:0 16px;border-radius:999px;border:1px solid var(--border-default);background:none;color:var(--text-strong);font:600 14px var(--font-body);cursor:pointer}a{color:var(--lamp-400)}a:hover{color:var(--lamp-300)}</style></head>
+<body><main><header><h1>Benchmark</h1><p>Two guards against “AI says everything passes”.</p><p id="st" style="color:var(--text-muted)">Running… about 8 minutes.</p></header>
+<div class="tot" id="tot"></div>
+<section><h2>A. Strict vs. informed heuristic score</h2><p><b>Strict</b> = no product context, demo controls included, told to be harsh — but it now gets a layout outline of what is drawn (inputs, buttons, bars, graphics, positions) so it judges what users actually see, not just text. <b>Informed</b> = the same reviewer knows our spec decisions. A big gap on a screen means the pass depends on context — check that screen by hand. Strict is the benchmark to report.</p><div class="wrap" id="tA"></div></section>
+<section><h2>B. Silent-break guard (no AI)</h2><p>A fingerprint of every screen: title, headings, every button and link label, form fields, and the count of each. The first run saves it as the baseline. Every later run lists what <b>disappeared</b>, appeared or got renamed. Nothing can break silently. Save a new baseline only after you’ve checked a change on purpose.</p><div style="display:flex;gap:10px;flex-wrap:wrap;margin:8px 0"><button class="b" id="save" disabled>Save this run as baseline</button><span id="bl" style="color:var(--text-muted);align-self:center"></span></div><div class="wrap" id="tB"></div></section>
+</main><iframe id="f"></iframe>
+<script src="screens.js"></script>
+<script>
+const S=window.CA_SCREENS,$=id=>document.getElementById(id),F=$("f"),sleep=ms=>new Promise(r=>setTimeout(r,ms)),esc=s=>String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;");
+const AI=!!(window.claude&&window.claude.complete),KEY="ca_bench_baseline";
+const tot=[];const card=(n,v,c)=>{tot.push([n,v,c]);$("tot").innerHTML=tot.map(([n,v,c])=>`<div class="k"><b class="${c}">${v}</b>${n}</div>`).join("")};
+async function load(u){await new Promise(r=>{F.onload=r;F.src="about:blank"});await new Promise(r=>{F.onload=r;F.src=u;setTimeout(r,8000)});const t0=Date.now();while(Date.now()-t0<8000){try{if(F.contentDocument.body.innerText.trim().length>40)break}catch(e){}await sleep(150)}await sleep(1600)}
+const W=()=>F.contentWindow,D=()=>F.contentDocument;
+const vis=e=>{const r=e.getBoundingClientRect(),cs=W().getComputedStyle(e);return r.width>0&&r.height>0&&cs.visibility!=="hidden"&&cs.display!=="none"};
+const lbl=e=>(e.getAttribute("aria-label")||(e.labels&&e.labels[0]&&e.labels[0].innerText)||(e.tagName==="SELECT"?(e.selectedOptions[0]||{}).text:"")||e.innerText||e.placeholder||e.value||e.name||"").trim().replace(/\s+/g," ").slice(0,40);
+function fingerprint(){const d=D();const q=s=>[...d.querySelectorAll(s)].filter(vis);
+ return {title:d.title,h:q("h1,h2,h3").map(e=>e.tagName+" "+e.textContent.trim().replace(/\s+/g," ").slice(0,50)),btn:q('button,[role=button]').map(lbl).filter(Boolean),link:q("a[href]").map(lbl).filter(Boolean),field:q("input,textarea,select").map(e=>(e.type||e.tagName)+" "+lbl(e)),words:d.body.innerText.split(/\s+/).length}}
+function outline(){const w=W(),d=D(),H=w.innerHeight,out=[];const pos=r=>(r.top<H*0.2?"top":r.top<H*0.7?"middle":"bottom")+(r.left>w.innerWidth*0.55?"-right":r.right<w.innerWidth*0.45?"-left":"");
+ const fixed=e=>{for(let p=e;p&&p!==d.body;p=p.parentElement){const s=w.getComputedStyle(p).position;if(s==="fixed"||s==="sticky")return s}return ""};
+ const bg=e=>{const c=w.getComputedStyle(e).backgroundColor;return c==="rgba(0, 0, 0, 0)"?"":"filled"};
+ [...d.querySelectorAll("h1,h2,input,textarea,select,button,a[href],svg,canvas,img,nav,[role=tablist],[role=radiogroup],[role=list],ul,ol,details,[role=dialog]")].filter(vis).slice(0,80).forEach(e=>{const r=e.getBoundingClientRect();if(r.width<8||r.height<8)return;const t=e.tagName.toLowerCase();let k="";
+  if(/^h[12]$/.test(t))k=t+' "'+e.textContent.trim().slice(0,40)+'" '+Math.round(parseFloat(w.getComputedStyle(e).fontSize))+"px";
+  else if(t==="input"||t==="textarea"||t==="select")k=(t==="textarea"?"text area":t==="select"?"dropdown":(e.type||"text")+" input box")+' labelled "'+lbl(e)+'"'+(e.value&&t!=="select"?' (filled in: "'+String(e.value).slice(0,20)+'")':"");
+  else if(t==="button"||t==="a"){if(e.closest("nav,[role=tablist],[role=radiogroup]"))return;const c=w.getComputedStyle(e);k=(t==="a"?"link":(bg(e)?"filled button":c.borderStyle!=="none"&&parseFloat(c.borderWidth)>0?"outline button":"text button"))+' "'+lbl(e)+'"'+(c.color.includes("255, 1")||/danger/.test(e.outerHTML.slice(0,300))?" (red)":"")}
+  else if(t==="svg"||t==="canvas"){if(r.width<60)return;k=t+" graphic "+Math.round(r.width)+"×"+Math.round(r.height)+(e.querySelectorAll?(" with "+e.querySelectorAll("circle,rect,path").length+" shapes"):"")}
+  else if(t==="img")k='image "'+(e.alt||"")+'"';
+  else if(t==="nav"||e.getAttribute("role")==="tablist"||e.getAttribute("role")==="radiogroup")k=(t==="nav"?"navigation bar":"tab/segmented control")+": "+[...e.querySelectorAll("button,a")].filter(vis).map(lbl).join(" | ");
+  else if(t==="details")k='collapsed panel "'+(e.querySelector("summary")||{}).textContent+'"';
+  else if(t==="ul"||t==="ol"||e.getAttribute("role")==="list"){const n=e.children.length;if(n<2)return;k="list of "+n+" items"}
+  else k=t;const f=fixed(e);out.push("- "+k+" ["+pos(r)+(f?", "+f:"")+"]")});
+ const map=[...d.querySelectorAll("button")].filter(e=>vis(e)&&/border-radius: 50%|borderRadius/.test(e.getAttribute("style")||"")&&e.closest("[role=application],[aria-label*=map i]")).length;if(map)out.push("- "+map+" round concept bubbles on a pannable map");
+ return [...new Set(out)].join("\n").slice(0,2600)}
+async function ask(p){if(!AI)return null;try{const r=await window.claude.complete(p);const m=r.match(/\{[\s\S]*\}/);return m?JSON.parse(m[0]):null}catch(e){return null}}
+const STRICT=`You are a harsh senior UX auditor. You know nothing about this product beyond what is on the screen. Do a Nielsen heuristic evaluation of ONE mobile screen. Do not give the benefit of the doubt: anything unclear, unexplained, inconsistent, or that a first-time user could misread counts against it. 5 = flawless, 4 = minor nit, 3 = real problem, 1–2 = blocker.`;
+const INFORMED=`You are a senior UX expert. Product: "Church AI", a calm faith-vocabulary app for Gen Z with a private pastor wellbeing track. Deliberate spec decisions (not flaws): code name codes instead of names; typing "publish" to confirm; hidden press-and-hold Faith mode; required "Who" governance copy; repeated crisis line; tour is a video; demo-only controls are for judges. Do a Nielsen heuristic evaluation of ONE mobile screen. 5 = met, 4 = minor nit, 3 = real problem, 1–2 = blocker.`;
+const fmt=`Reply ONLY JSON: {"scores":[10 integers for H1..H10],"worst":"<one specific problem quoting the UI>"}`;
+const avg=a=>a&&Array.isArray(a.scores)&&a.scores.length===10?+(a.scores.map(Number).reduce((x,y)=>x+y,0)/10).toFixed(1):null;
+const diff=(a,b)=>{const m=new Map();a.forEach(x=>m.set(x,(m.get(x)||0)+1));const out=[];b.forEach(x=>{if(m.get(x))m.set(x,m.get(x)-1);else out.push(x)});return out};
+(async()=>{
+ const base=(()=>{try{return JSON.parse(localStorage.getItem(KEY))}catch(e){return null}})();
+ $("bl").textContent=base?"Comparing with baseline saved "+new Date(base.at).toLocaleString():"No baseline yet — this run will be the first.";
+ const rA=[],rB=[],now={};let sP=0,iP=0,gap=0,broke=0,changed=0;
+ for(const [n,u] of S){
+  await load(u);const fp=fingerprint();now[n]=fp;
+  let txt="";try{txt=D().body.innerText.replace(/\n{2,}/g,"\n").trim()}catch(e){}
+  const ctl=[...fp.btn,...fp.link].slice(0,30).join(" | ").slice(0,700);
+  const body=`\nScreen: ${n} (phone, 390×844)\nWhat is drawn on screen, top to bottom (this IS the visible layout — treat listed inputs, buttons, bars and graphics as present):\n${outline()}\nVisible text:\n"""${txt.slice(0,1800)}"""\n${fmt}`;
+  const [s,i]=await Promise.all([ask(STRICT+body),ask(INFORMED+body)]);const sa=avg(s),ia=avg(i);
+  const sOk=sa!==null&&sa>=4&&Math.min(...s.scores.map(Number))>=3,iOk=ia!==null&&ia>=4&&Math.min(...i.scores.map(Number))>=3;if(sOk)sP++;if(iOk)iP++;
+  const g=sa!==null&&ia!==null?+(ia-sa).toFixed(1):null;if(g!==null&&g>=0.8)gap++;
+  rA.push(`<tr><td>${esc(n)}</td><td class="${sa===null?"":sOk?"ok":sa>=3.5?"wn":"no"}">${sa??"—"}</td><td class="${ia===null?"":iOk?"ok":"wn"}">${ia??"—"}</td><td class="${g===null?"":g>=0.8?"no":g>=0.4?"wn":"ok"}">${g===null?"—":(g>0?"+":"")+g}</td><td>${s?esc(s.worst||""):AI?"":"AI off"}</td></tr>`);
+  $("tA").innerHTML=`<table><thead><tr><th>Screen</th><th>Strict</th><th>Informed</th><th>Gap</th><th>Strict reviewer’s worst problem</th></tr></thead><tbody>${rA.join("")}</tbody></table>`;
+  if(base&&base.fp[n]){const b=base.fp[n];const lost=[...diff(fp.h,b.h).map(x=>"heading: "+x),...diff(fp.btn,b.btn).map(x=>"button: "+x),...diff(fp.link,b.link).map(x=>"link: "+x),...diff(fp.field,b.field).map(x=>"field: "+x)];const added=[...diff(b.h,fp.h),...diff(b.btn,fp.btn),...diff(b.link,fp.link),...diff(b.field,fp.field)];const wd=fp.words-b.words;if(lost.length)broke++;else if(added.length||Math.abs(wd)>20)changed++;
+   rB.push(`<tr><td>${esc(n)}</td><td class="${lost.length?"no":"ok"}">${lost.length?lost.length+" gone":"Nothing lost"}</td><td class="${added.length?"wn":"ok"}">${added.length||"—"}</td><td>${wd>0?"+":""}${wd}</td><td><code>${esc([...lost.slice(0,6).map(x=>"− "+x),...added.slice(0,4).map(x=>"+ "+x)].join(" · "))}</code></td></tr>`)}
+  else rB.push(`<tr><td>${esc(n)}</td><td class="wn">${base?"New screen":"Recorded"}</td><td>${fp.btn.length+fp.link.length} controls</td><td>${fp.words} words</td><td><code>${esc(fp.h.slice(0,3).join(" · "))}</code></td></tr>`);
+  $("tB").innerHTML=`<table><thead><tr><th>Screen</th><th>Lost since baseline</th><th>Added</th><th>Word change</th><th>What</th></tr></thead><tbody>${rB.join("")}</tbody></table>`;
+  $("st").textContent=`Screens ${rA.length}/${S.length}…`;
+ }
+ if(base){const gone=Object.keys(base.fp).filter(k=>!now[k]);gone.forEach(k=>{broke++;rB.unshift(`<tr><td>${esc(k)}</td><td class="no">Screen missing</td><td></td><td></td><td></td></tr>`)});$("tB").innerHTML=`<table><thead><tr><th>Screen</th><th>Lost since baseline</th><th>Added</th><th>Word change</th><th>What</th></tr></thead><tbody>${rB.join("")}</tbody></table>`}
+ card("Strict benchmark: screens ≥4",`${sP} / ${S.length}`,sP===S.length?"ok":sP>=S.length*.7?"wn":"no");
+ card("Informed score: screens ≥4",`${iP} / ${S.length}`,"ok");
+ card("Screens where context lifts the score ≥0.8",gap,gap?"wn":"ok");
+ card(base?"Screens that lost something":"Baseline",base?broke:"ready to save",base?(broke?"no":"ok"):"wn");
+ if(!base&&!localStorage.getItem(KEY)){localStorage.setItem(KEY,JSON.stringify({at:Date.now(),fp:now}));$("bl").textContent="Baseline saved automatically (first run)."}
+ const sv=$("save");sv.disabled=false;sv.onclick=()=>{localStorage.setItem(KEY,JSON.stringify({at:Date.now(),fp:now}));$("bl").textContent="Baseline saved "+new Date().toLocaleString()};
+ $("st").textContent="Finished "+new Date().toLocaleString()+(AI?"":" — AI unavailable; section B still valid.");
+ window.__bench={tot,low:rA.filter(r=>/class="(no|wn)">\d/.test(r)).map(r=>r.replace(/<[^>]+>/g," ").replace(/\s+/g," ").slice(0,240))};
+})();
+</script></body></html>

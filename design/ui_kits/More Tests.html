@@ -1,0 +1,63 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>More UI/UX tests</title><link rel="stylesheet" href="../styles.css">
+<style>body{margin:0;padding:24px 20px 60px;background:var(--surface-page);color:var(--text-body);font:15px/1.45 var(--font-body)}main{max-width:1200px;margin:0 auto;display:flex;flex-direction:column;gap:28px}h1{font:800 32px/1.05 var(--font-display);color:var(--text-strong);margin:0}h2{font:var(--type-section);color:var(--text-strong);margin:0 0 4px}p{margin:4px 0}table{border-collapse:collapse;width:100%;margin-top:8px}td,th{padding:7px 10px;border-bottom:1px solid var(--border-subtle);text-align:left;vertical-align:top}th{color:var(--text-muted);font-weight:600}.ok{color:var(--ok-400);font-weight:700}.no{color:var(--danger-400);font-weight:700}.wn{color:var(--lamp-400);font-weight:700}code{font:12px/1.4 var(--font-mono)}.wrap{overflow-x:auto}.tot{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr));gap:12px}.k{border:1px solid var(--border-subtle);border-radius:var(--radius-md);padding:16px;background:var(--surface-raised)}.k b{display:block;font:800 32px/1 var(--font-display);margin-bottom:6px}#f{position:absolute;left:-9999px;top:0;width:1280px;height:800px;border:0}.hid{position:absolute;left:-9999px;width:1400px;height:900px;border:0}a{color:var(--lamp-400)}a:hover{color:var(--lamp-300)}</style></head>
+<body><main><header><h1>More UI/UX tests</h1><p id="st" style="color:var(--text-muted)">Running… about 10 minutes. Leave this tab open.</p></header>
+<div class="tot" id="tot"></div>
+<section><h2>1. Desktop 1280 — X-ray &amp; accessibility</h2><p>Same checks as mobile, at web width. Tap size is skipped (mouse). Full detail: <a href="xray.html?w=1280">X-ray desktop</a> · <a href="audit.html?w=1280">Audit desktop</a>.</p><div class="wrap" id="t1"></div></section>
+<section><h2>2. Keyboard only</h2><p>Every control reachable with Tab, no positive tabindex, nothing focusable while hidden, and a visible focus ring on each control.</p><div class="wrap" id="t2"></div></section>
+<section><h2>3. Reduced motion</h2><p>Opened with reduce-motion on. Pass = no animation still looping after 2.5 s, and none longer than 1 ms.</p><div class="wrap" id="t3"></div></section>
+<section><h2>4. AI-assisted review</h2><p>A model reads each screen's visible text and checks it against our rules: one purpose, plain language, banned words, fair to each tradition, no sales tone, no pressure. Rule-word scan runs without AI.</p><div class="wrap" id="t4"></div></section>
+</main>
+<iframe id="f"></iframe><iframe class="hid" id="dx"></iframe><iframe class="hid" id="da"></iframe>
+<script src="screens.js"></script>
+<script>
+const S=window.CA_SCREENS,$=id=>document.getElementById(id),F=$("f"),sleep=ms=>new Promise(r=>setTimeout(r,ms)),esc=s=>String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;");
+const tot=[];const card=(n,p,t)=>{tot.push([n,p,t]);$("tot").innerHTML=tot.map(([n,p,t])=>`<div class="k"><b class="${p===t?"ok":"no"}">${p} / ${t}</b>${n}</div>`).join("")};
+const withRm=u=>u.includes("#")?u+"&rm=1":u+"#rm=1";
+async function load(u){await new Promise(r=>{F.onload=r;F.src="about:blank"});await new Promise(r=>{F.onload=r;F.src=u;setTimeout(r,8000)});const t0=Date.now();while(Date.now()-t0<8000){try{if(F.contentDocument.body.innerText.trim().length>40)break}catch(e){}await sleep(150)}await sleep(1800)}
+const BANNED=[["idol","mūrti"],["myth","sacred narrative"],["demigod","deva"],["hindu trinity","Trimūrti (not the Trinity)"],["hīnayāna","Theravāda"],["hinayana","Theravāda"],["hindus believe","name the school"],["buddhists believe","name the school"],["christians believe","name the tradition"],["heaven (for nirvana)",""]].slice(0,9);
+function kb(){const w=F.contentWindow,d=F.contentDocument,o={reach:0,pos:[],hidden:[],ring:[]};
+ const sel='a[href],button:not([disabled]),input:not([disabled]):not([type=hidden]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"]),[contenteditable="true"]';
+ const vis=e=>{const r=e.getBoundingClientRect(),cs=w.getComputedStyle(e);return r.width>0&&r.height>0&&cs.visibility!=="hidden"&&cs.display!=="none"};
+ const lbl=e=>(e.innerText||e.getAttribute("aria-label")||e.placeholder||e.tagName).trim().replace(/\s+/g," ").slice(0,24);
+ const els=[...d.querySelectorAll(sel)];
+ els.forEach(e=>{const ti=+e.getAttribute("tabindex");if(ti>0)o.pos.push(lbl(e));const hid=!vis(e)||e.closest('[aria-hidden="true"],[inert]');if(hid&&!e.closest('[inert]')&&vis(e.closest('[aria-hidden="true"]')||e))o.hidden.push(lbl(e))});
+ const live=els.filter(e=>vis(e)&&!e.closest('[aria-hidden="true"],[inert]'));o.reach=live.length;
+ live.slice(0,40).forEach(e=>{const sty=x=>{const c=w.getComputedStyle(x);return [c.outlineStyle,c.outlineWidth,c.outlineColor,c.boxShadow,c.borderColor,c.backgroundColor].join("|")};const before=sty(e);try{e.focus({focusVisible:true,preventScroll:true})}catch(x){e.focus()}const after=sty(e);const c=w.getComputedStyle(e);const ok=before!==after||(c.outlineStyle!=="none"&&parseFloat(c.outlineWidth)>0);if(!ok)o.ring.push(lbl(e));e.blur()});
+ Object.keys(o).forEach(k=>Array.isArray(o[k])&&(o[k]=[...new Set(o[k])]));return o}
+function motion(){const d=F.contentDocument;const an=d.getAnimations?d.getAnimations():[];const bad=[];an.forEach(a=>{const t=a.effect&&a.effect.getComputedTiming&&a.effect.getComputedTiming();if(!t)return;if(a.playState==="running"&&(t.iterations===Infinity||t.duration>1.5)){const el=a.effect.target;bad.push((a.animationName||a.transitionProperty||"anim")+" on "+(el&&el.tagName||"?")+" "+Math.round(t.duration)+"ms"+(t.iterations===Infinity?" ∞":""))}});return [...new Set(bad)]}
+async function ai(name,text){if(!window.claude||!window.claude.complete)return null;
+ const prompt=`You are a strict UX reviewer for "Church AI", a calm faith-vocabulary app for Gen Z (dictionary of Hindu/Buddhist/Christian words, a monthly anonymous question, a ideas map, and a private pastor wellbeing track). Rules: each screen has ONE clear purpose; plain short sentences; no sales or hype tone; no pressure, streaks or guilt; describe other traditions from their own texts and name the school instead of "Hindus/Buddhists believe"; never use idol, myth, demigod, Hindu trinity, Hīnayāna; no names of people on public screens; every action label says what it does.
+Screen: ${name}
+Visible text (may be truncated):
+"""${text.slice(0,2500)}"""
+Reply with ONLY JSON: {"purpose":"<this screen lets you ...>","score":<1-5, 5 = fully follows rules>,"issues":["<short, specific issue quoting the text>"]} with at most 3 issues; empty array if none.`;
+ try{const r=await window.claude.complete(prompt);const m=r.match(/\{[\s\S]*\}/);return m?JSON.parse(m[0]):{purpose:"?",score:0,issues:["unparsable reply"]}}catch(e){return {purpose:"—",score:0,issues:["AI error: "+e.message]}}}
+async function frameDone(id,src,key,done){const fr=$(id);fr.src=src;for(let i=0;i<900;i++){try{const w=fr.contentWindow;if(w[key]&&done(w))return w}catch(e){}await sleep(1000)}return fr.contentWindow}
+(async()=>{
+ const dxP=frameDone("dx","xray.html?w=1280","__xray",w=>/clean/.test(w.document.getElementById("sum").textContent));
+ const daP=frameDone("da","audit.html?w=1280","__audit",w=>/clean/.test(w.document.getElementById("sum").textContent));
+ const r2=[],r3=[],r4=[];let p2=0,p3=0,p4=0,aiOn=!!(window.claude&&window.claude.complete);
+ for(const [n,u] of S){
+  await load(u);let k;try{k=kb()}catch(e){k={reach:0,pos:[],hidden:["error "+e.message],ring:[]}}const kOk=!k.pos.length&&!k.hidden.length&&!k.ring.length;if(kOk)p2++;
+  r2.push(`<tr><td>${esc(n)}</td><td>${k.reach}</td><td class="${k.pos.length?"no":"ok"}">${k.pos.length||"Pass"}</td><td class="${k.hidden.length?"no":"ok"}">${k.hidden.length||"Pass"}</td><td class="${k.ring.length?"no":"ok"}">${k.ring.length||"Pass"}</td><td><code>${esc([...k.pos,...k.hidden.map(x=>"hidden: "+x),...k.ring.slice(0,4).map(x=>"no ring: "+x)].join(" · "))}</code></td></tr>`);
+  $("t2").innerHTML=`<table><thead><tr><th>Screen</th><th>Controls</th><th>Positive tabindex</th><th>Focusable while hidden</th><th>Focus ring</th><th>Where</th></tr></thead><tbody>${r2.join("")}</tbody></table>`;
+  let txt="";try{txt=F.contentDocument.body.innerText.replace(/\n{2,}/g,"\n")}catch(e){}
+  const low=txt.toLowerCase();const hits=BANNED.filter(([b])=>low.includes(b)).map(([b,s])=>`“${b}”${s?" → "+s:""}`);
+  const a=await ai(n,txt);const aOk=!hits.length&&(!a||(a.score>=4));if(aOk)p4++;
+  r4.push(`<tr><td>${esc(n)}</td><td class="${hits.length?"no":"ok"}">${hits.length?esc(hits.join(", ")):"Pass"}</td><td>${a?esc(a.purpose):"—"}</td><td class="${!a?"":a.score>=4?"ok":a.score>=3?"wn":"no"}">${a?a.score+" / 5":"AI off"}</td><td>${a&&a.issues.length?esc(a.issues.join(" · ")):"—"}</td></tr>`);
+  $("t4").innerHTML=`${aiOn?"":"<p class='wn'>AI model not reachable in this tab — rule-word scan only.</p>"}<table><thead><tr><th>Screen</th><th>Banned words</th><th>Purpose (AI)</th><th>Rule score</th><th>AI notes</th></tr></thead><tbody>${r4.join("")}</tbody></table>`;
+  await load(withRm(u));await sleep(700);let m=[];try{m=motion()}catch(e){m=["error "+e.message]}if(!m.length)p3++;
+  r3.push(`<tr><td>${esc(n)}</td><td class="${m.length?"no":"ok"}">${m.length?m.length+" still moving":"Pass"}</td><td><code>${esc(m.slice(0,4).join(" · "))}</code></td></tr>`);
+  $("t3").innerHTML=`<table><thead><tr><th>Screen</th><th>Result</th><th>Still animating</th></tr></thead><tbody>${r3.join("")}</tbody></table>`;
+  $("st").textContent=`Screens ${r2.length}/${S.length}… desktop suites running alongside.`;
+ }
+ card("Keyboard: screens clean",p2,S.length);card("Reduced motion: screens clean",p3,S.length);card(aiOn?"AI review: score ≥4 & no banned words":"Banned-word scan clean",p4,S.length);
+ const [DX,DA]=await Promise.all([dxP,daP]);const xk=["x","off","clip","ov","g"],ak=["c","t","u","h","s"];
+ const xm=Object.fromEntries((DX.__xray||[]).map(([n,o])=>[n,o])),am=Object.fromEntries((DA.__audit||[]).map(([n,o])=>[n,o]));let p1=0;
+ const rows=S.map(([n])=>{const x=xm[n],a=am[n];const xi=x?xk.flatMap(k=>x[k]):["not run"],ai2=a?ak.flatMap(k=>a[k]):[];const ok=!xi.length&&!ai2.length;if(ok)p1++;return `<tr><td>${esc(n)}</td><td class="${xi.length?"no":"ok"}">${xi.length||"Pass"}</td><td class="${!a?"":ai2.length?"no":"ok"}">${a?(ai2.length||"Pass"):"—"}</td><td><code>${esc([...xi.slice(0,3),...ai2.slice(0,3)].join(" · "))}</code></td></tr>`});
+ $("t1").innerHTML=`<table><thead><tr><th>Screen</th><th>X-ray</th><th>Accessibility</th><th>Where</th></tr></thead><tbody>${rows.join("")}</tbody></table>`;
+ card("Desktop: screens clean",p1,S.length);
+ $("st").textContent="Finished "+new Date().toLocaleString()+".";
+ window.__more={tot,r2:r2.filter(r=>r.includes('class="no"')).map(r=>r.replace(/<[^>]+>/g," ").replace(/\s+/g," ").slice(0,220)),r3:r3.filter(r=>r.includes('class="no"')).map(r=>r.replace(/<[^>]+>/g," ").replace(/\s+/g," ").slice(0,200)),r4:r4.filter(r=>!r.includes('class="ok">5')&&(r.includes('class="no"')||r.includes('class="wn"'))).map(r=>r.replace(/<[^>]+>/g," ").replace(/\s+/g," ").slice(0,260)),d:rows.filter(r=>r.includes('class="no"')).map(r=>r.replace(/<[^>]+>/g," ").replace(/\s+/g," ").slice(0,220))};
+})();
+</script></body></html>

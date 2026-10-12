@@ -1,0 +1,16 @@
+@import "tokens/fonts.css";
+@import "tokens/colors.css";
+@import "tokens/typography.css";
+@import "tokens/spacing.css";
+@import "tokens/effects.css";
+@import "tokens/base.css";
+
+/* touch-targets: 44px minimum on touch screens (WCAG 2.5.5 / Apple HIG) */
+@media (pointer: coarse){button,select,[role="button"],[role="radio"],[role="tab"],[role="switch"],input[type="checkbox"],input[type="radio"]{min-height:44px;min-width:44px}}
+html[data-touch] button,html[data-touch] select,html[data-touch] [role="button"],html[data-touch] [role="radio"],html[data-touch] [role="tab"],html[data-touch] [role="switch"]{min-height:44px;min-width:44px}
+
+/* demo-only controls (role picker, outcome picker) never show outside demo mode */
+html:not([data-ca-demo]) [data-demo]{display:none!important}
+
+/* focus-ring: visible keyboard focus on every control (WCAG 2.4.7) */
+:where(a[href],button,input,select,textarea,summary,[tabindex]:not([tabindex="-1"]),[role="button"],[role="radio"],[role="tab"],[role="switch"],[role="option"]):focus-visible{outline:2px solid var(--lamp-400)!important;outline-offset:2px!important}

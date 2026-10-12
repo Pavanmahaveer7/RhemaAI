@@ -1,0 +1,29 @@
+:root{
+/* Ink — green-black surfaces (Moss) */
+--ink-0:#0B0F0C;--ink-1:#121813;--ink-2:#1A211B;--ink-3:#243025;--ink-4:#324034;
+/* Stone → Bone — sage neutrals (text) */
+--stone-5:#66705E;--stone-6:#95A08B;--bone-7:#C2CCB8;--bone-8:#E3EADB;--bone-9:#F3F7EE;
+/* Lamp — brand action accent (olive-gold; token name kept) */
+--lamp-100:#F6F8DC;--lamp-200:#ECF0B8;--lamp-300:#E1E899;--lamp-400:#CFDA5C;--lamp-500:#B5C143;--lamp-600:#8C962C;--lamp-700:#646B1F;--lamp-800:#3E4314;--lamp-900:#22250B;--lamp-tint:rgba(207,218,92,.12);
+/* Clay — second accent: links, human and faith moments (token name kept) */
+--clay-200:#F3D2BF;--clay-300:#EBB89B;--clay-400:#E2A07C;--clay-500:#C9825D;--clay-600:#9E6143;--clay-800:#4A2C1E;
+--bridge-400:var(--clay-400);--bridge-tint:rgba(226,160,124,.08);--bridge-line:rgba(226,160,124,.32);
+/* Traditions — equal weight, never ranked */
+--trad-hindu:#E3875C;--trad-hindu-tint:rgba(227,135,92,.14);
+--trad-buddhist:#62B39B;--trad-buddhist-tint:rgba(98,179,155,.14);
+--trad-christian:#86A6E0;--trad-christian-tint:rgba(134,166,224,.14);
+/* Semantic */
+--ok-400:#7CC08A;--ok-tint:rgba(124,192,138,.14);
+--warn-400:#E9B949;--warn-tint:rgba(233,185,73,.14);
+--danger-400:#EE7B6B;--danger-tint:rgba(238,123,107,.14);
+--info-400:#9DB8C9;--info-tint:rgba(157,184,201,.14);
+
+/* Semantic aliases */
+--surface-page:var(--ink-0);--surface-card:var(--ink-1);--surface-raised:var(--ink-2);--surface-hover:var(--ink-3);--surface-inverse:var(--bone-8);
+--border-subtle:var(--ink-3);--border-default:var(--ink-4);--border-strong:var(--stone-5);--border-focus:var(--lamp-400);
+--text-strong:var(--bone-9);--text-body:var(--bone-8);--text-muted:var(--stone-6);--text-faint:color-mix(in srgb, var(--stone-5) 45%, var(--stone-6));--text-inverse:var(--ink-0);--text-accent:var(--bridge-400);
+--action-primary-bg:var(--bone-8);--action-primary-fg:var(--ink-0);--action-primary-hover:var(--bone-9);
+--action-accent-bg:var(--lamp-400);--action-accent-fg:var(--ink-0);--action-accent-hover:var(--lamp-300);--action-accent-press:var(--lamp-500);--action-primary-press:var(--bone-7);--action-disabled-bg:var(--ink-3);--action-disabled-fg:var(--stone-5);
+/* Semantic = meaning only: ok saved/done · warn needs attention · danger alert/destructive · info neutral notice. Never decorative. */
+--graph-node:var(--bone-7);--graph-node-new:var(--lamp-400);--graph-link-shared:rgba(227,234,219,.28);--graph-link-tension:var(--danger-400);
+}

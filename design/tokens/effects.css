@@ -1,0 +1,20 @@
+:root{
+--radius-xs:4px;--radius-sm:6px;--radius-md:10px;--radius-lg:16px;--radius-xl:24px;--radius-pill:999px;
+--border-w:1px;/* @kind other */--border-w-strong:2px;/* @kind other */
+/* Shadow scale — only for things that float (menus, sheets, dialogs, toasts). Cards use surface lift, not shadow. */
+--shadow-1:0 1px 2px rgba(0,0,0,.4);--shadow-2:0 4px 12px -4px rgba(0,0,0,.55);--shadow-3:0 12px 32px -10px rgba(0,0,0,.65);
+--shadow-overlay:0 1px 0 rgba(255,255,255,.04) inset,0 18px 48px -12px rgba(0,0,0,.7);
+--shadow-pop:0 8px 24px -8px rgba(0,0,0,.6);
+--focus-ring:0 0 0 2px var(--ink-0),0 0 0 4px var(--lamp-400);
+--scrim:rgba(8,7,6,.72);
+/* Overlay gradients — legibility only: text over imagery, scroll-edge fades, sticky bars. */
+--overlay-image:linear-gradient(180deg,rgba(11,15,12,0) 35%,rgba(11,15,12,.85) 100%);/* @kind other */--overlay-fade-bottom:linear-gradient(180deg,rgba(11,15,12,0),var(--ink-0) 85%);--overlay-fade-top:linear-gradient(0deg,rgba(11,15,12,0),var(--ink-0) 85%);--overlay-scrim:linear-gradient(180deg,rgba(8,7,6,.55),rgba(8,7,6,.82));/* @kind other */
+--blur-bar:saturate(140%) blur(14px);/* @kind other */
+--ease-out:cubic-bezier(.2,.7,.2,1);/* @kind other */--ease-in-out:cubic-bezier(.6,0,.3,1);/* @kind other */
+--dur-fast:120ms;/* @kind other */--dur-base:180ms;/* @kind other */--dur-slow:320ms;/* @kind other */
+--press-scale:.97;/* @kind other */--hover-lift:-1px;/* @kind other */
+/* Dark-mode elevation: lift = lighter surface + hairline, not shadow. Shadow only when something floats above the page. */
+/* Icon scale — icons match the text they sit beside: 16 with 13–16px text, 18 with 18px, 20 inside 44px buttons/nav, 24 next to section titles. */
+--icon-sm:16px;/* @kind other */--icon-md:18px;/* @kind other */--icon-lg:20px;/* @kind other */--icon-xl:24px;/* @kind other */
+--elev-0:var(--ink-0);--elev-1:var(--ink-1);--elev-2:var(--ink-2);--elev-3:var(--ink-3);
+}

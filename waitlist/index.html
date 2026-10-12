@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Rhema.ai — Waitlist</title>
+  <link rel="stylesheet" href="/design/styles.css">
+  <style>
+    body { margin: 0; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; background: var(--ink-0, #0b0f0c); color: var(--text-body, #e8ece4); font: 16px/1.5 system-ui, sans-serif; }
+    main { max-width: 420px; width: 100%; display: flex; flex-direction: column; gap: 16px; }
+    h1 { font: 800 2rem/1.1 Georgia, serif; color: var(--text-strong, #f3f7ee); margin: 0; }
+    label { font-size: 13px; font-weight: 600; color: var(--text-muted, #b8c4b8); }
+    input, select { width: 100%; box-sizing: border-box; padding: 12px 14px; border-radius: 10px; border: 1px solid var(--border-subtle, #324034); background: var(--surface-card, #121814); color: inherit; font: inherit; }
+    button { padding: 14px; border: 0; border-radius: 10px; background: var(--lamp-400, #cfda5c); color: #0b0f0c; font-weight: 700; cursor: pointer; }
+    .msg { font-size: 14px; color: var(--text-muted, #b8c4b8); }
+    a { color: var(--lamp-400, #cfda5c); }
+  </style>
+</head>
+<body>
+  <main>
+    <p><a href="/">← Home</a> · <a href="/app#guest=1&r=search">Try as guest</a></p>
+    <h1>Join the waitlist</h1>
+    <p class="msg">We will email when your region opens. Nothing is posted publicly.</p>
+    <form id="f">
+      <label for="email">Email</label>
+      <input id="email" name="email" type="email" required autocomplete="email" placeholder="name@example.com">
+      <label for="role">I am mostly interested as</label>
+      <select id="role" name="role">
+        <option value="reader">Reader / dictionary</option>
+        <option value="pastor">Pastor / staff</option>
+        <option value="church">Church leader</option>
+      </select>
+      <button type="submit">Join waitlist</button>
+    </form>
+    <p id="status" class="msg" role="status"></p>
+  </main>
+  <script>
+    document.getElementById("f").addEventListener("submit", function (ev) {
+      ev.preventDefault();
+      var st = document.getElementById("status");
+      st.textContent = "Sending…";
+      fetch("/api/v1/waitlist", {
+        method: "POST",
+        headers: { "content-type": "application/json", accept: "application/json" },
+        body: JSON.stringify({ email: document.getElementById("email").value.trim(), role: document.getElementById("role").value })
+      }).then(function (r) {
+        if (r.status === 204) { st.textContent = "You are on the list. Continue as guest anytime."; return; }
+        return r.json().then(function (j) { throw new Error((j.error && j.error.message) || "Could not save."); });
+      }).catch(function (e) {
+        st.textContent = e.message || "Start the local API (run_local.ps1) to save waitlist entries.";
+      });
+    });
+  </script>
+</body>
+</html>
