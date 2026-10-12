@@ -1,4 +1,4 @@
-/** Type-only placeholder wordmark (no logo supplied). */
+/** Rhema.ai wordmark: three-leaf mark plus the name. */
 export interface WordmarkProps {
   /** font-size px, default 22 */
   size?: number;

@@ -55,7 +55,12 @@ function Icon({ name, active }: { name: string; active?: boolean }) {
 function Wordmark() {
   const DS = window.ChurchAIDesignSystem_06db43 as { Wordmark?: ComponentType<{ size: number }> } | undefined;
   if (DS?.Wordmark) return <DS.Wordmark size={19} />;
-  return <span style={{ font: "800 18px/1 Georgia, serif", color: "var(--text-strong)" }}>Rhema.ai</span>;
+  return (
+    <span style={{ display: "inline-flex", alignItems: "center", gap: 7 }}>
+      <img src="/brand/mark.svg" width={22} height={22} alt="" />
+      <span style={{ font: "800 18px/1 Georgia, serif", color: "var(--text-strong)" }}>Rhema.ai</span>
+    </span>
+  );
 }
 
 export default function StaffChrome({ children }: { children: React.ReactNode }) {

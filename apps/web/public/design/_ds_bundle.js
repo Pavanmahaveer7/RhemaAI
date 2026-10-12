@@ -873,23 +873,35 @@ function Wordmark({
   size = 22,
   style
 }) {
+  const mark = Math.round(size * 1.25);
   return /*#__PURE__*/React.createElement("span", {
     "aria-label": "Rhema.ai",
     "data-wordmark": "",
     "data-no-tr": "",
     translate: "no",
     style: {
-      font: `800 ${size}px/1 var(--font-display)`,
-      letterSpacing: "-0.035em",
-      color: "var(--text-strong)",
+      display: "inline-flex",
+      alignItems: "center",
+      gap: Math.max(6, Math.round(size * 0.35)),
       whiteSpace: "nowrap",
       ...style
+    }
+  }, /*#__PURE__*/React.createElement("img", {
+    src: "/brand/mark.svg",
+    width: mark,
+    height: mark,
+    alt: ""
+  }), /*#__PURE__*/React.createElement("span", {
+    style: {
+      font: `800 ${size}px/1 var(--font-display)`,
+      letterSpacing: "-0.035em",
+      color: "var(--text-strong)"
     }
   }, "Rhema", /*#__PURE__*/React.createElement("span", {
     style: {
       color: "var(--lamp-400)"
     }
-  }, "."), "ai");
+  }, "."), "ai"));
 }
 Object.assign(__ds_scope, { Wordmark });
 })(); } catch (e) { __ds_ns.__errors.push({ path: "components/domain/Wordmark.jsx", error: String((e && e.message) || e) }); }
