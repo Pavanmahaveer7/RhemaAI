@@ -70,5 +70,6 @@ Write-Host "Different ports: .\scripts\run_local_demo.ps1  (web :3010, API :8010
 Write-Host "  or: .\scripts\run_local.ps1 -WebPort 3010 -ApiPort 8010"
 Write-Host "Feedback CSV: $env:FEEDBACK_CSV_PATH"
 Write-Host "Feedback map: docs/feedback-where.md"
+Write-Host "n8n workflows: .\scripts\run_n8n.ps1  (see docs/n8n.md)"
 Write-Host ""
 Write-Host "API PID $($api.Id)  Web PID $($web.Id)  - stop: Stop-Process -Id $($api.Id),$($web.Id)"

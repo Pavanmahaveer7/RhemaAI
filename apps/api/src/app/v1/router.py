@@ -976,6 +976,12 @@ async def create_checkin(request: Request):
     )
     if crisis:
         store.audit_block("checkin", "selfharm", "routed", "pastor")
+        from app.v1.workflow_events import emit_workflow_event
+
+        emit_workflow_event(
+            "checkin.crisis",
+            {"pastor_id": actor["account_id"], "client_id": client_id[:32], "outcome": outcome},
+        )
     return _checkin_response(outcome)
 
 
@@ -1495,6 +1501,12 @@ async def beta_survey(request: Request):
     }
     store.beta_surveys.append(row)
     write_surveys(store.beta_surveys)
+    from app.v1.workflow_events import emit_workflow_event
+
+    emit_workflow_event(
+        "feedback.beta_survey",
+        {"from": row["from"], "lang": row["lang"], "has_email": bool(email), "version": row["version"]},
+    )
     return Response(status_code=204)
 
 
