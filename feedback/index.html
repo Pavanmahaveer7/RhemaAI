@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Rhema.ai — Feedback board</title>
+  <link rel="stylesheet" href="/design/styles.css">
+  <style>
+    body { margin: 0; background: var(--ink-0, #0b0f0c); color: var(--text-body, #e8ece4); font: 16px/1.5 system-ui, sans-serif; }
+    main { max-width: 640px; margin: 0 auto; padding: 32px 20px 64px; }
+    h1 { font: 800 2.2rem/1.1 Georgia, serif; color: var(--text-strong, #f3f7ee); margin: 0 0 8px; }
+    .card { border: 1px solid var(--border-subtle, #324034); border-radius: 12px; padding: 16px; margin: 12px 0; background: var(--surface-card, #121814); }
+    button, textarea { font: inherit; }
+    textarea { width: 100%; box-sizing: border-box; min-height: 88px; padding: 12px; border-radius: 10px; border: 1px solid var(--border-subtle, #324034); background: var(--surface-card, #121814); color: inherit; }
+    .btn { margin-top: 8px; padding: 10px 16px; border: 0; border-radius: 8px; background: var(--lamp-400, #cfda5c); color: #0b0f0c; font-weight: 700; cursor: pointer; }
+    .muted { color: var(--text-muted, #b8c4b8); font-size: 14px; }
+    a { color: var(--lamp-400, #cfda5c); }
+  </style>
+</head>
+<body>
+  <main>
+    <p><a href="/app#r=settings">← Settings</a> · <a href="/beta-survey">Beta survey</a></p>
+    <h1>Ideas &amp; fixes</h1>
+    <p class="muted">Counts only — no names on posts. Requires local API for live board.</p>
+    <section class="card">
+      <h2 style="font-size:1.1rem;margin:0 0 8px">Suggest something</h2>
+      <textarea id="text" maxlength="280" placeholder="Missing word, idea, or fix…"></textarea>
+      <button class="btn" type="button" id="post">Post</button>
+      <p id="postStatus" class="muted" role="status"></p>
+    </section>
+    <h2 style="font-size:1.1rem;margin-top:24px">Open items</h2>
+    <div id="list"></div>
+    <h2 style="font-size:1.1rem;margin-top:24px">Changelog</h2>
+    <ul id="log" class="muted"></ul>
+  </main>
+  <script>
+    var list = document.getElementById("list");
+    function load() {
+      fetch("/api/v1/feedback?status=open").then(function (r) { return r.json(); }).then(function (rows) {
+        list.innerHTML = rows.length ? rows.map(function (row) {
+          return "<article class=\"card\"><p style=\"margin:0 0 8px\">" + row.text.replace(/</g, "&lt;") + "</p><p class=\"muted\">" + row.kind + " · " + row.meToo + " me too</p><button class=\"btn\" data-id=\"" + row.id + "\" type=\"button\">Me too</button></article>";
+        }).join("") : "<p class=\"muted\">Nothing open yet.</p>";
+        list.querySelectorAll("button[data-id]").forEach(function (btn) {
+          btn.onclick = function () {
+            fetch("/api/v1/feedback/" + encodeURIComponent(btn.getAttribute("data-id")) + "/me-too", { method: "POST" }).then(load);
+          };
+        });
+      }).catch(function () { list.innerHTML = "<p class=\"muted\">Start run_local.ps1 to load the board.</p>"; });
+      fetch("/api/v1/feedback/changelog").then(function (r) { return r.json(); }).then(function (rows) {
+        document.getElementById("log").innerHTML = rows.map(function (r) { return "<li>" + r.at + " — " + r.text + "</li>"; }).join("");
+      }).catch(function () {});
+    }
+    document.getElementById("post").onclick = function () {
+      var st = document.getElementById("postStatus");
+      var text = document.getElementById("text").value.trim();
+      if (text.length < 3) { st.textContent = "Write a few words."; return; }
+      fetch("/api/v1/feedback", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ kind: "idea", text: text }) })
+        .then(function (r) { if (!r.ok) throw new Error(); document.getElementById("text").value = ""; st.textContent = "Posted."; load(); })
+        .catch(function () { st.textContent = "Could not post — is the API running?"; });
+    };
+    load();
+  </script>
+</body>
+</html>

@@ -1,0 +1,4 @@
+/* Lamp — previous default (warm ink, amber). Override on top of styles.css */
+:root{--ink-0:#0E0D0B;--ink-1:#161411;--ink-2:#1F1C18;--ink-3:#2A2621;--ink-4:#3A352E;
+--stone-5:#6E665B;--stone-6:#A39A8C;--bone-7:#CFC6B6;--bone-8:#EDE6D8;--bone-9:#FAF6EE;
+--lamp-300:#F8D78A;--lamp-400:#F4C152;--lamp-500:#E5A92C;--lamp-600:#B9831A;--lamp-tint:rgba(244,193,82,.12);}

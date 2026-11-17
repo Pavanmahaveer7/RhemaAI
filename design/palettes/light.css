@@ -1,0 +1,15 @@
+/* Light — for Settings › Appearance › Light. Ramps are inverted so every component keeps working. */
+:root{
+--ink-0:#F4F6EF;--ink-1:#FFFFFF;--ink-2:#EBEFE4;--ink-3:#DFE5D5;--ink-4:#C6D0BA;
+--stone-5:#646E5C;--stone-6:#4D5646;--bone-7:#363E31;--bone-8:#1C231A;--bone-9:#0D130E;
+--lamp-300:#5A8708;--lamp-400:#467000;--lamp-500:#3A5D00;--lamp-600:#2D4800;--lamp-tint:rgba(70,112,0,.09);
+--bridge-400:#7E6630;--bridge-tint:rgba(126,102,48,.06);--bridge-line:rgba(126,102,48,.30);
+--trad-hindu:#B4532A;--trad-hindu-tint:rgba(180,83,42,.10);
+--trad-buddhist:#1F7A60;--trad-buddhist-tint:rgba(31,122,96,.10);
+--trad-christian:#3C5FA8;--trad-christian-tint:rgba(60,95,168,.10);
+--ok-400:#2E7D3F;--ok-tint:rgba(46,125,63,.10);--warn-400:#94650A;--warn-tint:rgba(148,101,10,.10);
+--danger-400:#B8392A;--danger-tint:rgba(184,57,42,.09);--info-400:#39667F;--info-tint:rgba(57,102,127,.10);
+--graph-link-shared:rgba(13,19,14,.22);
+--scrim:rgba(20,26,20,.45);
+--shadow-overlay:0 18px 48px -16px rgba(20,30,20,.28);--shadow-pop:0 8px 24px -10px rgba(20,30,20,.25);
+}

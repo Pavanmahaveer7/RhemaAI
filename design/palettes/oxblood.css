@@ -1,0 +1,4 @@
+/* Oxblood — palette candidate (override on top of styles.css) */
+:root{--ink-0:#120B0C;--ink-1:#1A1112;--ink-2:#24181A;--ink-3:#312224;--ink-4:#43302F;
+--stone-5:#72605B;--stone-6:#A38E88;--bone-7:#D0BFB9;--bone-8:#EEE2DD;--bone-9:#FBF3F0;
+--lamp-300:#A8E6FF;--lamp-400:#6FD6FF;--lamp-500:#3CBEEE;--lamp-600:#1F8FBB;--lamp-tint:rgba(111,214,255,.12);}

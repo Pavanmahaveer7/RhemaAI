@@ -1,0 +1,95 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Expert Review</title><link rel="stylesheet" href="../styles.css">
+<style>body{margin:0;padding:24px 20px 60px;background:var(--surface-page);color:var(--text-body);font:15px/1.45 var(--font-body)}main{max-width:1200px;margin:0 auto;display:flex;flex-direction:column;gap:28px}h1{font:800 32px/1.05 var(--font-display);color:var(--text-strong);margin:0}h2{font:var(--type-section);color:var(--text-strong);margin:0 0 4px}p{margin:4px 0}table{border-collapse:collapse;width:100%;margin-top:8px}td,th{padding:7px 10px;border-bottom:1px solid var(--border-subtle);text-align:left;vertical-align:top}th{color:var(--text-muted);font-weight:600}.ok{color:var(--ok-400);font-weight:700}.no{color:var(--danger-400);font-weight:700}.wn{color:var(--lamp-400);font-weight:700}code{font:12px/1.4 var(--font-mono)}.wrap{overflow-x:auto}.tot{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,190px),1fr));gap:12px}.k{border:1px solid var(--border-subtle);border-radius:var(--radius-md);padding:16px;background:var(--surface-raised)}.k b{display:block;font:800 32px/1 var(--font-display);margin-bottom:6px}#f{position:absolute;left:-9999px;top:0;width:390px;height:844px;border:0}a{color:var(--lamp-400)}a:hover{color:var(--lamp-300)}</style></head>
+<body><main><header><h1>Expert Review</h1><p id="st" style="color:var(--text-muted)">Running… about 8 minutes. Leave this tab open.</p></header>
+<div class="tot" id="tot"></div>
+<section><h2>1. Heuristic evaluation — Nielsen’s 10</h2><p>Controls marked “Demo only” are left out — they are for judges, not users. “States” is the component gallery. H1 status · H2 real-world words · H3 control &amp; exit · H4 consistency · H5 error prevention · H6 recognition · H7 efficiency · H8 minimal · H9 error recovery · H10 help. Score 1–5 each (AI reviewer + rule checks). Pass = average ≥4 and no heuristic below 3.</p><div class="wrap" id="t1"></div></section>
+<section><h2>2. Cognitive walkthrough — 6 key tasks</h2><p>At every step: will they know what to do? Will they see the control? Will they connect it to their goal? Will they know it worked?</p><div class="wrap" id="t2"></div></section>
+<section><h2>3. Consistency audit</h2><p>Same thing, same name, same shape, everywhere.</p><div class="wrap" id="t3"></div></section>
+<section><h2>4. Error &amp; edge states</h2><p>Check-in can be sent with only the mood picked, so empty text is allowed on purpose. Each form submitted empty and with bad input: an error must appear, say how to fix it, be announced, and keep the user's input.</p><div class="wrap" id="t4"></div></section>
+<section><h2>5. Navigation &amp; structure</h2><p>Every screen has a way back or home, a clear title, and no dead end.</p><div class="wrap" id="t5"></div></section>
+<section><h2>6. Content &amp; microcopy</h2><p>Reading grade (Flesch–Kincaid, target ≤8), long sentences (&gt;25 words), vague buttons, blaming errors.</p><div class="wrap" id="t6"></div></section>
+</main><iframe id="f"></iframe>
+<script src="screens.js"></script>
+<script>
+const S=window.CA_SCREENS,$=id=>document.getElementById(id),F=$("f"),sleep=ms=>new Promise(r=>setTimeout(r,ms)),esc=s=>String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;");
+const P="public/index.html#",Q="pipeline/index.html#";const AI=!!(window.claude&&window.claude.complete);
+const tot=[];const card=(n,p,t)=>{tot.push([n,p,t]);$("tot").innerHTML=tot.map(([n,p,t])=>`<div class="k"><b class="${p===t?"ok":p>=t*.8?"wn":"no"}">${p} / ${t}</b>${n}</div>`).join("")};
+const tbl=(id,h,rows)=>$(id).innerHTML=`<table><thead><tr>${h.map(x=>`<th>${x}</th>`).join("")}</tr></thead><tbody>${rows.join("")}</tbody></table>`;
+const cls=v=>v===true?"ok":v===false?"no":"wn";
+async function load(u){await new Promise(r=>{F.onload=r;F.src="about:blank"});await new Promise(r=>{F.onload=r;F.src=u;setTimeout(r,8000)});const t0=Date.now();while(Date.now()-t0<8000){try{if(F.contentDocument.body.innerText.trim().length>40)break}catch(e){}await sleep(150)}await sleep(1600)}
+const W=()=>F.contentWindow,D=()=>F.contentDocument;
+const vis=e=>{const r=e.getBoundingClientRect(),cs=W().getComputedStyle(e);return r.width>0&&r.height>0&&cs.visibility!=="hidden"&&cs.display!=="none"&&!e.closest('[aria-hidden="true"]')};
+const ctrls=()=>[...D().querySelectorAll('button,a[href],[role=button],input,select,textarea')].filter(vis);
+const lbl=e=>(e.getAttribute("aria-label")||e.innerText||e.value||e.placeholder||"").trim().replace(/\s+/g," ");
+async function ask(p){if(!AI)return null;try{const r=await window.claude.complete(p);const m=r.match(/\{[\s\S]*\}/);return m?JSON.parse(m[0]):null}catch(e){return null}}
+const CTX=`Product: "Church AI" — a calm faith-vocabulary web/mobile app for Gen Z (dictionary of Hindu/Buddhist/Christian words with sources; hidden press-and-hold Faith mode; monthly anonymous question; ideas map; private pastor wellbeing track with a human reviewer; church integrations like Planning Center; region alerts). Intentionally minimal; demo controls are collapsed under "Demo controls" and are not product UI.
+Deliberate decisions from the product spec — do NOT score these as problems: code name codes (P-0233, M-1234) instead of names for privacy; stage names (Training, Ministry…) are the church's own words; publishing needs typing "publish" in a dialog (that IS the confirmation); the "Who" block on Integrations is required governance copy; crisis help ("In danger now? Call 999") is repeated on purpose; Faith mode is hidden behind press-and-hold on purpose; phone screens have a bottom tab bar and header back links that may not appear in the text dump; the tour is a non-interactive video; the empty state's large word ("quiet", "soon") is decorative.
+Score 5 when the heuristic is met, 4 for a minor polish nit, 3 for a real problem a user would notice, 1–2 only for a blocker.`
+// readability
+const syl=w=>{w=w.toLowerCase().replace(/[^a-z]/g,"");if(w.length<=3)return 1;w=w.replace(/(?:[^laeiouy]es|ed|[^laeiouy]e)$/,"").replace(/^y/,"");const m=w.match(/[aeiouy]{1,2}/g);return m?m.length:1};
+function fk(t){const sents=t.split(/[.!?]+\s|\n/).map(s=>s.trim()).filter(s=>s.split(/\s+/).length>=3);const words=sents.join(" ").split(/\s+/).filter(w=>/[a-z]/i.test(w));if(words.length<20)return {g:null,long:[]};const sy=words.reduce((a,w)=>a+syl(w),0);return {g:+(0.39*words.length/sents.length+11.8*sy/words.length-15.59).toFixed(1),long:sents.filter(s=>s.split(/\s+/).length>25).map(s=>s.slice(0,70)+"…")}}
+const VAGUE=/^(ok|okay|submit|click here|go|more|here|learn more)$/i; // Next/Back in a stepper and Yes/No after a question are standard
+const BLAME=/\b(you failed|illegal|error occurred|you must)\b/i;
+(async()=>{
+ const H=["H1","H2","H3","H4","H5","H6","H7","H8","H9","H10"];
+ const r1=[],r5=[],r6=[],inv={btn:{},shape:{},back:{},empty:{}};let p1=0,p5=0,p6=0;
+ for(const [n,u] of S){
+  await load(u);let txt="";try{D().querySelectorAll("[data-demo]").forEach(e=>e.setAttribute("aria-hidden","true"));const c=D().body.cloneNode(true);c.querySelectorAll("[data-demo]").forEach(e=>e.remove());D().body.appendChild(Object.assign(D().createElement("div"),{id:"__t",hidden:true}));txt=D().body.innerText.replace(/\n{2,}/g,"\n").split("\n").filter(l=>!/^(Demo only|Demo · view as|Demo controls)/.test(l.trim())).join("\n").trim()}catch(e){}
+  const cs=ctrls();
+  // consistency inventory
+  cs.forEach(e=>{const l=lbl(e);if(!l||l.length>34)return;const k=l.toLowerCase().replace(/[←→‹›]/g,"").trim();(inv.btn[k]=inv.btn[k]||new Set()).add(l);
+   if(e.tagName==="BUTTON"&&e.innerText.trim()){const c=W().getComputedStyle(e);const sig=`${Math.round(e.getBoundingClientRect().height)}h r${c.borderRadius} ${c.fontWeight}`;const v=(c.backgroundColor==="rgba(0, 0, 0, 0)"?(c.borderStyle!=="none"&&parseFloat(c.borderWidth)>0?"outline":"ghost"):"filled");(inv.shape[v]=inv.shape[v]||{});(inv.shape[v][sig]=inv.shape[v][sig]||new Set()).add(n)}
+   if(/^(←\s*)?(back|go back|← .+)$/i.test(l)||/^←/.test(l))(inv.back[l]=inv.back[l]||new Set()).add(n)});
+  // nav
+  const back=cs.some(e=>/back|home|close|←|menu|search|settings/i.test(lbl(e))||e.closest("nav,header"));const h1=[...D().querySelectorAll("h1")].some(h=>h.textContent.trim());const tt=D().title&&!/^(document|untitled)$/i.test(D().title);const next=cs.length>0;
+  const n5={back,h1,tt,next};const ok5=back&&h1&&next;if(ok5)p5++;
+  r5.push(`<tr><td>${esc(n)}</td>${[back,h1,tt,next].map(v=>`<td class="${v?"ok":"no"}">${v?"Pass":"Missing"}</td>`).join("")}</tr>`);
+  // copy
+  const f=fk(txt);const vague=cs.filter(e=>e.tagName!=="INPUT"&&VAGUE.test(lbl(e))).map(lbl);const blame=(txt.match(new RegExp(BLAME.source,"gi"))||[]);
+  const ok6=(f.g===null||f.g<=8.5)&&!f.long.length&&!vague.length&&!blame.length;if(ok6)p6++;
+  r6.push(`<tr><td>${esc(n)}</td><td class="${f.g===null?"ok":f.g<=8.5?"ok":f.g<=10?"wn":"no"}">${f.g===null?"short":f.g}</td><td class="${f.long.length?"no":"ok"}">${f.long.length||"Pass"}</td><td class="${vague.length?"wn":"ok"}">${vague.length?esc([...new Set(vague)].join(", ")):"Pass"}</td><td class="${blame.length?"no":"ok"}">${blame.length?esc([...new Set(blame)].join(", ")):"Pass"}</td><td><code>${esc(f.long.slice(0,2).join(" · "))}</code></td></tr>`);
+  // heuristics
+  const ctrlList=cs.slice(0,30).map(lbl).filter(Boolean).join(" | ");
+  const a=await ask(`${CTX}\nYou are a senior UX expert doing a Nielsen heuristic evaluation of ONE mobile screen. Be strict but fair; judge only what is visible.\nScreen: ${n}\nVisible text:\n"""${txt.slice(0,2200)}"""\nControls: ${ctrlList.slice(0,700)}\nReply ONLY JSON: {"scores":[10 integers 1-5 for H1..H10 in order],"worst":"<H# — one specific, fixable problem quoting the UI>","fix":"<one concrete change>"}`);
+  const sc=a&&Array.isArray(a.scores)&&a.scores.length===10?a.scores.map(Number):null;const avg=sc?+(sc.reduce((x,y)=>x+y,0)/10).toFixed(1):null;const ok1=sc?avg>=4&&Math.min(...sc)>=3:null;if(ok1)p1++;
+  r1.push(`<tr><td>${esc(n)}</td>${sc?sc.map(v=>`<td class="${v>=4?"ok":v===3?"wn":"no"}">${v}</td>`).join(""):H.map(()=>"<td>—</td>").join("")}<td class="${cls(ok1)}">${avg??"AI off"}</td><td>${a?esc(a.worst||""):""}<br><span style="color:var(--text-muted)">${a?esc(a.fix||""):""}</span></td></tr>`);
+  tbl("t1",["Screen",...H,"Avg","Worst problem → fix"],r1);tbl("t5",["Screen","Way back / home","Has title (h1)","Tab title","Has an action"],r5);tbl("t6",["Screen","Grade","Long sentences","Vague buttons","Blaming words","Examples"],r6);
+  $("st").textContent=`Screens ${r1.length}/${S.length}…`;
+ }
+ card("Heuristics: avg ≥4",p1,S.length);card("Navigation clean",p5,S.length);card("Microcopy clean",p6,S.length);
+ // 3 consistency
+ const r3=[];let p3=0,t3=0;
+ const syn=[["Back","Go back","← Back"],["Cancel","Close","Dismiss"],["Sign in","Log in","Login"],["Sign out","Log out"],["Create account","Sign up","Register"],["Search","Look up","Find"],["Delete","Remove"],["Save","Done"]];
+ syn.forEach(g=>{const norm=w=>w.replace(/[←→]/g,"").trim().toLowerCase();const used=[...new Set(g.filter(w=>Object.values(inv.btn).some(s=>[...s].some(l=>l.replace(/[←→]/g,"").trim().toLowerCase()===w.replace(/[←→]/g,"").trim().toLowerCase()))).map(norm))];t3++;const ok=used.length<=1;if(ok)p3++;r3.push(`<tr><td>Same action, one word</td><td>${esc(g.join(" / "))}</td><td class="${ok?"ok":"wn"}">${ok?"Pass":"Mixed: "+esc(used.join(", "))}</td></tr>`)});
+ Object.entries(inv.btn).forEach(([k,s])=>{if(s.size>1){t3++;r3.push(`<tr><td>Same label, different spelling</td><td>${esc(k)}</td><td class="wn">${esc([...s].join(" | "))}</td></tr>`)}});
+ Object.entries(inv.shape).forEach(([v,sigs])=>{const ks=Object.keys(sigs);const hs=new Set(ks.map(k=>k.split(" ")[0]));t3++;const ok=hs.size<=3;if(ok)p3++;r3.push(`<tr><td>Button shape · ${v}</td><td>${hs.size} heights: ${esc([...hs].join(", "))}</td><td class="${ok?"ok":"wn"}">${ok?"Pass (sm/md/lg)":"More than 3 sizes"} <code>${esc(ks.slice(0,5).join(" ; "))}</code></td></tr>`)});
+ const bl=Object.keys(inv.back);t3++;const okb=bl.filter(l=>/^←/.test(l)).length===bl.length||bl.length<=1;if(okb)p3++;r3.push(`<tr><td>Back links</td><td>${bl.length} styles</td><td class="${okb?"ok":"wn"}">${esc(bl.slice(0,8).join(" | "))||"—"}</td></tr>`);
+ tbl("t3",["Check","What","Result"],r3);card("Consistency checks",p3,t3);
+ // 4 errors
+ const FORMS=[["Search: empty",P+"r=search","form",{}],["Search: symbols",P+"r=search","form",{"input":"%%$$##"}],["Monthly: empty",P+"r=month","form",{}],["Sign in: empty",P+"r=signin","form",{}],["Sign in: bad email",P+"r=signin","form",{"input[type=email]":"not-an-email","input[type=password]":"x"}],["Create account: weak password",P+"r=signin&tab=create","form",{"input[type=email]":"a@b.co","input[type=password]":"abc"}],["Check-in: empty",Q+"r=checkin","form",{}],["Register church: empty",Q+"r=register","form",{}],["Sign-in Planning Center: empty",Q+"r=signin","form",{}]];
+ const r4=[];let p4=0;
+ for(const [n,u,fs,vals] of FORMS){await load(u);const d=D(),w=W();let res={shown:false,fix:false,ann:false,kept:true,note:""};
+  try{const form=[...d.querySelectorAll(fs)].find(vis);if(!form){res.note="no form";}else{const setV=(el,v)=>{const pr=Object.getOwnPropertyDescriptor(w[el.tagName==="TEXTAREA"?"HTMLTextAreaElement":"HTMLInputElement"].prototype,"value");pr.set.call(el,v);el.dispatchEvent(new w.Event("input",{bubbles:true}))};
+   Object.entries(vals).forEach(([s,v])=>{const el=[...form.querySelectorAll(s)].find(vis);if(el)setV(el,v)});await sleep(150);
+   const before=d.body.innerText;const sb=[...form.querySelectorAll('button[type=submit],button:not([type])')].find(vis);if(sb)sb.click();else form.requestSubmit();await sleep(900);
+   const after=d.body.innerText;const added=after.split("\n").filter(l=>!before.includes(l)&&l.trim()).join(" ").trim();
+   const inv2=[...d.querySelectorAll('[aria-invalid="true"],[role=alert],[aria-live]')].filter(e=>vis(e)&&(e.matches('[aria-invalid="true"]')||e.textContent.trim()));
+   const bad=[...form.querySelectorAll("input,textarea")].filter(e=>e.validity&&!e.validity.valid).map(e=>e.validationMessage);
+   res.shown=!!added||bad.length>0||inv2.length>0;res.note=(added||bad[0]||"").slice(0,90);res.fix=/(use|add|enter|type|try|search|sending|pick|write|at least|or more|must|needs?|choose|pick|write|a word|characters?)/i.test(res.note);res.ann=inv2.length>0||bad.length>0;
+   res.kept=Object.entries(vals).every(([s,v])=>{const el=[...form.querySelectorAll(s)].find(vis);return !el||el.value===v})}}catch(e){res.note="error "+e.message}
+  const ok=res.shown&&res.fix&&res.ann&&res.kept;if(ok)p4++;
+  r4.push(`<tr><td>${esc(n)}</td>${[res.shown,res.fix,res.ann,res.kept].map(v=>`<td class="${v?"ok":"no"}">${v?"Pass":"No"}</td>`).join("")}<td><code>${esc(res.note)}</code></td></tr>`);tbl("t4",["Case","Error shown","Says how to fix","Announced","Input kept","Message"],r4)}
+ card("Error states",p4,FORMS.length);
+ // 2 walkthrough
+ const TASKS=[["Look up “karma”",[[P+"r=search","Find where to type a word"],[P+"r=term&t=karma","Read the meaning and sources"]]],["Answer the monthly question as a guest",[[P+"r=welcome","Choose to continue without an account"],[P+"r=month","Write and send an answer"]]],["Pastor: log today’s check-in",[[Q+"r=home&pco=on","Find where to check in"],[Q+"r=checkin","Fill and send"],[Q+"r=result&ck=steady","Understand what happened"]]],["Reviewer: open and acknowledge a packet",[[Q+"role=reviewer&r=queue","Pick the next review"],[Q+"role=reviewer&r=review&id=P-0419","Read and acknowledge"]]],["Leader: raise a region alert",[[Q+"role=leader&r=alerts","Start and send an alert"]]],["Connect Planning Center",[[Q+"r=integrations&pco=off","Find Connect"],[Q+"r=signin","Sign in"],[Q+"r=church&pco=on","Confirm what came in"]]]];
+ const r2=[];let p2=0;
+ for(const [task,steps] of TASKS){const shots=[];for(const [u,g] of steps){await load(u);shots.push(`STEP goal: ${g}\nScreen text: """${D().body.innerText.replace(/\n{2,}/g,"\n").slice(0,1100)}"""\nControls: ${ctrls().slice(0,24).map(lbl).filter(Boolean).join(" | ").slice(0,400)}`)}
+  const a=await ask(`${CTX}\nRun a cognitive walkthrough for a first-time user. Task: ${task}.\n${shots.join("\n---\n")}\nFor EACH step answer the 4 questions (know what to do? see the control? connect it to the goal? know it worked?) as true/false. Reply ONLY JSON: {"steps":[{"q":[b,b,b,b],"problem":"<short or empty>"}],"verdict":"<one sentence>"}`);
+  const st=a&&a.steps||[];const fails=st.reduce((x,s)=>x+(s.q||[]).filter(v=>!v).length,0);const ok=a?fails===0:null;if(ok)p2++;
+  r2.push(`<tr><td>${esc(task)}</td><td>${steps.length}</td><td class="${cls(ok)}">${a?(fails?fails+" gaps":"Pass"):"AI off"}</td><td>${a?esc(st.map((s,i)=>s.problem?`Step ${i+1}: ${s.problem}`:"").filter(Boolean).join(" · ")||a.verdict||""):""}</td></tr>`);tbl("t2",["Task","Steps","Result","Where a user could stall"],r2)}
+ card("Walkthrough tasks clean",p2,TASKS.length);
+ $("st").textContent="Finished "+new Date().toLocaleString()+(AI?"":" — AI reviewer unavailable; rule checks only.");
+ const strip=r=>r.replace(/<br>/g," → ").replace(/<[^>]+>/g," ").replace(/\s+/g," ").trim();
+ window.__expert={tot,h:r1.filter(r=>/class="(no|wn)">\d\.\d|class="no">[12]</.test(r)).map(strip).map(s=>s.slice(0,260)),w:r2.filter(r=>/gaps/.test(r)).map(strip),c:r3.filter(r=>/class="wn"/.test(r)).map(strip).map(s=>s.slice(0,160)),e:r4.filter(r=>/class="no"/.test(r)).map(strip),n:r5.filter(r=>/class="no"/.test(r)).map(strip),m:r6.filter(r=>/class="(no|wn)"/.test(r)).map(strip).map(s=>s.slice(0,200))};
+})();
+</script></body></html>

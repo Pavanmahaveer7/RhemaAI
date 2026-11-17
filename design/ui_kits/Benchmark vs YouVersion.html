@@ -1,0 +1,42 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Benchmark vs YouVersion</title><link rel="stylesheet" href="../styles.css">
+<style>body{margin:0;padding:24px 20px 60px;background:var(--surface-page);color:var(--text-body);font:15px/1.45 var(--font-body)}main{max-width:1000px;margin:0 auto;display:flex;flex-direction:column;gap:20px}h1{font:800 34px/1.05 var(--font-display);color:var(--text-strong);margin:0}table{border-collapse:collapse;width:100%}td,th{padding:8px 10px;border-bottom:1px solid var(--border-subtle);text-align:left;vertical-align:top}th{color:var(--text-muted);font-weight:600}.ok{color:var(--ok-400);font-weight:700}.no{color:var(--danger-400);font-weight:700}.wn{color:var(--lamp-400);font-weight:700}#f{position:absolute;left:-9999px;width:390px;height:844px;border:0}a{color:var(--lamp-400)}a:hover{color:var(--lamp-300)}</style></head>
+<body><main><h1>Strict benchmark · Church AI vs YouVersion</h1><p>Same harsh reviewer, same format for every page: headings + controls in order, no product context. Each page scored 3 times and averaged (the reviewer varies run to run). YouVersion pages are its public web pages at bible.com, read as text — the app's 4.9★ / 1B+ installs are not shown to the reviewer.</p><p id="st" style="color:var(--text-muted)">Running…</p><table><thead><tr><th>Page</th><th>Run 1</th><th>Run 2</th><th>Run 3</th><th>Average</th><th>Top complaint</th></tr></thead><tbody id="rows"></tbody></table></main><iframe id="f"></iframe>
+<script>
+const YV_HOME=`[header] logo link · link "Get the app"
+H1 "The Holy Bible. For Everyone. 100% Free." · large photo
+H2 "Read the Bible Online" — "Trusted translations, in your language." · buttons "Start Reading", "Listen"
+H2 "Today's Bible Verse" — "Encouragement from Scripture. For you." · button "Read Now"
+H2 "Bible Verses About..." · 17 topic links (Love, Strength, Healing, Anxiety, Hard Times, Anger, Life, Faith, Jesus, God, The Bible, The Ten Commandments, Loving God, Friendship, Death, Family, Marriage)
+H2 "Videos" — "See the Bible in a fresh way" · link "See All" · 3 video cards with thumbnail, duration, title, publisher
+H2 "Bible Reading Plans" — "Start with a question" · link "See All" · 3 plan cards with image, length in days, title, publisher
+H2 "Bible Stories" — "Faith, failure, and hope" · 6 story links
+H2 "Bible Audio" — "Listen to Scripture throughout your day." · button "Try Audio" · photo
+H2 "Daily Devotionals & Bible Plans" — "Build a daily Bible habit." · button "Explore" · image
+H2 "Free Mobile Apps" — "Your Bible. On every screen." · app card "1 Billion+ Global Installs", "4.9 20M Ratings", link "Learn More" · kids app card, link "Learn More"
+[footer] 13 links (Blog, Versions, Languages, Help, Feedback, Giving, About, Press, Churches, Developers, Vulnerability, Privacy, Terms)
+[fixed bottom bar] Home | Bible | Today | Plans`;
+const YV_APP=`[header] logo link · link "Get the app"
+H1 "Bible App" — "100% free. No ads or purchases ever." · QR code image "Scan the QR Code with your mobile device to download Bible App." · phone mockup image
+H2 "Stories of Life Change" · carousel of 3 testimonial cards (name, country, quote, "Read More →"), repeated twice
+H2 "Versions" — "Trusted Bible translations, in your language." · 4 version names
+H2 "Audio" — "Listen to the Bible wherever you go." · photo
+H2 "Start Your Day Right" — "Get a new Bible verse, short devotional, and Guided Prayer every day." · screenshot
+H2 "Plans" — "Build a Bible habit with daily Plans." · screenshot · scrolling strip of 9 partner logos repeated 4 times
+H2 "Discover" — "Find verses, plans, and videos for any topic." · screenshot
+H2 "Make the Bible Yours" — "Reflect as you read with Highlights, Notes, and other helpful tools." · screenshot
+H2 "Download the Holy Bible App" — "Connect with God's Word every day." "20M Ratings. 4.9" · App Store badge · Google Play badge
+[footer] 11 links
+[fixed bottom bar] Home | Bible | Today | Plans`;
+const STRICT=`You are a harsh senior UX auditor. You know nothing about this product beyond what is on the screen. Do a Nielsen heuristic evaluation of ONE mobile page. Do not give the benefit of the doubt: anything unclear, unexplained, inconsistent, or that a first-time user could misread counts against it. 5 = flawless, 4 = minor nit, 3 = real problem, 1–2 = blocker.`;
+const fmt=`Reply ONLY JSON: {"scores":[10 integers for H1..H10],"worst":"<one specific problem quoting the UI>"}`;
+const $=id=>document.getElementById(id),F=$("f"),sleep=ms=>new Promise(r=>setTimeout(r,ms)),esc=s=>String(s).replace(/</g,"&lt;");
+async function ourOutline(u){await new Promise(r=>{F.onload=r;F.src=u;setTimeout(r,8000)});await sleep(3000);const d=F.contentDocument,w=F.contentWindow;const vis=e=>{const r=e.getBoundingClientRect();return r.width>0&&r.height>0&&w.getComputedStyle(e).visibility!=="hidden"&&!e.closest('[aria-hidden="true"],[data-demo]')};const L=e=>(e.getAttribute("aria-label")||(e.labels&&e.labels[0]&&e.labels[0].innerText)||e.innerText||e.placeholder||"").trim().replace(/\s+/g," ").slice(0,60);
+ const out=[];[...d.body.querySelectorAll("h1,h2,h3,p,button,a[href],input,textarea,nav,video,img,svg")].filter(vis).forEach(e=>{const t=e.tagName;if(e.closest("nav")&&t!=="NAV")return;if(t==="NAV")out.push("[navigation] "+[...e.querySelectorAll("a,button")].filter(vis).map(L).join(" | "));else if(/^H/.test(t))out.push(t+' "'+e.textContent.trim().slice(0,80)+'"');else if(t==="P"){const s=e.textContent.trim();if(s.length>8&&!e.closest("button,a"))out.push('— "'+s.slice(0,110)+'"')}else if(t==="INPUT"||t==="TEXTAREA")out.push('input box labelled "'+L(e)+'"');else if(t==="VIDEO")out.push("video");else if((t==="SVG"||t==="IMG")&&e.getBoundingClientRect().width>120)out.push("illustration");else if(t==="BUTTON"||t==="A"){const l=L(e);if(l)out.push((t==="A"?"link":"button")+' "'+l+'"')}});
+ return [...new Set(out)].join("\n").slice(0,2800)}
+async function score(name,outline){const r=[];for(let k=0;k<3;k++){try{const t=await window.claude.complete(`${STRICT}\nPage: ${name} (phone)\nWhat is on the page, top to bottom:\n${outline}\n${fmt}`);const j=JSON.parse(t.match(/\{[\s\S]*\}/)[0]);r.push({a:+(j.scores.reduce((x,y)=>x+ +y,0)/10).toFixed(1),w:j.worst})}catch(e){r.push({a:null,w:"error"})}}return r}
+(async()=>{if(!window.claude||!window.claude.complete){$("st").textContent="AI not reachable in this tab.";return}
+ const pages=[["YouVersion · home (bible.com)",YV_HOME],["YouVersion · app page (bible.com/app)",YV_APP],["Church AI · landing",await ourOutline("landing/index.html")],["Church AI · search home",await ourOutline("public/index.html#r=search")],["Church AI · word page (karma)",await ourOutline("public/index.html#r=term&t=karma")]];
+ const res=[];for(const [n,o] of pages){const r=await score(n,o);const ok=r.filter(x=>x.a!==null);const avg=ok.length?+(ok.reduce((x,y)=>x+y.a,0)/ok.length).toFixed(2):null;res.push([n,avg]);
+  const tr=document.createElement("tr");tr.innerHTML=`<td>${esc(n)}</td>${r.map(x=>`<td>${x.a??"—"}</td>`).join("")}<td class="${avg>=4?"ok":avg>=3?"wn":"no"}">${avg??"—"}</td><td>${esc((r.find(x=>x.w&&x.w!=="error")||{}).w||"")}</td>`;$("rows").appendChild(tr);$("st").textContent=`${res.length}/${pages.length}…`}
+ $("st").textContent="Finished "+new Date().toLocaleString();window.__yv=res;})();
+</script></body></html>

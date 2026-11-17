@@ -1,0 +1,29 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Full test report</title><link rel="stylesheet" href="../styles.css">
+<style>body{margin:0;padding:28px 20px 60px;background:var(--surface-page);color:var(--text-body);font:15px/1.45 var(--font-body)}main{max-width:1100px;margin:0 auto;display:flex;flex-direction:column;gap:28px}h1{font:800 clamp(30px,5vw,44px)/1.05 var(--font-display);color:var(--text-strong);margin:0}h2{font:var(--type-section);color:var(--text-strong);margin:0}.tot{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr));gap:12px}.k{border:1px solid var(--border-subtle);border-radius:var(--radius-md);padding:16px;background:var(--surface-raised)}.k b{display:block;font:800 32px/1 var(--font-display);color:var(--text-strong);margin-bottom:6px}table{border-collapse:collapse;width:100%;margin-top:10px}td,th{padding:7px 10px;border-bottom:1px solid var(--border-subtle);text-align:left;vertical-align:top}th{color:var(--text-muted);font-weight:600}.ok{color:var(--ok-400);font-weight:700}.no{color:var(--danger-400);font-weight:700}code{font:12px/1.4 var(--font-mono)}.wrap{overflow-x:auto}iframe{position:absolute;left:-9999px;top:0;width:1200px;height:900px;border:0}a{color:var(--lamp-400)}a:hover{color:var(--lamp-300)}</style></head>
+<body><main><header><h1>Full UI/UX test report</h1><p id="st" style="margin:8px 0 0;color:var(--text-muted)">Running all three suites… about 4 minutes.</p></header>
+<div class="tot" id="tot"></div>
+<section><h2>1. Components &amp; input rules</h2><div class="wrap" id="t1"></div></section>
+<section><h2>2. Every screen loads (landing, onboarding, app, pastor, reviewer, tour)</h2><div class="wrap" id="t2"></div></section>
+<section><h2>3. Accessibility audit (phone width)</h2><div class="wrap" id="t3"></div></section>
+</main>
+<iframe id="a" src="tests.html"></iframe><iframe id="b" src="smoke.html"></iframe><iframe id="c" src="audit.html"></iframe>
+<script>
+const sleep=ms=>new Promise(r=>setTimeout(r,ms)),$=id=>document.getElementById(id),esc=s=>String(s).replace(/</g,"&lt;");
+const wait=async(id,key,done)=>{for(let i=0;i<600;i++){try{const w=$(id).contentWindow;if(w[key]&&done(w))return w}catch(e){}await sleep(1000)}return $(id).contentWindow};
+const tot=[];const card=(n,p,t)=>{tot.push([n,p,t]);$("tot").innerHTML=tot.map(([n,p,t])=>`<div class="k"><b class="${p===t?"ok":"no"}">${p} / ${t}</b>${n}</div>`).join("")};
+(async()=>{
+ const A=await wait("a","__tests",()=>true);const ar=[...A.document.querySelectorAll("#rows tr")].map(tr=>[...tr.children].map(td=>td.textContent));
+ $("t1").innerHTML=`<table><thead><tr><th>Area</th><th>Test</th><th>Result</th><th>Detail</th></tr></thead><tbody>${ar.map(r=>`<tr><td>${esc(r[0])}</td><td>${esc(r[1])}</td><td class="${r[2]==="Pass"?"ok":"no"}">${r[2]}</td><td><code>${esc(r[3])}</code></td></tr>`).join("")}</tbody></table>`;
+ card("Components & rules",A.__tests.pass,A.__tests.total);
+ const B=await wait("b","__smoke",()=>true);const br=[...B.document.querySelectorAll("#rows tr")].map(tr=>[...tr.children].map(td=>td.textContent));
+ $("t2").innerHTML=`<table><thead><tr><th>Screen</th><th>Result</th><th>Detail</th></tr></thead><tbody>${br.map(r=>`<tr><td>${esc(r[0])}</td><td class="${r[1]==="Pass"?"ok":"no"}">${r[1]}</td><td><code>${esc(r[2])}</code></td></tr>`).join("")}</tbody></table>`;
+ card("Screens load clean",B.__smoke.pass,B.__smoke.total);
+ const C=await wait("c","__audit",w=>/clean/.test(w.document.getElementById("sum").textContent));const cr=C.__audit;
+ const names=["Contrast","Tap ≥44px","Named controls","Heading order","Text ≥12px"],keys=["c","t","u","h","s"];
+ $("t3").innerHTML=`<table><thead><tr><th>Screen</th>${names.map(n=>`<th>${n}</th>`).join("")}<th>Issues</th></tr></thead><tbody>${cr.map(([n,o])=>`<tr><td>${esc(n)}</td>${keys.map(k=>`<td class="${o[k].length?"no":"ok"}">${o[k].length?o[k].length:"Pass"}</td>`).join("")}<td><code>${esc(keys.flatMap(k=>o[k].slice(0,2)).join(" · ")).slice(0,220)}</code></td></tr>`).join("")}</tbody></table>`;
+ let cp=0,ct=0;cr.forEach(([,o])=>keys.forEach(k=>{ct++;if(!o[k].length)cp++}));
+ card("Accessibility checks",cp,ct);card("Screens fully clean (a11y)",cr.filter(([,o])=>keys.every(k=>!o[k].length)).length,cr.length);
+ $("st").textContent="Finished "+new Date().toLocaleString()+". Re-open this page to run again.";
+ window.__report={tot,fails:{a:ar.filter(r=>r[2]!=="Pass"),b:br.filter(r=>r[1]!=="Pass"),c:cr.filter(([,o])=>keys.some(k=>o[k].length)).map(([n,o])=>n+": "+keys.flatMap(k=>o[k].slice(0,3)).join(" ; "))}};
+})();
+</script></body></html>

@@ -1,0 +1,19 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Screen smoke test</title><link rel="stylesheet" href="../styles.css">
+<style>body{margin:0;padding:24px;background:var(--surface-page);color:var(--text-body);font:15px/1.4 var(--font-body)}h1{font:800 32px/1 var(--font-display);color:var(--text-strong);margin:0 0 6px}table{border-collapse:collapse;width:100%;max-width:1200px;margin-top:16px}td,th{padding:7px 10px;border-bottom:1px solid var(--border-subtle);text-align:left;vertical-align:top}th{color:var(--text-muted)}.ok{color:var(--ok-400);font-weight:700}.no{color:var(--danger-400);font-weight:700}code{font:13px var(--font-mono)}#f{position:absolute;left:-9999px;width:390px;height:844px}a{color:var(--lamp-400)}a:hover{color:var(--lamp-300)}</style></head>
+<body><h1>Screen smoke test</h1><p style="color:var(--text-muted);max-width:720px">Loads every route from <code>screens-manifest.json</code>. Headless CI: <code>pnpm test:ui</code> from repo root (needs Next on :3000).</p><div id="sum">Running…</div><table><thead><tr><th>Screen</th><th>Result</th><th>Detail</th></tr></thead><tbody id="rows"></tbody></table><iframe id="f"></iframe>
+<script>
+const f=document.getElementById("f"),tb=document.getElementById("rows");let pass=0;const out=[];
+(async()=>{
+  const manifest=await fetch("screens-manifest.json").then(r=>r.json());
+  const R=manifest.screens.map(s=>[s.name,s.url,s.expect]);
+  for(const [n,u,expect] of R){const errs=[];
+  await new Promise(res=>{let done=false;const fin=()=>{if(done)return;done=true;res()};
+  f.onload=()=>{try{const w=f.contentWindow;w.addEventListener("error",e=>errs.push(e.message));const ce=w.console.error;w.console.error=(...a)=>{const s=a.map(String).join(" ");if(!/Warning:|DevTools|babel|in-browser/i.test(s))errs.push(s.slice(0,160));ce.apply(w.console,a)}}catch(e){}setTimeout(fin,3200)};
+  f.src=u;setTimeout(fin,6500)});
+  let blank=false,txt=0;try{const d=f.contentDocument;txt=(d.body.innerText||"").trim().length;blank=txt<20&&!/plain/.test(f.contentWindow.location.href)}catch(e){}
+  const expectRe=new RegExp(expect,"i");const contentOk=expect==="."?txt>=20:expectRe.test((f.contentDocument.body.innerText||""));
+  const ok=!errs.length&&!blank&&contentOk;if(ok)pass++;out.push([n,ok,errs[0]||(blank?"blank page":contentOk?txt+" chars":"missing /"+expect+"/")]);
+  const tr=document.createElement("tr");tr.innerHTML=`<td>${n}</td><td class="${ok?"ok":"no"}">${ok?"Pass":"Fail"}</td><td><code>${String(errs[0]||(blank?"blank page":contentOk?txt+" chars":"missing /"+expect+"/")).replace(/</g,"&lt;")}</code></td>`;tb.appendChild(tr);
+  document.getElementById("sum").textContent=`${pass} / ${out.length} passed…`}
+ document.getElementById("sum").textContent=`${pass} / ${R.length} passed`;window.__smoke={pass,total:R.length,fails:out.filter(r=>!r[1])};})();
+</script></body></html>

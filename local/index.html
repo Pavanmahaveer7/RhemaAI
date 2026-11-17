@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Rhema.ai — App map</title>
+  <link rel="stylesheet" href="/design/styles.css">
+  <style>
+    * { box-sizing: border-box; }
+    html, body { margin: 0; height: 100%; background: var(--ink-0, #0b0f0c); color: var(--text-body, #e8ece4); font: 15px/1.45 var(--font-body, system-ui, sans-serif); }
+    .app { display: grid; grid-template-columns: 280px 1fr; grid-template-rows: 56px 1fr 56px; height: 100vh; }
+    .top { grid-column: 1 / -1; display: flex; align-items: center; gap: 12px; padding: 0 16px; border-bottom: 1px solid var(--border-subtle, #324034); background: #0e1410; }
+    .brand { font: 800 1.05rem/1 var(--font-display, Georgia, serif); color: var(--text-strong, #f3f7ee); letter-spacing: -0.02em; }
+    .status { display: inline-flex; align-items: center; gap: 7px; font-size: 12px; color: var(--text-muted, #b8c4b8); margin-left: auto; }
+    .dot { width: 8px; height: 8px; border-radius: 50%; background: #888; }
+    .status.ok .dot { background: #6bc96b; }
+    .status.bad .dot { background: #e07070; }
+    .side { overflow: auto; border-right: 1px solid var(--border-subtle, #324034); padding: 12px 10px 24px; background: #0c110e; }
+    .stage { min-width: 0; min-height: 0; background: #0b0f0c; }
+    #frame { width: 100%; height: 100%; border: 0; background: #0b0f0c; }
+    .bar { grid-column: 1 / -1; display: flex; align-items: center; gap: 8px; padding: 0 16px; border-top: 1px solid var(--border-subtle, #324034); background: #0e1410; }
+    .bar .now { flex: 1; min-width: 0; font-size: 13px; color: var(--text-muted, #b8c4b8); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .btn { display: inline-flex; align-items: center; justify-content: center; min-height: 40px; padding: 0 14px; border-radius: 999px; font: 700 13px/1 var(--font-body, system-ui); text-decoration: none; border: 0; cursor: pointer; color: inherit; background: transparent; }
+    .btn-primary { background: var(--lamp-400, #cfda5c); color: #0b0f0c; }
+    .btn-ghost { border: 1px solid var(--border-subtle, #324034); }
+    .btn:disabled { opacity: .35; cursor: default; }
+    .find { width: 100%; min-height: 40px; margin: 0 0 12px; padding: 0 12px; border-radius: 10px; border: 1px solid var(--border-subtle, #324034); background: #121814; color: var(--text-strong, #f3f7ee); font: inherit; }
+    .sec { font: 700 10px/1 var(--font-body); letter-spacing: .08em; text-transform: uppercase; color: var(--lamp-400, #cfda5c); margin: 14px 6px 6px; }
+    .item { display: block; width: 100%; text-align: left; padding: 8px 10px; border: 0; border-radius: 10px; background: transparent; color: var(--text-body, #e8ece4); font: 600 14px/1.25 var(--font-body); cursor: pointer; }
+    .item:hover { background: rgba(207, 218, 92, .08); }
+    .item.on { background: rgba(207, 218, 92, .16); color: var(--text-strong, #f3f7ee); }
+    .tip { display: block; font: 500 11px/1.35 var(--font-body); color: var(--text-muted, #b8c4b8); margin-top: 3px; font-weight: 500; }
+    .copy { display: inline; border: 0; background: none; color: var(--lamp-400, #cfda5c); font: inherit; cursor: pointer; padding: 0; text-decoration: underline; text-underline-offset: 2px; }
+    .pass { font-size: 12px; color: var(--text-muted, #b8c4b8); padding: 0 6px 10px; }
+    .sub { display: flex; flex-wrap: wrap; gap: 6px; padding: 2px 6px 8px; }
+    .chip { min-height: 32px; padding: 0 10px; border-radius: 999px; border: 1px solid var(--border-subtle, #324034); background: transparent; color: var(--text-body); font: 600 12px/1 var(--font-body); cursor: pointer; }
+    .chip.on { background: var(--lamp-400, #cfda5c); color: #0b0f0c; border-color: transparent; }
+    .menu-btn { display: none; }
+    .api-banner { display: none; font-size: 12px; color: #f0c0c0; padding: 8px 10px; margin-bottom: 10px; border: 1px solid #5a3030; border-radius: 10px; background: #1a1010; }
+    .api-banner.show { display: block; }
+    @media (max-width: 800px) {
+      .app { grid-template-columns: 1fr; grid-template-rows: 56px auto 1fr 56px; }
+      .side { display: none; border-right: 0; border-bottom: 1px solid var(--border-subtle, #324034); max-height: 46vh; }
+      .side.open { display: block; }
+      .menu-btn { display: inline-flex; }
+      .top { grid-column: 1; }
+      .bar { grid-column: 1; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="top">
+      <button type="button" class="btn btn-ghost menu-btn" id="menuBtn">Map</button>
+      <span class="brand">Rhema.ai</span>
+      <span class="status" id="apiStatus"><span class="dot"></span><span id="apiText">Checking…</span></span>
+    </header>
+    <nav class="side" id="side" aria-label="App map">
+      <div class="api-banner" id="apiBanner">Looks offline. From <code>church-ai-stack</code> run <code>.\scripts\run_local.ps1</code></div>
+      <input class="find" id="find" type="search" placeholder="Find a screen…" autocomplete="off">
+      <p class="pass">Staff password <button type="button" class="copy" data-copy="dev-only-change-me" title="Copy">dev-only-change-me</button></p>
+      <div id="nav"></div>
+    </nav>
+    <div class="stage"><iframe id="frame" title="App screen" sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox"></iframe></div>
+    <div class="bar">
+      <span class="now" id="now"></span>
+      <button type="button" class="btn btn-ghost" id="prev">Back</button>
+      <button type="button" class="btn btn-primary" id="next">Next</button>
+      <button type="button" class="btn btn-ghost" id="openTab">Full screen</button>
+    </div>
+  </div>
+  <script>
+    var ITEMS = [
+      { id: "home", group: "Reader", name: "Home" },
+      { id: "tour", group: "Reader", name: "Tour", href: "/tour" },
+      { id: "app", group: "Reader", name: "Dictionary", href: "/search" },
+      { id: "search", group: "Reader", name: "Search", href: "/search" },
+      { id: "word", group: "Reader", name: "Word: karma", href: "/word/karma", tip: "Long-press the headword for Faith mode. The URL stays the same." },
+      { id: "month", group: "Reader", name: "Monthly question", href: "/month" },
+      { id: "map", group: "Reader", name: "Ideas map", href: "/map" },
+      { id: "onboard", group: "Reader", name: "Onboarding", href: "/welcome/1", chips: [
+        { label: "1", href: "/welcome/1" }, { label: "2", href: "/welcome/2" },
+        { label: "3", href: "/welcome/3" }, { label: "4", href: "/welcome/4" }
+      ] },
+      { id: "guest", group: "Reader", name: "Guest (skip account)", href: "/search?guest=1" },
+      { id: "signin", group: "Reader", name: "Member sign-in", href: "/signin" },
+      { id: "settings", group: "Reader", name: "Settings", href: "/settings" },
+      { id: "survey", group: "More pages", name: "Beta survey", href: "/beta-survey" },
+      { id: "feedback", group: "More pages", name: "Feedback board", href: "/feedback" },
+      { id: "waitlist", group: "More pages", name: "Waitlist", href: "/waitlist" },
+      { id: "help", group: "More pages", name: "Help", href: "/help" },
+      { id: "staff", group: "Staff", name: "Sign in", href: "/staff", tip: "Use P-0233, then you land on Pastor.", copy: "P-0233" },
+      { id: "phone-reg", group: "Staff", name: "Phone register", href: "/staff?register=phone", tip: "Code appears on screen." },
+      { id: "phone-in", group: "Staff", name: "Phone sign-in", href: "/staff?signin=phone" },
+      { id: "care", group: "Pastor", name: "Home / care", href: "/care", tip: "Sign in as P-0233 first.", copy: "P-0233" },
+      { id: "checkin", group: "Pastor", name: "Check-in", href: "/care/checkin", tip: "Sign in as P-0233 first.", copy: "P-0233" },
+      { id: "tracks", group: "Pastor", name: "Tracks", href: "/care/tracks", tip: "Sign in as P-0233 first.", copy: "P-0233" },
+      { id: "pack", group: "Pastor", name: "Monthly pack", href: "/care/pack", tip: "Sign in as P-0233 first.", copy: "P-0233" },
+      { id: "apps", group: "Pastor", name: "Church apps", href: "/care/apps", tip: "Sign in as P-0233 first.", copy: "P-0233" },
+      { id: "review", group: "Other roles", name: "Reviewer queue", href: "/review", tip: "Sign in as R-0100 first.", copy: "R-0100" },
+      { id: "alerts", group: "Other roles", name: "Regional alerts", href: "/alerts", tip: "Sign in as L-0100 first.", copy: "L-0100" },
+      { id: "admin", group: "Admin", name: "Admin hub", href: "/admin/map", tip: "Sign in as A-0100 first.", copy: "A-0100" },
+      { id: "analytics", group: "Admin", name: "Analytics", href: "/analytics", tip: "Sign in as A-0100 first.", copy: "A-0100" }
+    ];
+    ITEMS[0].href = "/";
+
+    var i = 0;
+    var frame = document.getElementById("frame");
+    var nav = document.getElementById("nav");
+    var q = "";
+
+    function copyText(t) {
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(t).catch(function () {});
+    }
+
+    function go(n, href) {
+      i = n;
+      var it = ITEMS[i];
+      var url = href || it.href;
+      it._href = url;
+      frame.src = url;
+      document.getElementById("now").textContent = it.group + " · " + it.name;
+      document.getElementById("prev").disabled = i === 0;
+      document.getElementById("next").disabled = i === ITEMS.length - 1;
+      history.replaceState(null, "", "/local#" + it.id);
+      paint();
+      if (window.matchMedia("(max-width: 800px)").matches) document.getElementById("side").classList.remove("open");
+    }
+
+    function paint() {
+      nav.innerHTML = "";
+      var last = "";
+      ITEMS.forEach(function (it, n) {
+        if (q && it.name.toLowerCase().indexOf(q) < 0 && it.group.toLowerCase().indexOf(q) < 0) return;
+        if (it.group !== last) {
+          var h = document.createElement("div");
+          h.className = "sec";
+          h.textContent = it.group;
+          nav.appendChild(h);
+          last = it.group;
+        }
+        var b = document.createElement("button");
+        b.type = "button";
+        b.className = "item" + (n === i ? " on" : "");
+        b.textContent = it.name;
+        if (it.tip) {
+          var t = document.createElement("span");
+          t.className = "tip";
+          t.textContent = it.tip + " ";
+          if (it.copy) {
+            var c = document.createElement("button");
+            c.type = "button";
+            c.className = "copy";
+            c.textContent = "Copy " + it.copy;
+            c.onclick = function (e) { e.stopPropagation(); copyText(it.copy); c.textContent = "Copied"; setTimeout(function () { c.textContent = "Copy " + it.copy; }, 1200); };
+            t.appendChild(c);
+          }
+          b.appendChild(t);
+        }
+        b.onclick = function () { go(n); };
+        nav.appendChild(b);
+        if (it.chips) {
+          var row = document.createElement("div");
+          row.className = "sub";
+          it.chips.forEach(function (ch) {
+            var k = document.createElement("button");
+            k.type = "button";
+            k.className = "chip" + ((it._href || it.href) === ch.href && n === i ? " on" : "");
+            k.textContent = ch.label;
+            k.onclick = function () { go(n, ch.href); };
+            row.appendChild(k);
+          });
+          nav.appendChild(row);
+        }
+      });
+    }
+
+    document.getElementById("prev").onclick = function () { if (i > 0) go(i - 1); };
+    document.getElementById("next").onclick = function () { if (i < ITEMS.length - 1) go(i + 1); };
+    document.getElementById("openTab").onclick = function () { window.open(ITEMS[i]._href || ITEMS[i].href, "_blank"); };
+    document.getElementById("find").oninput = function (e) { q = e.target.value.trim().toLowerCase(); paint(); };
+    document.getElementById("menuBtn").onclick = function () { document.getElementById("side").classList.toggle("open"); };
+    document.querySelectorAll("[data-copy]").forEach(function (el) {
+      el.onclick = function () { copyText(el.getAttribute("data-copy")); el.textContent = "copied"; setTimeout(function () { el.textContent = el.getAttribute("data-copy"); }, 1200); };
+    });
+    document.addEventListener("keydown", function (e) {
+      if (e.target && (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA")) return;
+      if (e.key === "ArrowRight" || e.key === "ArrowDown") { e.preventDefault(); if (i < ITEMS.length - 1) go(i + 1); }
+      if (e.key === "ArrowLeft" || e.key === "ArrowUp") { e.preventDefault(); if (i > 0) go(i - 1); }
+    });
+
+    var start = (location.hash || "").replace(/^#/, "");
+    var idx = ITEMS.findIndex(function (it) { return it.id === start; });
+    go(idx >= 0 ? idx : 0);
+
+    fetch("/api/v1/status", { cache: "no-store" })
+      .then(function (r) { if (!r.ok) throw new Error(); return r.json(); })
+      .then(function () {
+        document.getElementById("apiStatus").classList.add("ok");
+        document.getElementById("apiText").textContent = "API on";
+      })
+      .catch(function () {
+        document.getElementById("apiStatus").classList.add("bad");
+        document.getElementById("apiText").textContent = "API off";
+        document.getElementById("apiBanner").classList.add("show");
+      });
+  </script>
+</body>
+</html>

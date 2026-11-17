@@ -1,0 +1,42 @@
+// Catalog for All Screens board — keep in sync with screens-manifest.json
+window.CA_SCREENS = (() => {
+  const P = "public/index.html#", Q = "pipeline/index.html#";
+  return [
+    ["Landing", "landing/index.html"],
+    ["Search", P + "r=search"],
+    ["Guest search", P + "r=search&guest=1"],
+    ["Staff sign in", P + "r=signin&staff=l3"],
+    ["Word karma", P + "r=term&t=karma"],
+    ["Word missing", P + "r=term&t=zzzz"],
+    ["Monthly", P + "r=month"],
+    ["Monthly closed", P + "r=month&closed=1"],
+    ["Map", P + "r=graph"],
+    ["Onboarding 1", P + "r=intro&step=1"],
+    ["Onboarding 2", P + "r=intro&step=2"],
+    ["Onboarding 3", P + "r=intro&step=3"],
+    ["Onboarding 4", P + "r=intro&step=4"],
+    ["Welcome", P + "r=welcome"],
+    ["Sign in", P + "r=signin"],
+    ["Settings", P + "r=settings&as=member"],
+    ["States", P + "r=states"],
+    ["Admin accounts", P + "r=admin&tab=accounts&as=admin"],
+    ["Admin beta feedback", P + "r=admin&tab=feedback&as=admin"],
+    ["Admin map draft", P + "r=admin&tab=map&as=admin"],
+    ["Admin draft map", P + "r=admin&tab=draftmap&as=admin"],
+    ["Pastor home", Q + "r=home&pco=on&api=0"],
+    ["Check-in", Q + "r=checkin&api=0"],
+    ["Result steady", Q + "r=result&ck=steady&api=0"],
+    ["Result hard", Q + "r=result&ck=hard&api=0"],
+    ["Tracks", Q + "r=tracks&pco=on&api=0"],
+    ["Pack", Q + "r=pack&pco=on&api=0"],
+    ["Church apps", Q + "r=integrations&pco=off&api=0"],
+    ["Sign-in PCO", Q + "r=signin&api=0"],
+    ["Connected church", Q + "r=church&pco=on&api=0"],
+    ["Inside church app", Q + "r=embed&api=0"],
+    ["Register", Q + "r=register&api=0"],
+    ["Reviewer queue", Q + "role=reviewer&r=queue&api=0"],
+    ["Packet", Q + "role=reviewer&r=review&id=P-0419&api=0"],
+    ["Regional alerts", Q + "role=leader&r=alerts&api=0"],
+    ["Tour", "tour/index.html"]
+  ];
+})();

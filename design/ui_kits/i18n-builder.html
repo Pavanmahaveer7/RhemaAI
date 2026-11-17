@@ -1,0 +1,27 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Translation builder</title><link rel="stylesheet" href="../styles.css">
+<style>body{margin:0;padding:28px 20px 60px;background:var(--surface-page);color:var(--text-body);font:16px/1.45 var(--font-body)}main{max-width:900px;margin:0 auto;display:flex;flex-direction:column;gap:16px}h1{font:800 32px/1 var(--font-display);color:var(--text-strong);margin:0}table{border-collapse:collapse;width:100%}td,th{padding:8px 10px;border-bottom:1px solid var(--border-subtle);text-align:left;font-size:16px}button{height:44px;padding:0 18px;border-radius:999px;border:1px solid var(--border-default);background:var(--surface-card);color:var(--text-strong);font:600 16px/1 var(--font-body);cursor:pointer}button:hover{border-color:var(--border-strong)}#frames{position:fixed;left:-9999px;top:0;display:flex}#frames iframe{width:390px;height:844px;border:0}a{color:var(--lamp-400)}a:hover{color:var(--lamp-300)}</style>
+<script src="screens.js"></script></head><body><main><h1>Translation builder</h1>
+<p>Opens every screen in all 5 languages, collects every interface string, and drafts translations once. Results are saved on this device and can be downloaded as one file per language for native-speaker review. About 5 minutes. Leave this tab open.</p>
+<div style="display:flex;gap:10px;flex-wrap:wrap"><button id="go">Build all languages</button><button id="dl" disabled>Download files</button></div>
+<p id="st" role="status">Ready.</p>
+<table><thead><tr><th>Language</th><th>Strings</th></tr></thead><tbody id="rows"></tbody></table></main><div id="frames"></div>
+<script>
+const L=[["hi","हिन्दी"],["bn","বাংলা"],["ne","नेपाली"],["my","မြန်မာ"],["km","ខ្មែរ"]];
+const count=l=>{try{return Object.keys(JSON.parse(localStorage.getItem("ca_tr_"+l))||{}).length}catch(e){return 0}};
+const draw=()=>document.getElementById("rows").innerHTML=L.map(([k,n])=>"<tr><td lang='"+k+"'>"+n+"</td><td>"+count(k)+"</td></tr>").join("");draw();
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+async function settle(f){const t0=Date.now();await sleep(1500);let idle=0;while(Date.now()-t0<45000){let p=1;try{p=f.contentWindow.CAi18n?f.contentWindow.CAi18n.pending():0}catch(e){p=0}idle=p?0:idle+1;if(idle>=3)return;await sleep(500)}}
+const NAMES={hi:"Hindi",bn:"Bengali",ne:"Nepali",my:"Burmese (Myanmar)",km:"Khmer"};
+const ld=l=>{try{return JSON.parse(localStorage.getItem("ca_tr_"+l))||{}}catch(e){return {}}};
+function parse(r,list){const o={},re=/"((?:[^"\\]|\\.)*)"\s*:\s*"((?:[^"\\]|\\.)*)"/g;let m;while((m=re.exec(String(r||"")))){try{const k=JSON.parse('"'+m[1]+'"'),v=JSON.parse('"'+m[2]+'"');if(list.includes(k)&&v.trim())o[k]=v}catch(e){}}return o}
+async function ask(p){return Promise.race([window.claude.complete(p),new Promise((_,n)=>setTimeout(()=>n(new Error("t")),25000))])}
+document.getElementById("go").onclick=async()=>{const st=document.getElementById("st"),S=window.CA_SCREENS.filter(s=>!/States|plain/.test(s[0])),box=document.getElementById("frames"),all=new Set();
+for(let i=0;i<S.length;i++){const [name,url]=S[i];st.textContent="Collecting "+(i+1)+" of "+S.length+": "+name;box.innerHTML="";const f=document.createElement("iframe");f.src=url+(url.includes("#")?"&":"#")+"lang=en&demo=1";box.appendChild(f);
+await new Promise(r=>{f.onload=r;setTimeout(r,8000)});await sleep(1800);try{(f.contentWindow.CAi18n?f.contentWindow.CAi18n.collect():[]).forEach(x=>all.add(x))}catch(e){}}
+box.innerHTML="";const list=[...all].filter(x=>!["church","ai","church.ai","Planning Center"].includes(x));
+for(const [l] of L){const c=ld(l),todo=list;for(let i=0;i<todo.length;i+=16){const part=todo.slice(i,i+16);st.textContent=NAMES[l]+": "+Math.min(i+16,todo.length)+" of "+todo.length;
+const p="You translate the interface of church.ai, a calm, respectful dictionary of faith words (Hindu, Buddhist, Christian) for young people and pastors in South and Southeast Asia. Translate each English UI string (buttons, labels, short messages) into natural, everyday "+NAMES[l]+", polite register, as a native app would say it. Translate the meaning precisely (e.g. 'Search' is the verb to look something up). Keep unchanged: church.ai, Planning Center, numbers, ids, and religious terms such as karma, dharma, moksha, nirvana, saṃsāra, mūrti, deva, Theravāda. Reply ONLY with a JSON object mapping each English string to its translation.\n\n"+JSON.stringify(part);
+for(let a=0;a<2;a++){try{const o=parse(await ask(p),part);if(Object.keys(o).length){Object.assign(c,o);localStorage.setItem("ca_tr_"+l,JSON.stringify(c));break}}catch(e){}}draw()}}
+st.textContent="Done: "+list.length+" strings in each language. Download the files, or tell Claude the build is finished.";document.getElementById("dl").disabled=false;draw()};
+document.getElementById("dl").onclick=()=>{L.forEach(([k])=>{const b=new Blob([localStorage.getItem("ca_tr_"+k)||"{}"],{type:"application/json"});const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download=k+".json";a.click()})};
+</script></body></html>
